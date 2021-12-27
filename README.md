@@ -70,19 +70,20 @@ yarn add @reduxjs/toolkit
 <br>
 
 ## ⛏ screen configuration
+../page/
 
 |폴더|router|화면|설명|
-|------|------|---|-------|
-|pages/DashboardPage/index.js|/dashboard|대시보드|대시보드 메인 페이지|
-|pages/DeviceIntegratedMonitoringPage/index.js|/deviceMonitoring|디바이스 통합 모니터링|통합 모니터링 페이지|
-|pages/FotaPage/FirmwareManagementPage.js|/fota/firmwareManagement|FOTA Firmware 관리|FOTA Firmware 리스트, 펌웨어 리스트 추가 수정 삭제 및 엑셀 다운로드 기능|
-|pages/FotaPage/FirmwareManagementDetailPage.js|/fota/firmwareManagementDetail|FOTA Firmware 관리 상세|Firmware 등록 및 수정|
-|pages/FotaPage/FotaPolicyManagementPage.js|/fota/policyManagement|FOTA 정책관리|FOTA 정책 리스트, 정책 추가 수정 삭제 및 엑셀 다운로드 기능|
-|pages/FotaPage/FotaPolicyManagementDetailPage.js|/fota/policyManagementDetail|FOTA 정책관리 상세|FOTA 정책 등록 및 수정|
-|pages/FotaPage/CertPolicyManagementPage.js|/fota/certPolicyManagement|인증서 정책관리|인증서 정책 리스트, 인증서 추가 수정 삭제 및 엑셀 다운로드 기능|
-|pages/FotaPage/CertPolicyManagementDetailPage.js|/fota/certPolicyManagementDetail|인증서 정책관리 상세|인증서 정책 등록 및 수정|
-|pages/FotaPage/FotaStatusSearchPage.js|/fota/fotaStatusSearchPage|FOTA 상태 조회|Fota 상태 조회 리스트, 펌웨어 파일 상세 및 이력 조회 |
-|pages/FotaPage/FotaHistroySearchPage.js|/fota/fotaHistorySearchPage|FOTA 이력 조회|Fota 이력 조회 리스트|
+|---|---|---|-----|
+|DashboardPage/index.js|/dashboard|대시보드|대시보드 메인 페이지|
+|DeviceIntegratedMonitoringPage/index.js|/deviceMonitoring|디바이스 통합 모니터링|통합 모니터링 페이지|
+|FotaPage/FirmwareManagementPage.js|/fota/firmwareManagement|FOTA Firmware 관리|FOTA Firmware 리스트, 펌웨어 리스트 추가 수정 삭제 및 엑셀 다운로드 기능|
+|FotaPage/FirmwareManagementDetailPage.js|/fota/firmwareManagementDetail|FOTA Firmware 관리 상세|Firmware 등록 및 수정|
+|FotaPage/FotaPolicyManagementPage.js|/fota/policyManagement|FOTA 정책관리|FOTA 정책 리스트, 정책 추가 수정 삭제 및 엑셀 다운로드 기능|
+|FotaPage/FotaPolicyManagementDetailPage.js|/fota/policyManagementDetail|FOTA 정책관리 상세|FOTA 정책 등록 및 수정|
+|FotaPage/CertPolicyManagementPage.js|/fota/certPolicyManagement|인증서 정책관리|인증서 정책 리스트, 인증서 추가 수정 삭제 및 엑셀 다운로드 기능|
+|FotaPage/CertPolicyManagementDetailPage.js|/fota/certPolicyManagementDetail|인증서 정책관리 상세|인증서 정책 등록 및 수정|
+|FotaPage/FotaStatusSearchPage.js|/fota/fotaStatusSearchPage|FOTA 상태 조회|Fota 상태 조회 리스트, 펌웨어 파일 상세 및 이력 조회 |
+|FotaPage/FotaHistroySearchPage.js|/fota/fotaHistorySearchPage|FOTA 이력 조회|Fota 이력 조회 리스트|
   
 
 ## ⛏ File Structure
