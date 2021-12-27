@@ -47,6 +47,13 @@
     -ms-user-select: none !important;
     user-select: none !important;
 }
+.wrapper {
+    width: 100%;
+    @include ltr-rtl("padding-left", var(--cui-sidebar-occupy-start, 0));
+    will-change: auto;
+    @include transition(padding .15s);
+}
+
 
 /*** Login ***/
 .login_logo {position:absolute; left:0; top:8%; right:0; height:40px; text-indent:-9999em; background:url("../images/logo_iocare.png") no-repeat center top; background-size:auto 100%;}
