@@ -72,7 +72,7 @@ yarn add @reduxjs/toolkit
 ## ⛏ screen configuration
 
 |폴더|router|화면|설명|
-|------|------|---|---|
+|------|------|---|-------|
 |pages/DashboardPage/index.js|/dashboard|대시보드|대시보드 메인 페이지|
 |pages/DeviceIntegratedMonitoringPage/index.js|/deviceMonitoring|디바이스 통합 모니터링|통합 모니터링 페이지|
 |pages/FotaPage/FirmwareManagementPage.js|/fota/firmwareManagement|FOTA Firmware 관리|FOTA Firmware 리스트, 펌웨어 리스트 추가 수정 삭제 및 엑셀 다운로드 기능|
