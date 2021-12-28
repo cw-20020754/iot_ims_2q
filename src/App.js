@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import "./scss/style.scss";
+import "../src/assets/common/style.scss";
 import LoginPage from "./pages/LoginPage";
 
 const loading = (

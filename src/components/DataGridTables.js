@@ -29,7 +29,7 @@ import {
   makeRowsFormat,
 } from "../common/utils/CowayUtils";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+import dayjs from "dayjs";
 import { CPagination, CPaginationItem } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilPencil, cilSpeedometer } from "@coreui/icons";
@@ -307,7 +307,7 @@ const DataGridTables = (props) => {
       xlsx.utils.book_append_sheet(wb, ws, "Sheet1");
       xlsx.writeFile(
         wb,
-        `${title}_${moment(new Date()).format("YYMMDDHHmmssSSS")}.xlsx`
+        `${title}_${dayjs(new Date()).format("YYMMDDHHmmssSSS")}.xlsx`
       );
     } else {
       // TODO. 엑셀다운로드 실패
