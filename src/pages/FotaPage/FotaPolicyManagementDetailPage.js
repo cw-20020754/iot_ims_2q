@@ -21,7 +21,7 @@ import {
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+import dayjs from "dayjs";
 import { useHistory } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
@@ -82,7 +82,7 @@ const FotaPolicyManagementDetailPage = (props) => {
   });
 
   const [publishDateTxt, setPublishDateTxt] = useState(
-    moment(new Date()) // 예약 시간
+    dayjs(new Date()) // 예약 시간
       .hour(23)
       .minute(59)
       .second(59)
@@ -248,14 +248,14 @@ const FotaPolicyManagementDetailPage = (props) => {
 
       if (data.publishDate === 1) {
         setPublishDateTxt(
-          moment(new Date()) // 예약 시간
+          dayjs(new Date()) // 예약 시간
             .hour(23)
             .minute(59)
             .second(59)
             .format("YYYY-MM-DDTHH:mm")
         );
       } else {
-        setPublishDateTxt(moment(data.publishDate).format("YYYY-MM-DDTHH:mm"));
+        setPublishDateTxt(dayjs(data.publishDate).format("YYYY-MM-DDTHH:mm"));
       }
 
       setValidation((prevState) => ({
@@ -289,7 +289,7 @@ const FotaPolicyManagementDetailPage = (props) => {
           value === 1
             ? ""
             : dateToTimestampConvert(
-                moment(new Date()) // 예약 시간
+                dayjs(new Date()) // 예약 시간
                   .hour(23)
                   .minute(59)
                   .second(59)

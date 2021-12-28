@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import ClearIcon from "@mui/icons-material/Clear";
 import PropTypes from "prop-types";
-import moment from "moment";
+import dayjs from "dayjs";
 import {
   getFirmwareList,
   postCertPolicy,
@@ -71,7 +71,7 @@ const CertPolicyManagementDetailPage = (props) => {
   });
 
   const [publishDateTxt, setPublishDateTxt] = useState(
-    moment(new Date()) // 예약 시간
+    dayjs(new Date()) // 예약 시간
       .hour(23)
       .minute(59)
       .second(59)
@@ -149,14 +149,6 @@ const CertPolicyManagementDetailPage = (props) => {
       setSubmitData((prevState) => ({
         ...data,
         targetType: data.targetType === "제품군" ? 1 : 2,
-        // publishDateTxt:
-        //   data.publishType === 1
-        //     ? moment(new Date()) // 예약 시간
-        //         .hour(23)
-        //         .minute(59)
-        //         .second(59)
-        //         .format("YYYY-MM-DDTHH:mm")
-        //     : data.publishDate,
         useYn: data.useYn === "Y",
         regDate: dateToTimestampConvert(data.regDate),
         updDate: dateToTimestampConvert(data.updDate),
@@ -164,14 +156,14 @@ const CertPolicyManagementDetailPage = (props) => {
 
       if (data.publishDate === 1) {
         setPublishDateTxt(
-          moment(new Date()) // 예약 시간
+          dayjs(new Date()) // 예약 시간
             .hour(23)
             .minute(59)
             .second(59)
             .format("YYYY-MM-DDTHH:mm")
         );
       } else {
-        setPublishDateTxt(moment(data.publishDate).format("YYYY-MM-DDTHH:mm"));
+        setPublishDateTxt(dayjs(data.publishDate).format("YYYY-MM-DDTHH:mm"));
       }
 
       setValidation((prevState) => ({
@@ -202,7 +194,7 @@ const CertPolicyManagementDetailPage = (props) => {
           value === 1
             ? ""
             : dateToTimestampConvert(
-                moment(new Date()) // 예약 시간
+                dayjs(new Date()) // 예약 시간
                   .hour(23)
                   .minute(59)
                   .second(59)

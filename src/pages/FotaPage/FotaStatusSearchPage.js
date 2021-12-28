@@ -11,7 +11,7 @@ import {
 import MenuItem from "@mui/material/MenuItem";
 import DataGridTables from "../../components/DataGridTables";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+import dayjs from "dayjs";
 import MatEdit from "../../components/MatEdit";
 import { getStatusList } from "../../redux/reducers/fotaInfoSlice";
 
@@ -26,7 +26,7 @@ const FotaStatusSearchPage = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const options = useSelector((state) => state.getData.codes);
   const [startDate, setStartDate] = useState(
-    moment(new Date())
+    dayjs(new Date())
       .add(-7, "days")
       .hour(0)
       .minute(0)
@@ -35,7 +35,7 @@ const FotaStatusSearchPage = (props) => {
   );
 
   const [endDate, setEndDate] = useState(
-    moment(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
+    dayjs(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
   );
   const [searchOption, setSearchOption] = useState({
     policyName: "",
@@ -156,7 +156,7 @@ const FotaStatusSearchPage = (props) => {
   // 리프레시 누른 경우
   const onRefresh = () => {
     setStartDate(
-      moment(new Date())
+      dayjs(new Date())
         .add(-7, "days")
         .hour(0)
         .minute(0)
@@ -164,7 +164,7 @@ const FotaStatusSearchPage = (props) => {
         .format("YYYY-MM-DDTHH:mm")
     );
     setEndDate(
-      moment(new Date())
+      dayjs(new Date())
         .hour(23)
         .minute(59)
         .second(59)

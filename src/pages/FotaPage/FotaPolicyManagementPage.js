@@ -9,7 +9,7 @@ import {
   makeQuery,
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
-import moment from "moment";
+import dayjs from "dayjs";
 import { getFotaPolicyList } from "../../redux/reducers/fotaInfoSlice";
 import { useDispatch, useSelector } from "react-redux";
 import DataGridTables from "../../components/DataGridTables";
@@ -24,7 +24,7 @@ const FotaPolicyManagementPage = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const options = useSelector((state) => state.getData.codes);
   const [startDate, setStartDate] = useState(
-    moment(new Date())
+    dayjs(new Date())
       .add(-7, "days")
       .hour(0)
       .minute(0)
@@ -33,7 +33,7 @@ const FotaPolicyManagementPage = (props) => {
   );
 
   const [endDate, setEndDate] = useState(
-    moment(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
+    dayjs(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
   );
   const [searchOption, setSearchOption] = useState({
     policyName: "",
@@ -242,7 +242,7 @@ const FotaPolicyManagementPage = (props) => {
   // 리프레시 누른 경우
   const onRefresh = () => {
     setStartDate(
-      moment(new Date())
+      dayjs(new Date())
         .add(-7, "days")
         .hour(0)
         .minute(0)
@@ -250,7 +250,7 @@ const FotaPolicyManagementPage = (props) => {
         .format("YYYY-MM-DDTHH:mm")
     );
     setEndDate(
-      moment(new Date())
+      dayjs(new Date())
         .hour(23)
         .minute(59)
         .second(59)

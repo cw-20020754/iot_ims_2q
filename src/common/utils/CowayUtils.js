@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import * as queryString from "querystring";
 import { POLICY_STATUS } from "../constants";
 /**
@@ -29,7 +29,7 @@ const dateFormatConvert = (date) => {
   if (isNull(date)) {
     return "";
   }
-  return moment(date).format("YYYY-MM-DD HH:mm:ss");
+  return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
 };
 
 // Date to Timestamp
@@ -37,7 +37,7 @@ const dateToTimestampConvert = (date) => {
   if (isNull(date)) {
     return "";
   }
-  return moment(date).valueOf();
+  return dayjs(date).valueOf();
 };
 
 const makeurlQeuryString = (url, param) => {

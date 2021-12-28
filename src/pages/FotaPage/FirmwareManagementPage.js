@@ -9,7 +9,7 @@ import {
   isNull,
   makeQuery,
 } from "../../common/utils/CowayUtils";
-import moment from "moment";
+import dayjs from "dayjs";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import SearchIcon from "@mui/icons-material/Search";
@@ -24,7 +24,7 @@ const FirmwareManagementPage = (props) => {
   const dispatch = useDispatch();
   const [initial, setInitial] = useState(true);
   const [startDate, setStartDate] = useState(
-    moment(new Date())
+    dayjs(new Date())
       .add(-7, "days")
       .hour(0)
       .minute(0)
@@ -33,7 +33,7 @@ const FirmwareManagementPage = (props) => {
   );
 
   const [endDate, setEndDate] = useState(
-    moment(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
+    dayjs(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
   );
   const options = useSelector((state) => state.getData.codes);
   const [searchOption, setSearchOption] = useState({
@@ -214,7 +214,7 @@ const FirmwareManagementPage = (props) => {
   // 리프레시 누른 경우
   const onRefresh = () => {
     setStartDate(
-      moment(new Date())
+      dayjs(new Date())
         .add(-7, "days")
         .hour(0)
         .minute(0)
@@ -222,7 +222,7 @@ const FirmwareManagementPage = (props) => {
         .format("YYYY-MM-DDTHH:mm")
     );
     setEndDate(
-      moment(new Date())
+      dayjs(new Date())
         .hour(23)
         .minute(59)
         .second(59)
@@ -252,35 +252,6 @@ const FirmwareManagementPage = (props) => {
       ...prevState,
       [name]: value,
     }));
-
-    // validation check
-    // const stDate = moment(new Date(value)).format("YYYYMMDDHHmm");
-    // const edDate = moment(new Date(endDate)).format("YYYYMMDDHHmm");
-    //
-    // if (name === "startDate") {
-    //   if (stDate > edDate) {
-    //     setStartDate(endDate);
-    //   } else {
-    //     setStartDate(value);
-    //   }
-    // }
-    //
-    // if (name === "endDate") {
-    //   if (stDate < edDate) {
-    //     setEndDate(startDate);
-    //   } else {
-    //     setEndDate(value);
-    //   }
-    // }
-    //
-    // console.log("stDate >> ", stDate);
-    // console.log("edDate >> ", edDate);
-    // console.log("edDate >> ", stDate > edDate);
-
-    // console.log(
-    //   "diff >> ",
-    //   moment.duration(moment(endDate).diff(moment(startDate))).asDays()
-    // );
   };
 
   const onHandleSearch = () => {
