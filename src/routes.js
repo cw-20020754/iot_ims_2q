@@ -52,12 +52,15 @@ const routes = [
     component: CertPolicyManagementDetailPage,
   },
   {
-    path: "/fota/FotaStatusSearchPage",
+    path: "/fota/fotaStatusSearchPage",
     name: "상태조회",
     component: FotaStatusSearchPage,
   },
-  { path: "/fota/status", name: "Status", component: FotaStatusSearchPage },
-  { path: "/fota/history", name: "History", component: FotaHistroySearchPage },
+  {
+    path: "/fota/fotaHistorySearchPage",
+    name: "이력조회",
+    component: FotaHistroySearchPage,
+  },
 ];
 
 export default routes;

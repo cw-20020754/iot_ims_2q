@@ -72,12 +72,6 @@ const makeParamForCondition = (condition, options) => {
 const makeQuery = (param, condition) => {
   let result = "";
 
-  // if (!isNull(condition)) {
-  //   obj = Object.fromEntries(
-  //     Object.entries(condition).filter(([_, v]) => !isNull(v))
-  //   );
-  // }
-
   result = "?" + new URLSearchParams(param).toString() + "&";
   if (!isNull(condition)) {
     let option = {};

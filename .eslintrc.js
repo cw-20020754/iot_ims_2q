@@ -23,7 +23,6 @@ module.exports = {
         "jsx-a11y/label-has-associated-control": "off",
         "max-len": "off",
         "arrow-parens": ["warn", "always"],
-
     },
     settings: {
         "import/resolver": {

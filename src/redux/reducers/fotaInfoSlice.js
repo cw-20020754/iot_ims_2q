@@ -22,6 +22,10 @@ const initialState = {
     list: [],
     totalElements: 0,
   },
+  fotaHistory: {
+    list: [],
+    totalElements: 0,
+  },
   loading: false,
   error: false,
 };
@@ -31,48 +35,48 @@ const initialState = {
  */
 //  펌웨어 관리 리스트
 export const getFirmwareList = createAsyncThunk(
-  `${name}/getFirmwareList`,
-  async ({ param }, thunkAPI) => {
-    const response = await fotaAPI.getFirmwareList(param);
-    return response.data;
-  }
+    `${name}/getFirmwareList`,
+    async ({ param }, thunkAPI) => {
+      const response = await fotaAPI.getFirmwareList(param);
+      return response.data;
+    }
 );
 
 // 펌웨어 등록
 export const postFirmware = createAsyncThunk(
-  `${name}/postFirmware`,
-  async ({ formData }, thunkAPI) => {
-    // console.log("postFirmware response >> ", JSON.stringify(response));
+    `${name}/postFirmware`,
+    async ({ formData }, thunkAPI) => {
+      // console.log("postFirmware response >> ", JSON.stringify(response));
 
-    return await fotaAPI.postFirmware(formData);
-  }
+      return await fotaAPI.postFirmware(formData);
+    }
 );
 
 // 펌웨어 수정
 export const putFirmware = createAsyncThunk(
-  `${name}/putFirmware`,
-  async ({ formData }, thunkAPI) => {
-    const response = await fotaAPI.putFirmware(formData);
-    return response.data;
-  }
+    `${name}/putFirmware`,
+    async ({ formData }, thunkAPI) => {
+      const response = await fotaAPI.putFirmware(formData);
+      return response.data;
+    }
 );
 
 // 펌웨어 삭제
 export const deleteFirmware = createAsyncThunk(
-  `${name}/deleteFirmware`,
-  async ({ frmwrId }, thunkAPI) => {
-    const response = await fotaAPI.deleteFirmware(frmwrId);
-    return response.data;
-  }
+    `${name}/deleteFirmware`,
+    async ({ frmwrId }, thunkAPI) => {
+      const response = await fotaAPI.deleteFirmware(frmwrId);
+      return response.data;
+    }
 );
 
 // 엑셀 다운로드
 export const refreshFirmwareExportList = createAsyncThunk(
-  `${name}/refreshFirmwareExportList`,
-  async ({ option }, thunkAPI) => {
-    const response = await fotaAPI.refreshFirmwareExportList(option);
-    return response.data;
-  }
+    `${name}/refreshFirmwareExportList`,
+    async ({ option }, thunkAPI) => {
+      const response = await fotaAPI.refreshFirmwareExportList(option);
+      return response.data;
+    }
 );
 
 /**
@@ -80,36 +84,36 @@ export const refreshFirmwareExportList = createAsyncThunk(
  */
 // FOTA 정책 목록 조회
 export const getFotaPolicyList = createAsyncThunk(
-  `${name}/getFotaPolicyList`,
-  async ({ param }, thunkAPI) => {
-    // console.log("option >>> ", param);
-    const response = await fotaAPI.getFotaPolicyList(param);
-    return response.data;
-  }
+    `${name}/getFotaPolicyList`,
+    async ({ param }, thunkAPI) => {
+      // console.log("option >>> ", param);
+      const response = await fotaAPI.getFotaPolicyList(param);
+      return response.data;
+    }
 );
 // FOTA 정책 등록
 export const postFotaPolicy = createAsyncThunk(
-  `${name}/postFotaPolicy`,
-  async ({ formData }, thunkAPI) => {
-    // console.log("postFirmware response >> ", JSON.stringify(response));
-    return await fotaAPI.postFotaPolicy(formData);
-  }
+    `${name}/postFotaPolicy`,
+    async ({ formData }, thunkAPI) => {
+      // console.log("postFirmware response >> ", JSON.stringify(response));
+      return await fotaAPI.postFotaPolicy(formData);
+    }
 );
 // FOTA 정책 수정
 export const putFotaPolicy = createAsyncThunk(
-  `${name}/putFotaPolicy`,
-  async ({ formData }, thunkAPI) => {
-    // console.log("postFirmware response >> ", JSON.stringify(response));
-    return await fotaAPI.putFotaPolicy(formData);
-  }
+    `${name}/putFotaPolicy`,
+    async ({ formData }, thunkAPI) => {
+      // console.log("postFirmware response >> ", JSON.stringify(response));
+      return await fotaAPI.putFotaPolicy(formData);
+    }
 );
 // FOTA 정책 삭제
 export const deleteFotaPolicy = createAsyncThunk(
-  `${name}/deleteFotaPolicy`,
-  async ({ policyId }, thunkAPI) => {
-    // console.log("postFirmware response >> ", JSON.stringify(response));
-    return await fotaAPI.deleteFotaPolicy(policyId);
-  }
+    `${name}/deleteFotaPolicy`,
+    async ({ policyId }, thunkAPI) => {
+      // console.log("postFirmware response >> ", JSON.stringify(response));
+      return await fotaAPI.deleteFotaPolicy(policyId);
+    }
 );
 
 /**
@@ -118,48 +122,58 @@ export const deleteFotaPolicy = createAsyncThunk(
 
 // 인증서 정책 목록 조회
 export const getCertPolicyList = createAsyncThunk(
-  `${name}/getCertPolicyList`,
-  async ({ param }, thunkAPI) => {
-    const response = await fotaAPI.getCertPolicyList(param);
-    return response.data;
-  }
+    `${name}/getCertPolicyList`,
+    async ({ param }, thunkAPI) => {
+      const response = await fotaAPI.getCertPolicyList(param);
+      return response.data;
+    }
 );
 
 // 인증서 정책 등록
 export const postCertPolicy = createAsyncThunk(
-  `${name}/postCertPolicy`,
-  async ({ formData }, thunkAPI) => {
-    return await fotaAPI.postCertPolicy(formData);
-  }
+    `${name}/postCertPolicy`,
+    async ({ formData }, thunkAPI) => {
+      return await fotaAPI.postCertPolicy(formData);
+    }
 );
 
 // 인증서 정책 수정
 export const putCertPolicy = createAsyncThunk(
-  `${name}/putFotaPolicy`,
-  async ({ formData }, thunkAPI) => {
-    // console.log("postFirmware response >> ", JSON.stringify(response));
-    return await fotaAPI.putCertPolicy(formData);
-  }
+    `${name}/putFotaPolicy`,
+    async ({ formData }, thunkAPI) => {
+      // console.log("postFirmware response >> ", JSON.stringify(response));
+      return await fotaAPI.putCertPolicy(formData);
+    }
 );
 
 // 인증서 정책 삭제
 export const deleteCertPolicy = createAsyncThunk(
-  `${name}/deleteCertPolicy`,
-  async ({ policyId }, thunkAPI) => {
-    // console.log("postFirmware response >> ", JSON.stringify(response));
-    return await fotaAPI.deleteCertPolicy(policyId);
-  }
+    `${name}/deleteCertPolicy`,
+    async ({ policyId }, thunkAPI) => {
+      // console.log("postFirmware response >> ", JSON.stringify(response));
+      return await fotaAPI.deleteCertPolicy(policyId);
+    }
 );
 
 /**
  * 상태 조회
  */
 export const getStatusList = createAsyncThunk(
-  `${name}/getStatusList`,
-  async ({ param }, thunkAPI) => {
-    const response = await fotaAPI.getStatusList(param);
-    return response.data;
-  }
+    `${name}/getStatusList`,
+    async ({ param }, thunkAPI) => {
+      const response = await fotaAPI.getStatusList(param);
+      return response.data;
+    }
+);
+/**
+ * 이력 조회
+ */
+export const getHistoryList =  createAsyncThunk(
+    `${name}/getHistoryList`,
+    async ({ param }, thunkAPI) => {
+      const response = await fotaAPI.getHistoryList(param);
+      return response.data;
+    }
 );
 
 const fotaInfoSlice = createSlice({
@@ -180,8 +194,8 @@ const fotaInfoSlice = createSlice({
         state.firmwareMng = initialState.firmwareMng;
       } else {
         state.firmwareMng.list = isNull(payload.content)
-          ? initialState.firmwareMng.list
-          : makeRowsFormat(payload.content);
+            ? initialState.firmwareMng.list
+            : makeRowsFormat(payload.content);
         state.firmwareMng.totalElements = payload.totalElements;
       }
     },
@@ -238,8 +252,8 @@ const fotaInfoSlice = createSlice({
         state.fotaPolicy = initialState.fotaPolicy;
       } else {
         state.fotaPolicy.list = isNull(payload.content)
-          ? initialState.fotaPolicy.list
-          : makeRowsFormat(payload.content);
+            ? initialState.fotaPolicy.list
+            : makeRowsFormat(payload.content);
         state.fotaPolicy.totalElements = payload.totalElements;
       }
     },
@@ -295,8 +309,8 @@ const fotaInfoSlice = createSlice({
         state.certPolicy = initialState.certPolicy;
       } else {
         state.certPolicy.list = isNull(payload.content)
-          ? initialState.certPolicy.list
-          : makeRowsFormat(payload.content);
+            ? initialState.certPolicy.list
+            : makeRowsFormat(payload.content);
         state.certPolicy.totalElements = payload.totalElements;
       }
     },
@@ -353,12 +367,33 @@ const fotaInfoSlice = createSlice({
         state.fotaStatus = initialState.fotaStatus;
       } else {
         state.fotaStatus.list = isNull(payload.content)
-          ? initialState.fotaStatus.list
-          : makeRowsFormat(payload.content);
+            ? initialState.fotaStatus.list
+            : makeRowsFormat(payload.content);
         state.fotaStatus.totalElements = payload.totalElements;
       }
     },
     [getStatusList.rejected.type]: (state, action) => {
+      state.loading = false;
+      state.error = true;
+    },
+    [getHistoryList.pending.type]: (state, action) => {
+      state.loading = true;
+      state.error = false;
+    },
+    [getHistoryList.fulfilled.type]: (state, action) => {
+      state.loading = false;
+      state.error = false;
+      const payload = action.payload.payload;
+
+      if (isNull(payload)) {
+        state.fotaHistory = initialState.fotaHistory;
+      } else {
+        state.fotaHistory.list = isNull(payload.content)
+            ? initialState.fotaHistory.list : payload.content;
+        state.fotaHistory.totalElements = payload.totalElements;
+      }
+    },
+    [getHistoryList.rejected.type]: (state, action) => {
       state.loading = false;
       state.error = true;
     },

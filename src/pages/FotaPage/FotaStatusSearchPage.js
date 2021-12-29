@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Select, TextField } from "@material-ui/core";
-import { Button } from "@mui/material";
+import { Alert, AlertTitle, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import {
@@ -13,15 +13,15 @@ import DataGridTables from "../../components/DataGridTables";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import MatEdit from "../../components/MatEdit";
-import { getStatusList } from "../../redux/reducers/fotaInfoSlice";
+import { getFirmwareList, getStatusList } from "../../redux/reducers/fotaInfoSlice";
 
 /**
  * 포타 상태 조회
  */
 
 const FotaStatusSearchPage = (props) => {
-
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const options = useSelector((state) => state.getData.codes);
@@ -139,6 +139,8 @@ const FotaStatusSearchPage = (props) => {
     },
   ];
 
+  const [isFail, setIsFail] = useState(false);
+
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
   };
@@ -185,28 +187,53 @@ const FotaStatusSearchPage = (props) => {
     window.scrollTo(0, 0);
   };
 
-  useEffect(() => {
-    if (initial) {
-      dispatch(
-        getStatusList({
-          param: makeQuery(param),
-        })
-      );
+  const onFetchData = useCallback(async (data) => {
+
+    if(initial){
       setInitial(false);
     }
-  }, [initial, dispatch, param]);
 
-  const onFetchData = () => {
-    console.log("onFetchData >> ", param, searchOption);
-    dispatch(
-      getStatusList({
-        param: makeQuery(param, searchOption),
-      })
+    setIsLoading(true);
+    let params = isNull(data) ? param : data;
+    let option = initial ? '' : searchOption;
+
+    const result = await dispatch(
+        getStatusList({
+          param: makeQuery(params, option),
+        })
     );
-  };
+
+    if(!isNull(result)) {
+      setIsLoading(false);
+
+      if(isNull(result.payload)) {
+        setIsFail(true);
+
+        setTimeout(() => {
+          setIsFail(false);
+        }, 3000);
+      }
+    }
+  }, [dispatch, param, searchOption, initial]);
+
+  useEffect(() => {
+    if(initial) {
+      onFetchData();
+    }
+  }, [onFetchData, initial]);
 
   return (
     <div>
+      {
+        isFail && (
+            <div className='mb-3'>
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                <strong>일시적인 에러가 발생했습니다. 잠시 후 시도해 보세요.</strong>
+              </Alert>
+            </div>
+        )
+      }
       {/* 검색 */}
       <div className="accordion mb-2" id="accordionExample">
         <div className="accordion-item">
@@ -372,6 +399,7 @@ const FotaStatusSearchPage = (props) => {
         rows={!isNull(fotaStatusList) && fotaStatusList}
         columns={columns}
         totalElement={fotaStatusTotal}
+        isLoading={isLoading}
         searchOption={searchOption}
         category={"fotaStatus"}
         onFetchData={onFetchData}

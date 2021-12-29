@@ -14,13 +14,11 @@ import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
 import { createTheme, styled } from "@mui/material/styles";
 import { createStyles, makeStyles } from "@mui/styles";
-import { Pagination, PaginationItem } from "@mui/material";
+import { LinearProgress, Pagination, PaginationItem } from "@mui/material";
 import { Button, Paper, Typography } from "@material-ui/core";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import EditIcon from "@material-ui/icons/Edit";
 import {
   checkResult,
   isNull,
@@ -28,23 +26,23 @@ import {
   makeQuery,
   makeRowsFormat,
 } from "../common/utils/CowayUtils";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
-import { CPagination, CPaginationItem } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilPencil, cilSpeedometer } from "@coreui/icons";
-import { blue } from "@mui/material/colors";
 import { useHistory } from "react-router-dom";
 import {
   getCertPolicyList,
   getFirmwareList,
-  getFotaPolicyList,
+  getFotaPolicyList, getHistoryList,
 } from "../redux/reducers/fotaInfoSlice";
 import Box from "@mui/material/Box";
 import { CSVLink } from "react-csv";
 import xlsx from "xlsx";
+import { TITLE } from "../common/constants";
 
 const DataGridTables = (props) => {
+  const defaultTheme = createTheme();
+  const history = useHistory();
+  const dispatch = useDispatch();
   const [pages, setPages] = useState(0);
   const [pageSize, setPageSize] = React.useState(10);
   const columns = !isNull(props) ? props.columns : [];
@@ -52,32 +50,7 @@ const DataGridTables = (props) => {
   const totalElement = !isNull(props) ? props.totalElement : 10;
   const searchOption = !isNull(props) ? props.searchOption : {};
   const category = !isNull(props) ? props.category : "";
-  // console.log("rows >> ", rows);
-  // console.log("columns >> ", columns);
-
-  // const [test, setTest] = useState([]);
-  // const [searchText, setSearchText] = React.useState("");
-  // const data = {
-  //   dataSet: "Commodity",
-  //   rowLength: 1000,
-  //   maxColumns: 100,
-  // };
-
-  const defaultTheme = createTheme();
-  const history = useHistory();
-  const dispatch = useDispatch();
-
-  const testData = [
-    { field: "name", headerName: "Name", email: "jekim2@gmail.com" },
-    { field: "gggg", headerName: "Email", email: "jekim79@gmail.com" },
-    { field: "emdddddail", headerName: "Email", email: "jekim66@gmail.com" },
-  ];
-
-  const headers = [
-    { label: "field", key: "field" },
-    { label: "headerName", key: "headerName" },
-    { label: "email", key: "email" },
-  ];
+  const isLoading = !isNull(props) ? props.isLoading : false;
 
   useEffect(() => {}, []);
 
@@ -86,16 +59,6 @@ const DataGridTables = (props) => {
       createStyles({
         root: {
           flexGrow: 1,
-          // backgroundColor: "#dcdcdc",
-          // "& .MuiDataGrid-cell--textCenter": {
-          //   align: "center",
-          // },
-          // width: "100%",
-          // height: "600px",
-          // textAlign: "center",
-          // "& .MuiDataGrid-columnsContainer": {
-          //   backgroundColor: theme.palette.mode === "light" ? "red" : "red",
-          // },
         },
         menuButton: {
           marginRight: theme.spacing(2),
@@ -159,6 +122,16 @@ const DataGridTables = (props) => {
   const escapeRegExp = (value) => {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   };
+
+  function CustomLoadingOverlay() {
+    return (
+        <GridOverlay>
+          <div style={{ position: 'absolute', top: 0, width: '100%' }}>
+            <LinearProgress />
+          </div>
+        </GridOverlay>
+    );
+  }
 
   // const requestSearch = (searchValue) => {
   //   setSearchText(searchValue);
@@ -294,6 +267,17 @@ const DataGridTables = (props) => {
           })
         );
         break;
+      case "fotaHistory":
+        title = "이력 조회";
+        result = await dispatch(
+          getHistoryList({
+            param: makeQuery(
+              { page: 0, size: totalElement, totalItem: totalElement },
+              searchOption
+            ),
+          })
+        );
+        break;
       default:
         break;
     }
@@ -311,6 +295,8 @@ const DataGridTables = (props) => {
       );
     } else {
       // TODO. 엑셀다운로드 실패
+      console.log('excel down load fail!');
+
     }
   };
 
@@ -346,16 +332,20 @@ const DataGridTables = (props) => {
       <Paper className={classes.content}>
         <div className={classes.toolbar}>
           <Typography variant="h6" component="h2">
-            펌웨어 리스트
+            { TITLE.FOTA[category] }
           </Typography>
-          <Button
-            variant="outlined"
-            style={{ color: "#1976DE" }}
-            startIcon={<AppRegistrationIcon />}
-            onClick={() => goRegsiterPage()}
-          >
-            Registration
-          </Button>
+          {
+            category !== 'fotaHistory' && (
+              <Button
+                  variant="outlined"
+                  style={{ color: "#1976DE" }}
+                  startIcon={<AppRegistrationIcon />}
+                  onClick={() => goRegsiterPage()}
+              >
+                Registration
+              </Button>
+            )
+          }
         </div>
         <div
           className="w-100"
@@ -364,7 +354,9 @@ const DataGridTables = (props) => {
           <DataGrid
             components={{
               NoRowsOverlay: CustomNoRowsOverlay,
+              LoadingOverlay: CustomLoadingOverlay,
             }}
+            loading={isLoading}
             rows={rows}
             columns={columns}
             pagination
@@ -379,6 +371,7 @@ const DataGridTables = (props) => {
               setPageSize(newPageSize);
             }}
             onPageChange={(newPages) => {
+
               props.onFetchData({
                 page: newPages,
                 size: pageSize,
@@ -389,6 +382,8 @@ const DataGridTables = (props) => {
             rowCount={totalElement}
             paginationMode="server"
             autoHeight={totalElement > 0}
+            columnBuffer={2}
+            columnThreshold={2}
             // pagination
             // className={classes.test}
             // cell--textCenter={true}

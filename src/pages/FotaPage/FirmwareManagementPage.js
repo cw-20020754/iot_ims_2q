@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Select, TextField } from "@material-ui/core";
-import { Button } from "@mui/material";
+import { Alert, AlertTitle, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getFirmwareList } from "../../redux/reducers/fotaInfoSlice";
 import DataGridTables from "../../components/DataGridTables";
@@ -18,7 +18,7 @@ import MatEdit from "../../components/MatEdit";
  * 펌웨어관리
  */
 const FirmwareManagementPage = (props) => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
 
   const dispatch = useDispatch();
@@ -200,16 +200,42 @@ const FirmwareManagementPage = (props) => {
     },
   ];
 
-  useEffect(() => {
-    if (initial) {
-      dispatch(
-        getFirmwareList({
-          param: makeQuery(param),
-        })
-      );
+  const [isFail, setIsFail] = useState(false);
+
+  const onFetchData = useCallback(async (data) => {
+
+    if(initial){
       setInitial(false);
     }
-  }, [initial, dispatch, param]);
+
+    setIsLoading(true);
+    let params = isNull(data) ? param : data;
+    let option = initial ? '' : searchOption;
+
+    const result = await dispatch(
+        getFirmwareList({
+          param: makeQuery(params, option),
+        })
+    );
+
+    if(!isNull(result)) {
+      setIsLoading(false);
+
+      if(isNull(result.payload)) {
+        setIsFail(true);
+
+        setTimeout(() => {
+          setIsFail(false);
+        }, 3000);
+      }
+    }
+  }, [dispatch, param, searchOption, initial]);
+
+  useEffect(() => {
+    if(initial) {
+      onFetchData();
+    }
+  }, [onFetchData, initial]);
 
   // 리프레시 누른 경우
   const onRefresh = () => {
@@ -258,16 +284,18 @@ const FirmwareManagementPage = (props) => {
     setShowSearch(!showSearch);
   };
 
-  const onFetchData = () => {
-    dispatch(
-      getFirmwareList({
-        param: makeQuery(param, searchOption),
-      })
-    );
-  };
-
   return (
     <div>
+      {
+        isFail && (
+            <div className='mb-3'>
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                <strong>일시적인 에러가 발생했습니다. 잠시 후 시도해 보세요.</strong>
+              </Alert>
+            </div>
+        )
+      }
       {/* 검색 */}
       <div className="accordion mb-2" id="accordionExample">
         <div className="accordion-item">
@@ -431,6 +459,7 @@ const FirmwareManagementPage = (props) => {
         rows={!isNull(firmwareMngList) && firmwareMngList}
         columns={columns}
         totalElement={firmwareMngTotal}
+        isLoading={isLoading}
         searchOption={searchOption}
         category={"firmwareMng"}
         onFetchData={onFetchData}

@@ -230,4 +230,23 @@ export const getStatusList = (param) => {
 /**
  * 이력 조회
  */
-export const getHistoryList = () => {};
+/**
+ * 이력 조회
+ */
+export const getHistoryList = (param) => {
+  return axios
+      .get(
+          makeurlQeuryString(`${API.FOTA_URL}/iot/v1/shadow/history/shadow`, param),
+          {
+            headers: API.HEADERS,
+          }
+      )
+      .then((response) => {
+        console.log("response >> ", JSON.stringify(response.data));
+        return response;
+      })
+      .catch((err) => {
+        if (err.response) return err.response;
+      });
+};
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { Button, InputLabel } from "@mui/material";
@@ -10,7 +10,7 @@ import {
   makeQuery,
 } from "../../common/utils/CowayUtils";
 import DataGridTables from "../../components/DataGridTables";
-import { getCertPolicyList } from "../../redux/reducers/fotaInfoSlice";
+import { getCertPolicyList, getFirmwareList } from "../../redux/reducers/fotaInfoSlice";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import MatEdit from "../../components/MatEdit";
@@ -21,6 +21,7 @@ import MatEdit from "../../components/MatEdit";
 
 const CertPolicyManagementPage = (props) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const options = useSelector((state) => state.getData.codes);
@@ -200,6 +201,37 @@ const CertPolicyManagementPage = (props) => {
     },
   ];
 
+  const [isFail, setIsFail] = useState(false);
+
+  const onFetchData = useCallback(async (data) => {
+
+    if(initial){
+      setInitial(false);
+    }
+
+    setIsLoading(true);
+    let params = isNull(data) ? param : data;
+    let option = initial ? '' : searchOption;
+
+    const result = await dispatch(
+        getCertPolicyList({
+          param: makeQuery(params, option),
+        })
+    );
+
+    if(!isNull(result)) {
+      setIsLoading(false);
+
+      if(isNull(result.payload)) {
+        setIsFail(true);
+
+        setTimeout(() => {
+          setIsFail(false);
+        }, 3000);
+      }
+    }
+  }, [dispatch, param, searchOption, initial]);
+
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
   };
@@ -247,24 +279,10 @@ const CertPolicyManagementPage = (props) => {
   };
 
   useEffect(() => {
-    if (initial) {
-      dispatch(
-        getCertPolicyList({
-          param: makeQuery(param),
-        })
-      );
-      setInitial(false);
+    if(initial) {
+      onFetchData();
     }
-  }, [initial, dispatch, param]);
-
-  const onFetchData = () => {
-    console.log("onFetchData >> ", param, searchOption);
-    dispatch(
-      getCertPolicyList({
-        param: makeQuery(param, searchOption),
-      })
-    );
-  };
+  }, [onFetchData, initial]);
 
   return (
     <div>
@@ -433,6 +451,7 @@ const CertPolicyManagementPage = (props) => {
         rows={!isNull(certPolicyList) && certPolicyList}
         columns={columns}
         totalElement={certPolicyTotal}
+        isLoading={isLoading}
         searchOption={searchOption}
         category={"certPolicyMng"}
         onFetchData={onFetchData}

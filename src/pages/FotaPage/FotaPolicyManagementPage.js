@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Select, TextField } from "@material-ui/core";
-import { Button } from "@mui/material";
+import { Alert, AlertTitle, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import {
@@ -10,7 +10,7 @@ import {
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
 import dayjs from "dayjs";
-import { getFotaPolicyList } from "../../redux/reducers/fotaInfoSlice";
+import { getCertPolicyList, getFotaPolicyList } from "../../redux/reducers/fotaInfoSlice";
 import { useDispatch, useSelector } from "react-redux";
 import DataGridTables from "../../components/DataGridTables";
 import MatEdit from "../../components/MatEdit";
@@ -20,6 +20,7 @@ import MatEdit from "../../components/MatEdit";
  */
 const FotaPolicyManagementPage = (props) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
   const options = useSelector((state) => state.getData.codes);
@@ -284,30 +285,54 @@ const FotaPolicyManagementPage = (props) => {
       [name]: value,
     }));
   };
+  const [isFail, setIsFail] = useState(false);
+  const onFetchData = useCallback(async (data) => {
 
-  useEffect(() => {
-    if (initial) {
-      dispatch(
-        getFotaPolicyList({
-          param: makeQuery(param),
-        })
-      );
+    if(initial){
       setInitial(false);
     }
-  }, [initial, dispatch, param]);
 
-  const onFetchData = () => {
-    // console.log("onFetchData >> ", param, searchOption);
+    setIsLoading(true);
+    let params = isNull(data) ? param : data;
+    let option = initial ? '' : searchOption;
 
-    dispatch(
-      getFotaPolicyList({
-        param: makeQuery(param, searchOption),
-      })
+    const result = await dispatch(
+        getFotaPolicyList({
+          param: makeQuery(params, option),
+        })
     );
-  };
+
+    if(!isNull(result)) {
+      setIsLoading(false);
+
+      if(isNull(result.payload)) {
+        setIsFail(true);
+
+        setTimeout(() => {
+          setIsFail(false);
+        }, 3000);
+      }
+    }
+  }, [dispatch, param, searchOption, initial]);
+
+  useEffect(() => {
+    if(initial) {
+      onFetchData();
+    }
+  }, [onFetchData, initial]);
 
   return (
     <div>
+      {
+        isFail && (
+            <div className='mb-3'>
+              <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                <strong>일시적인 에러가 발생했습니다. 잠시 후 시도해 보세요.</strong>
+              </Alert>
+            </div>
+        )
+      }
       {/* 검색 */}
       <div className="accordion mb-2" id="accordionExample">
         <div className="accordion-item">
@@ -473,6 +498,7 @@ const FotaPolicyManagementPage = (props) => {
         rows={!isNull(fotaPolicyList) && fotaPolicyList}
         columns={columns}
         totalElement={fotaPolicyTotal}
+        isLoading={isLoading}
         searchOption={searchOption}
         category={"fotaPolicyMng"}
         onFetchData={onFetchData}
