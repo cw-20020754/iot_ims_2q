@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { getFirmwareList } from "../../redux/reducers/fotaInfoSlice";
 import DataGridTables from "../../components/DataGridTables";
 import {
+  dateFormatConvert,
+  fileSize,
   getCodeCategoryItems,
+  getText,
   isNull,
   makeQuery,
 } from "../../common/utils/CowayUtils";
@@ -14,6 +17,7 @@ import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import SearchIcon from "@mui/icons-material/Search";
 import MatEdit from "../../components/MatEdit";
+import AlertMessage from "../../components/AlertMessage";
 /**
  * 펌웨어관리
  */
@@ -35,7 +39,7 @@ const FirmwareManagementPage = (props) => {
   const [endDate, setEndDate] = useState(
     dayjs(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
   );
-  const options = useSelector((state) => state.getData.codes);
+  const options = useSelector((state) => state.sharedInfo.codes);
   const [searchOption, setSearchOption] = useState({
     frmwrName: "",
     frmwrType: "",
@@ -53,6 +57,27 @@ const FirmwareManagementPage = (props) => {
   const firmwareMngTotal = useSelector(
     (state) => state.fotaInfo.firmwareMng.totalElements
   );
+
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+
+  const text = {
+    search: getText(transMsg, "word.search"),
+    firmware: getText(transMsg, "word.firmware"),
+    name: getText(transMsg, "word.name"),
+    ver: getText(transMsg, "word.ver"),
+    file: getText(transMsg, "word.file"),
+    type: getText(transMsg, "word.type"),
+    devModelCode: getText(transMsg, "word.devModelCode"),
+    size: getText(transMsg, "word.size"),
+    regId: getText(transMsg, "word.regId"),
+    regDate: getText(transMsg, "word.regDate"),
+    updId: getText(transMsg, "word.updId"),
+    updDate: getText(transMsg, "word.updDate"),
+    use: getText(transMsg, "word.use"),
+    yn: getText(transMsg, "word.yn"),
+    valid_tempError: getText(transMsg, "desc.tempError"),
+    term: getText(transMsg, "word.term"),
+  };
 
   const columns = [
     {
@@ -77,7 +102,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "frmwrName",
-      headerName: "펌웨어 이름",
+      headerName: text.firmware + " " + text.name,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -85,7 +110,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "frmwrVer",
-      headerName: "펌웨어 버전",
+      headerName: text.firmware + " " + text.ver,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -93,7 +118,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "fileName",
-      headerName: "파일 이름",
+      headerName: text.file + " " + text.name,
       width: 300,
       editable: false,
       headerAlign: "center",
@@ -101,7 +126,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "frmwrType",
-      headerName: "펌웨어 유형",
+      headerName: text.firmware + " " + text.type,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -109,7 +134,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "devModelCode",
-      headerName: "기기모델코드",
+      headerName: text.devModelCode,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -117,7 +142,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "fileSizeTxt",
-      headerName: "파일 크기",
+      headerName: text.file + " " + text.size,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -125,7 +150,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "regId",
-      headerName: "등록자 아이디",
+      headerName: text.regId,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -133,7 +158,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "regDate",
-      headerName: "등록일시",
+      headerName: text.regDate,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -141,7 +166,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "updId",
-      headerName: "수정자 아이디",
+      headerName: text.updId,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -149,7 +174,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "updDate",
-      headerName: "수정 일시",
+      headerName: text.updDate,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -157,7 +182,7 @@ const FirmwareManagementPage = (props) => {
     },
     {
       field: "useYn",
-      headerName: "사용 여부",
+      headerName: text.use + " " + text.yn,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -202,37 +227,39 @@ const FirmwareManagementPage = (props) => {
 
   const [isFail, setIsFail] = useState(false);
 
-  const onFetchData = useCallback(async (data) => {
+  const onFetchData = useCallback(
+    async (data) => {
+      if (initial) {
+        setInitial(false);
+      }
 
-    if(initial){
-      setInitial(false);
-    }
+      setIsLoading(true);
+      let params = isNull(data) ? param : data;
+      let option = initial ? "" : searchOption;
 
-    setIsLoading(true);
-    let params = isNull(data) ? param : data;
-    let option = initial ? '' : searchOption;
-
-    const result = await dispatch(
+      const result = await dispatch(
         getFirmwareList({
           param: makeQuery(params, option),
         })
-    );
+      );
 
-    if(!isNull(result)) {
-      setIsLoading(false);
+      if (!isNull(result)) {
+        setIsLoading(false);
 
-      if(isNull(result.payload)) {
-        setIsFail(true);
+        if (isNull(result.payload)) {
+          setIsFail(true);
 
-        setTimeout(() => {
-          setIsFail(false);
-        }, 3000);
+          setTimeout(() => {
+            setIsFail(false);
+          }, 3000);
+        }
       }
-    }
-  }, [dispatch, param, searchOption, initial]);
+    },
+    [dispatch, param, searchOption, initial]
+  );
 
   useEffect(() => {
-    if(initial) {
+    if (initial) {
       onFetchData();
     }
   }, [onFetchData, initial]);
@@ -280,22 +307,38 @@ const FirmwareManagementPage = (props) => {
     }));
   };
 
+  const makeRowsFormat = (list) => {
+    let rows = [];
+    if (list.length > 0) {
+      list.map((item, index) => {
+        rows.push({
+          ...item,
+          id: index,
+          frmwrType: item.frmwrType === 1 ? "WIFI" : "MCU",
+          fileSizeTxt: fileSize(item.fileSize),
+          useYn: item.useYn ? "Y" : "N",
+          regDate: dateFormatConvert(item.regDate),
+          updDate: dateFormatConvert(item.updDate),
+        });
+        return rows;
+      });
+    }
+    return rows;
+  };
+
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
   };
 
   return (
     <div>
-      {
-        isFail && (
-            <div className='mb-3'>
-              <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                <strong>일시적인 에러가 발생했습니다. 잠시 후 시도해 보세요.</strong>
-              </Alert>
-            </div>
-        )
-      }
+      {isFail && (
+        <AlertMessage
+          isSuccess={false}
+          title={"Error"}
+          message={text.valid_tempError}
+        />
+      )}
       {/* 검색 */}
       <div className="accordion mb-2" id="accordionExample">
         <div className="accordion-item">
@@ -309,7 +352,7 @@ const FirmwareManagementPage = (props) => {
               aria-controls="flush-collapseOne"
               onClick={onHandleSearch}
             >
-              검색
+              {text.search}
             </button>
           </h2>
           <div
@@ -331,7 +374,7 @@ const FirmwareManagementPage = (props) => {
               >
                 <TextField
                   id="datetime-local"
-                  label="기간"
+                  label={text.term}
                   type="datetime-local"
                   InputLabelProps={{
                     shrink: true,
@@ -344,7 +387,7 @@ const FirmwareManagementPage = (props) => {
                 <span className="p-3 mb-4"> ~ </span>
                 <TextField
                   id="datetime-local"
-                  label="기간"
+                  label={text.term}
                   type="datetime-local"
                   value={searchOption.endDate}
                   InputLabelProps={{
@@ -370,7 +413,7 @@ const FirmwareManagementPage = (props) => {
             <div className="row ms-4">
               <div className="col-md-2 mb-4">
                 <label htmlFor="inputState" className="form-label">
-                  펌웨어 유형
+                  {text.firmware + " " + text.type}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
@@ -397,7 +440,7 @@ const FirmwareManagementPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="validationServer04" className="form-label">
-                  기기모델 코드
+                  {text.devModelCode}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
@@ -426,7 +469,7 @@ const FirmwareManagementPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
-                  펌웨어 이름
+                  {text.firmware + " " + text.name}
                 </label>
                 <input
                   type="text"
@@ -439,7 +482,7 @@ const FirmwareManagementPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
-                  펌웨어 버전
+                  {text.firmware + " " + text.ver}
                 </label>
                 <input
                   type="text"
@@ -456,12 +499,12 @@ const FirmwareManagementPage = (props) => {
       </div>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={!isNull(firmwareMngList) && firmwareMngList}
+        rows={!isNull(firmwareMngList) && makeRowsFormat(firmwareMngList)}
         columns={columns}
         totalElement={firmwareMngTotal}
         isLoading={isLoading}
         searchOption={searchOption}
-        category={"firmwareMng"}
+        category={"firmwareManage"}
         onFetchData={onFetchData}
         onRefresh={onRefresh}
       />

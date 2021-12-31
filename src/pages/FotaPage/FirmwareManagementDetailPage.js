@@ -3,18 +3,20 @@ import { CCard } from "@coreui/react";
 import { useHistory } from "react-router-dom";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import { Alert, AlertTitle, FormControlLabel, styled } from "@mui/material";
+import { FormControlLabel, styled } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkResult,
   dateToTimestampConvert,
   getCodeCategoryItems,
+  getText,
   isNull,
 } from "../../common/utils/CowayUtils";
 import { postFirmware, putFirmware } from "../../redux/reducers/fotaInfoSlice";
 import DropZone from "../../components/DropZone";
 import rules from "../../common/utils/rules";
 import { Switch, Select } from "@material-ui/core";
+import AlertMessage from "../../components/AlertMessage";
 
 /**
  * 펌웨어관리 상세 페이지
@@ -38,7 +40,7 @@ const FirmwareManagementDetailPage = (props) => {
     message: "",
   });
 
-  const options = useSelector((state) => state.getData.codes);
+  const options = useSelector((state) => state.sharedInfo.codes);
 
   const [submitData, setSubmitData] = useState({
     frmwrName: "",
@@ -64,6 +66,26 @@ const FirmwareManagementDetailPage = (props) => {
       backgroundColor: "#1976de",
     },
   }));
+
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+  const text = {
+    firmware: getText(transMsg, "word.firmware"),
+    name: getText(transMsg, "word.name"),
+    desc: getText(transMsg, "word.desc"),
+    ver: getText(transMsg, "word.ver"),
+    file: getText(transMsg, "word.file"),
+    type: getText(transMsg, "word.type"),
+    hardware: getText(transMsg, "word.hardware"),
+    devModelCode: getText(transMsg, "word.devModelCode"),
+    save: getText(transMsg, "word.save"),
+    cancel: getText(transMsg, "word.cancel"),
+    valid_frmwrName: getText(transMsg, "desc.validation.frmwrName"),
+    valid_frmwrDesc: getText(transMsg, "desc.validation.frmwrDesc"),
+    valid_frmwrVer: getText(transMsg, "desc.validation.frmwrVer"),
+    registerSuccess: getText(transMsg, "desc.registerSuccess"),
+    use: getText(transMsg, "word.use"),
+    yn: getText(transMsg, "word.yn"),
+  };
 
   useEffect(() => {
     // 수정
@@ -228,23 +250,25 @@ const FirmwareManagementDetailPage = (props) => {
   return (
     <form>
       {alertMessage.isSuccess === "success" && (
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          <strong> Firmware registration successful!</strong>
-        </Alert>
+        <AlertMessage
+          isSuccess={true}
+          title={"Success"}
+          message={text.registerSuccess}
+        />
       )}
       {alertMessage.isSuccess === "fail" && (
-        <Alert severity="error">
-          <AlertTitle>error</AlertTitle>
-          <strong> {alertMessage.message} Fail!</strong>
-        </Alert>
+        <AlertMessage
+          isSuccess={false}
+          title={"Error"}
+          message={alertMessage.message}
+        />
       )}
       <CCard className="p-5">
         <div className="row justify-content-center">
           {/* 펌웨어 이름 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer01" className="form-label">
-              펌웨어 이름
+              {text.firmware + " " + text.name}
             </label>
             <input
               type="text"
@@ -256,14 +280,12 @@ const FirmwareManagementDetailPage = (props) => {
               autoComplete="off"
               className={`form-control ${validation.frmwrName}`}
             />
-            <div className="invalid-feedback">
-              펌웨어 이름을 입력해주세요. (128자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_frmwrName}</div>
           </div>
           {/* 펌웨어 설명 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer02" className="form-label">
-              펌웨어 설명
+              {text.firmware + " " + text.desc}
             </label>
             <input
               type="text"
@@ -275,14 +297,12 @@ const FirmwareManagementDetailPage = (props) => {
               onChange={onChageFormData}
               className={`form-control ${validation.frmwrDesc}`}
             />
-            <div className="invalid-feedback">
-              펌웨어 설명을 입력해주세요. (2048자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_frmwrDesc}</div>
           </div>
           {/* 펌웨어 버전 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer02" className="form-label">
-              펌웨어 버전
+              {text.firmware + " " + text.ver}
             </label>
             <input
               type="text"
@@ -294,14 +314,12 @@ const FirmwareManagementDetailPage = (props) => {
               onChange={onChageFormData}
               className={`form-control ${validation.frmwrVer}`}
             />
-            <div className="invalid-feedback">
-              펌웨어 버전을 입력해주세요. (128자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_frmwrVer}</div>
           </div>
           {/* 펌웨어 유형 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer04" className="form-label">
-              펌웨어 유형
+              {text.firmware + " " + text.type}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -336,7 +354,7 @@ const FirmwareManagementDetailPage = (props) => {
           {/* 하드웨어 유형 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer04" className="form-label">
-              하드웨어 유형
+              {text.hardware + " " + text.type}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -377,7 +395,7 @@ const FirmwareManagementDetailPage = (props) => {
           {/* 기기모델 코드 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer04" className="form-label">
-              기기모델 코드
+              {text.devModelCode}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -431,7 +449,7 @@ const FirmwareManagementDetailPage = (props) => {
                     name="useYn"
                   />
                 }
-                label="사용 여부"
+                label={text.use + " " + text.yn}
               />
             </FormControl>
           </div>
@@ -440,7 +458,7 @@ const FirmwareManagementDetailPage = (props) => {
             type="button"
             onClick={saveFirmware}
           >
-            저장
+            {text.save}
           </button>
           <button
             className="btn btn-dark cancel_btn ms-3"
@@ -449,7 +467,7 @@ const FirmwareManagementDetailPage = (props) => {
               history.goBack();
             }}
           >
-            취소
+            {text.cancel}
           </button>
         </div>
       </CCard>

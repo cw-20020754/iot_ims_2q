@@ -242,7 +242,6 @@ export const getHistoryList = (param) => {
           }
       )
       .then((response) => {
-        console.log("response >> ", JSON.stringify(response.data));
         return response;
       })
       .catch((err) => {

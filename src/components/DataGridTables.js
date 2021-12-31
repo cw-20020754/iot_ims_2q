@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
@@ -21,18 +21,20 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {
   checkResult,
+  getText,
   isNull,
   makeExcelFormat,
   makeQuery,
   makeRowsFormat,
 } from "../common/utils/CowayUtils";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { useHistory } from "react-router-dom";
 import {
   getCertPolicyList,
   getFirmwareList,
-  getFotaPolicyList, getHistoryList,
+  getFotaPolicyList,
+  getHistoryList,
 } from "../redux/reducers/fotaInfoSlice";
 import Box from "@mui/material/Box";
 import { CSVLink } from "react-csv";
@@ -51,6 +53,25 @@ const DataGridTables = (props) => {
   const searchOption = !isNull(props) ? props.searchOption : {};
   const category = !isNull(props) ? props.category : "";
   const isLoading = !isNull(props) ? props.isLoading : false;
+
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+  const text = {
+    firmware: getText(transMsg, "word.firmware"),
+    manage: getText(transMsg, "word.manage"),
+    fota: getText(transMsg, "word.fota"),
+    policy: getText(transMsg, "word.policy"),
+    cert: getText(transMsg, "word.cert"),
+
+    list: getText(transMsg, "word.list"),
+    firmwareManage:
+      getText(transMsg, "word.firmware") +
+      " " +
+      getText(transMsg, "word.manage"),
+    fotaPolicyManage: getText(transMsg, "word.fotaPolicyManage"),
+    certPolicyManage: getText(transMsg, "word.certPolicyManage"),
+    statusSearch: getText(transMsg, "word.statusSearch"),
+    historySearch: getText(transMsg, "word.historySearch"),
+  };
 
   useEffect(() => {}, []);
 
@@ -125,11 +146,11 @@ const DataGridTables = (props) => {
 
   function CustomLoadingOverlay() {
     return (
-        <GridOverlay>
-          <div style={{ position: 'absolute', top: 0, width: '100%' }}>
-            <LinearProgress />
-          </div>
-        </GridOverlay>
+      <GridOverlay>
+        <div style={{ position: "absolute", top: 0, width: "100%" }}>
+          <LinearProgress />
+        </div>
+      </GridOverlay>
     );
   }
 
@@ -234,8 +255,8 @@ const DataGridTables = (props) => {
 
     let title = "";
     switch (category) {
-      case "firmwareMng":
-        title = "펌웨어 목록";
+      case "firmwareManage":
+        title = text.firmwareManage;
         result = await dispatch(
           getFirmwareList({
             param: makeQuery(
@@ -245,8 +266,8 @@ const DataGridTables = (props) => {
           })
         );
         break;
-      case "fotaPolicyMng":
-        title = "FOTA 정책 관리 목록";
+      case "fotaPolicyManage":
+        title = text.fotaPolicyManage;
         result = await dispatch(
           getFotaPolicyList({
             param: makeQuery(
@@ -256,8 +277,8 @@ const DataGridTables = (props) => {
           })
         );
         break;
-      case "certPolicyMng":
-        title = "인증서 정책관리";
+      case "certPolicyManage":
+        title = text.certPolicyManage;
         result = await dispatch(
           getCertPolicyList({
             param: makeQuery(
@@ -267,8 +288,8 @@ const DataGridTables = (props) => {
           })
         );
         break;
-      case "fotaHistory":
-        title = "이력 조회";
+      case "historySearch":
+        title = text.historySearch;
         result = await dispatch(
           getHistoryList({
             param: makeQuery(
@@ -295,27 +316,25 @@ const DataGridTables = (props) => {
       );
     } else {
       // TODO. 엑셀다운로드 실패
-      console.log('excel down load fail!');
-
     }
   };
 
   const goRegsiterPage = () => {
     // console.log("category >> ", category);
     switch (category) {
-      case "firmwareMng":
+      case "firmwareManage":
         history.push({
           pathname: "/fota/firmwareManagementDetail",
           state: { isEdit: false },
         });
         break;
-      case "fotaPolicyMng":
+      case "fotaPolicyManage":
         history.push({
           pathname: "/fota/policyManagementDetail",
           state: { isEdit: false },
         });
         break;
-      case "certPolicyMng":
+      case "certPolicyManage":
         history.push({
           pathname: "/fota/certPolicyManagementDetail",
           state: { isEdit: false },
@@ -332,20 +351,18 @@ const DataGridTables = (props) => {
       <Paper className={classes.content}>
         <div className={classes.toolbar}>
           <Typography variant="h6" component="h2">
-            { TITLE.FOTA[category] }
+            {text[category]}
           </Typography>
-          {
-            category !== 'fotaHistory' && (
-              <Button
-                  variant="outlined"
-                  style={{ color: "#1976DE" }}
-                  startIcon={<AppRegistrationIcon />}
-                  onClick={() => goRegsiterPage()}
-              >
-                Registration
-              </Button>
-            )
-          }
+          {category !== "historySearch" && category !== "fotaStatus" && (
+            <Button
+              variant="outlined"
+              style={{ color: "#1976DE" }}
+              startIcon={<AppRegistrationIcon />}
+              onClick={() => goRegsiterPage()}
+            >
+              Registration
+            </Button>
+          )}
         </div>
         <div
           className="w-100"
@@ -371,7 +388,6 @@ const DataGridTables = (props) => {
               setPageSize(newPageSize);
             }}
             onPageChange={(newPages) => {
-
               props.onFetchData({
                 page: newPages,
                 size: pageSize,

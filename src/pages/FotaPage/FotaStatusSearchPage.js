@@ -4,7 +4,9 @@ import { Alert, AlertTitle, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import {
+  dateFormatConvert,
   getCodeCategoryItems,
+  getText,
   isNull,
   makeQuery,
 } from "../../common/utils/CowayUtils";
@@ -13,7 +15,8 @@ import DataGridTables from "../../components/DataGridTables";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import MatEdit from "../../components/MatEdit";
-import { getFirmwareList, getStatusList } from "../../redux/reducers/fotaInfoSlice";
+import { getStatusList } from "../../redux/reducers/fotaInfoSlice";
+import AlertMessage from "../../components/AlertMessage";
 
 /**
  * 포타 상태 조회
@@ -24,14 +27,14 @@ const FotaStatusSearchPage = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
-  const options = useSelector((state) => state.getData.codes);
+  const options = useSelector((state) => state.sharedInfo.codes);
   const [startDate, setStartDate] = useState(
     dayjs(new Date())
       .add(-7, "days")
       .hour(0)
       .minute(0)
       .second(0)
-      .format('YYYY-MM-DDTHH:mm')
+      .format("YYYY-MM-DDTHH:mm")
   );
 
   const [endDate, setEndDate] = useState(
@@ -52,6 +55,28 @@ const FotaStatusSearchPage = (props) => {
   const fotaStatusTotal = useSelector(
     (state) => state.fotaInfo.fotaStatus.totalElements
   );
+
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+
+  const text = {
+    serialNum: getText(transMsg, "word.serialNum"),
+    devModelCode: getText(transMsg, "word.devModelCode"),
+    fota: getText(transMsg, "word.fota"),
+    status: getText(transMsg, "word.status"),
+    cert: getText(transMsg, "word.cert"),
+    regId: getText(transMsg, "word.regId"),
+    regDate: getText(transMsg, "word.regDate"),
+    updId: getText(transMsg, "word.updId"),
+    updDate: getText(transMsg, "word.updDate"),
+    valid_tempError: getText(transMsg, "desc.tempError"),
+    search: getText(transMsg, "word.search"),
+    term: getText(transMsg, "word.term"),
+    policy: getText(transMsg, "word.policy"),
+    name: getText(transMsg, "word.name"),
+    target: getText(transMsg, "word.target"),
+    id: getText(transMsg, "word.id"),
+  };
+
   const columns = [
     {
       field: "editDelete",
@@ -75,7 +100,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "serial",
-      headerName: "시리얼번호",
+      headerName: text.serialNum,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -83,7 +108,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "devModelCode",
-      headerName: "기기모델코드",
+      headerName: text.devModelCode,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -91,7 +116,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "fotaShadowStatusName",
-      headerName: "FOTA 상태",
+      headerName: text.fota + " " + text.status,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -99,7 +124,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "certShadowStatusName",
-      headerName: "인증 상태",
+      headerName: text.cert + " " + text.status,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -107,7 +132,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "regId",
-      headerName: "등록자 아이디",
+      headerName: text.regId,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -115,7 +140,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "regDate",
-      headerName: "등록일시",
+      headerName: text.regDate,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -123,7 +148,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "updId",
-      headerName: "수정자 아이디",
+      headerName: text.updId,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -131,7 +156,7 @@ const FotaStatusSearchPage = (props) => {
     },
     {
       field: "updDate",
-      headerName: "수정 일시",
+      headerName: text.updDate,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -140,6 +165,24 @@ const FotaStatusSearchPage = (props) => {
   ];
 
   const [isFail, setIsFail] = useState(false);
+
+  const makeRowsFormat = (res, category) => {
+    // console.log("makeRowsFormat >> ", res);
+    let rows = [];
+    if (res.length > 0) {
+      res.map((item, index) => {
+        rows.push({
+          ...item,
+          id: index,
+          regDate: dateFormatConvert(item.regDate),
+          updDate: dateFormatConvert(item.updDate),
+        });
+        return rows;
+      });
+    }
+    // console.log("rows >> ", rows);
+    return rows;
+  };
 
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
@@ -187,53 +230,52 @@ const FotaStatusSearchPage = (props) => {
     window.scrollTo(0, 0);
   };
 
-  const onFetchData = useCallback(async (data) => {
+  const onFetchData = useCallback(
+    async (data) => {
+      if (initial) {
+        setInitial(false);
+      }
 
-    if(initial){
-      setInitial(false);
-    }
+      setIsLoading(true);
+      let params = isNull(data) ? param : data;
+      let option = initial ? "" : searchOption;
 
-    setIsLoading(true);
-    let params = isNull(data) ? param : data;
-    let option = initial ? '' : searchOption;
-
-    const result = await dispatch(
+      const result = await dispatch(
         getStatusList({
           param: makeQuery(params, option),
         })
-    );
+      );
 
-    if(!isNull(result)) {
-      setIsLoading(false);
+      if (!isNull(result)) {
+        setIsLoading(false);
 
-      if(isNull(result.payload)) {
-        setIsFail(true);
+        if (isNull(result.payload)) {
+          setIsFail(true);
 
-        setTimeout(() => {
-          setIsFail(false);
-        }, 3000);
+          setTimeout(() => {
+            setIsFail(false);
+          }, 3000);
+        }
       }
-    }
-  }, [dispatch, param, searchOption, initial]);
+    },
+    [dispatch, param, searchOption, initial]
+  );
 
   useEffect(() => {
-    if(initial) {
+    if (initial) {
       onFetchData();
     }
   }, [onFetchData, initial]);
 
   return (
     <div>
-      {
-        isFail && (
-            <div className='mb-3'>
-              <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                <strong>일시적인 에러가 발생했습니다. 잠시 후 시도해 보세요.</strong>
-              </Alert>
-            </div>
-        )
-      }
+      {isFail && (
+        <AlertMessage
+          isSuccess={false}
+          title={"Error"}
+          message={text.valid_tempError}
+        />
+      )}
       {/* 검색 */}
       <div className="accordion mb-2" id="accordionExample">
         <div className="accordion-item">
@@ -247,7 +289,7 @@ const FotaStatusSearchPage = (props) => {
               aria-controls="flush-collapseOne"
               onClick={onHandleSearch}
             >
-              검색
+              {text.search}
             </button>
           </h2>
           <div
@@ -282,7 +324,7 @@ const FotaStatusSearchPage = (props) => {
                 <span className="p-3 mb-4"> ~ </span>
                 <TextField
                   id="datetime-local"
-                  label="기간"
+                  label={text.term}
                   type="datetime-local"
                   value={searchOption.endDate}
                   InputLabelProps={{
@@ -308,7 +350,7 @@ const FotaStatusSearchPage = (props) => {
             <div className="row ms-4">
               <div className="col-md-2 mb-4">
                 <label htmlFor="inputState" className="form-label">
-                  정책 상태
+                  {text.policy + " " + text.status}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
@@ -337,7 +379,7 @@ const FotaStatusSearchPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="validationServer04" className="form-label">
-                  기기모델 코드
+                  {text.devModelCode}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
@@ -366,7 +408,7 @@ const FotaStatusSearchPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
-                  정책 이름
+                  {text.policy + " " + text.name}
                 </label>
                 <input
                   type="text"
@@ -379,7 +421,7 @@ const FotaStatusSearchPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
-                  대상 아이디
+                  {text.target + " " + text.id}
                 </label>
                 <input
                   type="text"
@@ -396,12 +438,12 @@ const FotaStatusSearchPage = (props) => {
       </div>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={!isNull(fotaStatusList) && fotaStatusList}
+        rows={!isNull(fotaStatusList) && makeRowsFormat(fotaStatusList)}
         columns={columns}
         totalElement={fotaStatusTotal}
         isLoading={isLoading}
         searchOption={searchOption}
-        category={"fotaStatus"}
+        category={"statusSearch"}
         onFetchData={onFetchData}
         onRefresh={onRefresh}
       />

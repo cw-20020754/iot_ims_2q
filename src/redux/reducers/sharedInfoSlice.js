@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import React from "react";
-const name = "getData";
+const name = "sharedInfo";
 
 const initialState = {
   messages: [
@@ -71,12 +71,12 @@ const initialState = {
     },
     {
       msgId: "word.statusSearch",
-      msg: "상태조회",
+      msg: "상태 조회",
       localeId: "ko",
     },
     {
       msgId: "word.historySearch",
-      msg: "이력조회",
+      msg: "이력 조회",
       localeId: "ko",
     },
     {
@@ -437,6 +437,56 @@ const initialState = {
     {
       msgId: "word.copyright",
       msg: "Copyright Coway Co., Ltd. All Rights reserved.",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.tempError",
+      msg: "일시적인 문제가 발생했습니다. 잠시후에 다시 시도해주세요.",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.frmwrName",
+      msg: "펌웨어 이름을 입력해주세요. (128자 이내).",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.frmwrDesc",
+      msg: "펌웨어 설명을 입력해주세요. (2048자 이내).",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.frmwrVer",
+      msg: " 펌웨어 버전을 입력해주세요. (128자 이내).",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.policyName",
+      msg: "정어 이름을 입력해주세요. (128자 이내).",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.policyDesc",
+      msg: "정책 설명을 입력해주세요. (2048자 이내)",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.targetId",
+      msg: "대상 아이디를 입력해주세요. (18자 이내)",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.wifiFrmwrVer",
+      msg: "WIFI 펌웨어 버전을 선택해 주세요.",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.validation.mcuFrmwrVer",
+      msg: "MCU 펌웨어 버전을 선택해 주세요.",
+      localeId: "ko",
+    },
+    {
+      msgId: "desc.registerSuccess",
+      msg: "Firmware registration successful!",
       localeId: "ko",
     },
   ],
@@ -843,16 +893,11 @@ const initialState = {
   ],
 };
 
-const getDataSlice = createSlice({
+const sharedInfoSlice = createSlice({
   name,
   initialState,
-  reducers: {
-    getData(state, action) {
-      state.todos = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: {},
 });
 
-export const { getData } = getDataSlice.actions;
-export default getDataSlice.reducer;
+export default sharedInfoSlice.reducer;

@@ -19,11 +19,12 @@ const isNull = (data) => {
 };
 
 const getCodeCategoryItems = (list, category) => {
-  // console.log("@@@ list : ", list);
-  // console.log("@@@ category : ", category);
   return list.find((el) => el.category === category).items;
 };
 
+const getText = (list, msgId) => {
+  return list.find((el) => el.msgId === msgId).msg;
+};
 // Date Formatting
 const dateFormatConvert = (date) => {
   if (isNull(date)) {
@@ -49,24 +50,6 @@ const makeurlQeuryString = (url, param) => {
   } else {
     return url;
   }
-};
-
-const makeParamForCondition = (condition, options) => {
-  let param = null;
-
-  // page=0&size=5&frmwrName=1&frmwrType=1&devModelCode=02FER&frmwrVer=2&fromDt=1638370800000&toDt=1638975599000
-  // let param =
-  //   options !== null
-  //     ? this.makeParamForServerPage(options)
-  //     : "?page=0&size=".concat(condition.totalItem);
-
-  // Object.entries(condition).forEach((cond) => {
-  //   if (cond[1] !== undefined && cond[1] !== null) {
-  //     param = param.concat("&").concat(cond[0]).concat("=").concat(cond[1]);
-  //   }
-  // });
-  // console.log("param >>> ", param);
-  return param;
 };
 
 const makeQuery = (param, condition) => {
@@ -165,7 +148,7 @@ export {
   checkResult,
   makeRowsFormat,
   fileSize,
-  makeParamForCondition,
   makeQuery,
   makeExcelFormat,
+  getText,
 };

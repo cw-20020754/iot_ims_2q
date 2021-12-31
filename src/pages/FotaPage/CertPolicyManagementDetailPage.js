@@ -1,35 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { CCard } from "@coreui/react";
-import { Alert, AlertTitle, FormControlLabel, styled } from "@mui/material";
+import { FormControlLabel, styled } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import { Button, Select, Switch, TextField } from "@material-ui/core";
+import { Select, Switch, TextField } from "@material-ui/core";
 import {
   checkResult,
   dateToTimestampConvert,
   getCodeCategoryItems,
+  getText,
   isNull,
   makeQuery,
   makeRowsFormat,
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import CloseIcon from "@mui/icons-material/Close";
-import { DataGrid } from "@mui/x-data-grid";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Box from "@mui/material/Box";
-import ClearIcon from "@mui/icons-material/Clear";
-import PropTypes from "prop-types";
 import dayjs from "dayjs";
 import {
   getFirmwareList,
   postCertPolicy,
   putCertPolicy,
-  putFotaPolicy,
 } from "../../redux/reducers/fotaInfoSlice";
 import rules from "../../common/utils/rules";
+import AlertMessage from "../../components/AlertMessage";
 
 /**
  * 인증서 정책관리 상세 페이지
@@ -39,15 +32,13 @@ const CertPolicyManagementDetailPage = (props) => {
   const dispatch = useDispatch();
   const { data } = isNull(props.location.state) ? "" : props.location.state;
   const { isEdit } = isNull(props.location.state) ? "" : props.location.state;
-  const [pages, setPages] = useState(0);
-  const [pageSize, setPageSize] = React.useState(10);
   const [openDialog, setOpenDialog] = useState(false);
   const [validation, setValidation] = useState({
     policyName: "",
     policyDesc: "",
     targetId: "",
   });
-  const options = useSelector((state) => state.getData.codes);
+  const options = useSelector((state) => state.sharedInfo.codes);
   const [submitData, setSubmitData] = useState({
     policyId: "",
     policyName: "",
@@ -82,13 +73,44 @@ const CertPolicyManagementDetailPage = (props) => {
 
   const [isClickWifiVer, setIsClickWifiVer] = useState(false);
 
-  const [searchText, setSearchText] = React.useState("");
   const [totalRows, setTotalRows] = useState([]);
   const [rows, setRows] = useState([]);
+
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+  const text = {
+    devModelCode: getText(transMsg, "word.devModelCode"),
+    policy: getText(transMsg, "word.policy"),
+    name: getText(transMsg, "word.name"),
+    desc: getText(transMsg, "word.desc"),
+    status: getText(transMsg, "word.status"),
+    target: getText(transMsg, "word.target"),
+    publish: getText(transMsg, "word.publish"),
+    type: getText(transMsg, "word.type"),
+    regId: getText(transMsg, "word.regId"),
+    regDate: getText(transMsg, "word.regDate"),
+    updId: getText(transMsg, "word.updId"),
+    updDate: getText(transMsg, "word.updDate"),
+    use: getText(transMsg, "word.use"),
+    yn: getText(transMsg, "word.yn"),
+    valid_tempError: getText(transMsg, "desc.tempError"),
+    search: getText(transMsg, "word.search"),
+    id: getText(transMsg, "word.id"),
+    term: getText(transMsg, "word.term"),
+    firmware: getText(transMsg, "word.firmware"),
+    ver: getText(transMsg, "word.ver"),
+    valid_policyName: getText(transMsg, "desc.validation.policyName"),
+    valid_policyDesc: getText(transMsg, "desc.validation.policyDesc"),
+    valid_targetId: getText(transMsg, "desc.validation.targetId"),
+    reservation: getText(transMsg, "word.reservation"),
+    time: getText(transMsg, "word.time"),
+    cert: getText(transMsg, "word.cert"),
+    save: getText(transMsg, "word.save"),
+    cancel: getText(transMsg, "word.cancel"),
+  };
   const columns = [
     {
       field: "frmwrType",
-      headerName: "펌웨어 유형",
+      headerName: text.firmware + " " + text.firmware,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -96,7 +118,7 @@ const CertPolicyManagementDetailPage = (props) => {
     },
     {
       field: "devModelCode",
-      headerName: "기기모델코드",
+      headerName: text.devModelCode,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -104,7 +126,7 @@ const CertPolicyManagementDetailPage = (props) => {
     },
     {
       field: "frmwrName",
-      headerName: "펌웨어 이름",
+      headerName: text.firmware + " " + text.name,
       width: 300,
       editable: false,
       headerAlign: "center",
@@ -112,7 +134,7 @@ const CertPolicyManagementDetailPage = (props) => {
     },
     {
       field: "frmwrVer",
-      headerName: "펌웨어 버전",
+      headerName: text.firmware + " " + text.ver,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -120,7 +142,7 @@ const CertPolicyManagementDetailPage = (props) => {
     },
     {
       field: "frmwrId",
-      headerName: "펌웨어 아이디",
+      headerName: text.firmware + " " + text.id,
       width: 400,
       editable: false,
       headerAlign: "center",
@@ -145,7 +167,6 @@ const CertPolicyManagementDetailPage = (props) => {
   useEffect(() => {
     // 수정
     if (!isNull(data)) {
-      console.log("data >> ", data.publishDate);
       setSubmitData((prevState) => ({
         ...data,
         targetType: data.targetType === "제품군" ? 1 : 2,
@@ -257,8 +278,6 @@ const CertPolicyManagementDetailPage = (props) => {
   const saveCertPolicy = async () => {
     let result = null;
 
-    console.log("submitData >> ", JSON.stringify(submitData));
-
     if (checkValidation()) {
       if (isEdit) {
         result = await dispatch(
@@ -342,23 +361,25 @@ const CertPolicyManagementDetailPage = (props) => {
   return (
     <form>
       {alertMessage.isSuccess === "success" && (
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          <strong> Firmware 정책 관리 registration successful!</strong>
-        </Alert>
+        <AlertMessage
+          isSuccess={true}
+          title={"Success"}
+          message={"Firmware registration successful!"}
+        />
       )}
       {alertMessage.isSuccess === "fail" && (
-        <Alert severity="error">
-          <AlertTitle>error</AlertTitle>
-          <strong> {alertMessage.message} Fail!</strong>
-        </Alert>
+        <AlertMessage
+          isSuccess={false}
+          title={"Error"}
+          message={alertMessage.message}
+        />
       )}
       <CCard className="p-5">
         <div className="row justify-content-center">
           {/* 정책 이름 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer01" className="form-label">
-              정책 이름
+              {text.policy + " " + text.name}
             </label>
             <input
               type="text"
@@ -370,14 +391,12 @@ const CertPolicyManagementDetailPage = (props) => {
               autoComplete="off"
               className={`form-control ${validation.policyName}`}
             />
-            <div className="invalid-feedback">
-              정책 이름을 입력해주세요. (128자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_policyName}</div>
           </div>
           {/*  정책 설명 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer02" className="form-label">
-              정책 설명
+              {text.policy + " " + text.desc}
             </label>
             <input
               type="text"
@@ -389,14 +408,12 @@ const CertPolicyManagementDetailPage = (props) => {
               onChange={onChageFormData}
               className={`form-control ${validation.policyDesc}`}
             />
-            <div className="invalid-feedback">
-              정책 설명을 입력해주세요. (2048자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_policyDesc}</div>
           </div>
           {/* 대상 아이디 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer02" className="form-label">
-              대상 아이디
+              {text.target + " " + text.id}
             </label>
             <input
               type="text"
@@ -408,14 +425,12 @@ const CertPolicyManagementDetailPage = (props) => {
               onChange={onChageFormData}
               className={`form-control ${validation.targetId}`}
             />
-            <div className="invalid-feedback">
-              대상 아이디를 입력해주세요. (18자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_targetId}</div>
           </div>
           {/* 배포 대상 유형 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer04" className="form-label">
-              배포 대상 유형
+              {text.publish + " " + text.target + " " + text.type}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -442,7 +457,7 @@ const CertPolicyManagementDetailPage = (props) => {
           {/* 배포 유형 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer04" className="form-label">
-              배포 유형
+              {text.publish + " " + text.type}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -469,11 +484,10 @@ const CertPolicyManagementDetailPage = (props) => {
           {/* 예약 시간 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer04" className="form-label">
-              예약 시간
+              {text.reservation + " " + text.time}
             </label>
             <TextField
               id="datetime-local"
-              // label="기간"
               type="datetime-local"
               InputLabelProps={{
                 shrink: true,
@@ -488,7 +502,7 @@ const CertPolicyManagementDetailPage = (props) => {
           {/* 인증 유형 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer02" className="form-label mt-1">
-              인증 유형
+              {text.cert + " " + text.type}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -515,7 +529,7 @@ const CertPolicyManagementDetailPage = (props) => {
           {/* 정책 상태 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer04" className="form-label">
-              정책 상태
+              {text.policy + " " + text.status}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -552,7 +566,7 @@ const CertPolicyManagementDetailPage = (props) => {
                     name="useYn"
                   />
                 }
-                label="사용 여부"
+                label={text.use + " " + text.yn}
               />
             </FormControl>
           </div>
@@ -564,7 +578,7 @@ const CertPolicyManagementDetailPage = (props) => {
             type="button"
             onClick={saveCertPolicy}
           >
-            저장
+            {text.save}
           </button>
           <button
             className="btn btn-dark cancel_btn ms-3"
@@ -573,7 +587,7 @@ const CertPolicyManagementDetailPage = (props) => {
               history.goBack();
             }}
           >
-            취소
+            {text.cancel}
           </button>
         </div>
       </CCard>
