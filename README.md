@@ -69,6 +69,15 @@ yarn add @reduxjs/toolkit
 
 <br>
 
+
+### `Day.js` [(Day.js)](https://day.js.org/)
+Day.js는 moment.js 축소된 버전으로 moment.js와 동일한 API지만 용량이 적기 때문에 해당 library를 적용함.
+
+```txt
+yarn add dayjs
+```
+
+
 ## ⛏ screen configuration
 ../page/
 

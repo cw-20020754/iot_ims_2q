@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CCard } from "@coreui/react";
 import {
-  Alert,
-  AlertTitle,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -15,6 +13,7 @@ import {
   checkResult,
   dateToTimestampConvert,
   getCodeCategoryItems,
+  getText,
   isNull,
   makeQuery,
   makeRowsFormat,
@@ -37,6 +36,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import rules from "../../common/utils/rules";
+import AlertMessage from "../../components/AlertMessage";
 
 /**
  * FOTA 정책 상세 페이지
@@ -56,7 +56,7 @@ const FotaPolicyManagementDetailPage = (props) => {
     wifiFrmwrVer: "",
     mcuFrmwrVer: "",
   });
-  const options = useSelector((state) => state.getData.codes);
+  const options = useSelector((state) => state.sharedInfo.codes);
   const [submitData, setSubmitData] = useState({
     policyId: "",
     policyName: "",
@@ -100,11 +100,50 @@ const FotaPolicyManagementDetailPage = (props) => {
 
   const [searchText, setSearchText] = React.useState("");
   const [totalRows, setTotalRows] = useState([]);
+
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+
+  const text = {
+    search: getText(transMsg, "word.search"),
+    target: getText(transMsg, "word.target"),
+    id: getText(transMsg, "word.id"),
+    policy: getText(transMsg, "word.policy"),
+    name: getText(transMsg, "word.name"),
+    desc: getText(transMsg, "word.desc"),
+    status: getText(transMsg, "word.status"),
+    type: getText(transMsg, "word.type"),
+    publish: getText(transMsg, "word.publish"),
+    cert: getText(transMsg, "word.cert"),
+    firmware: getText(transMsg, "word.firmware"),
+    wifi: getText(transMsg, "word.wifi"),
+    ver: getText(transMsg, "word.ver"),
+    mcu: getText(transMsg, "word.mcu"),
+    devModelCode: getText(transMsg, "word.devModelCode"),
+    regId: getText(transMsg, "word.regId"),
+    regDate: getText(transMsg, "word.regDate"),
+    updId: getText(transMsg, "word.updId"),
+    updDate: getText(transMsg, "word.updDate"),
+    use: getText(transMsg, "word.use"),
+    yn: getText(transMsg, "word.yn"),
+    valid_tempError: getText(transMsg, "desc.tempError"),
+    term: getText(transMsg, "word.term"),
+    registerSuccess: getText(transMsg, "desc.registerSuccess"),
+    valid_policyName: getText(transMsg, "desc.validation.policyName"),
+    valid_policyDesc: getText(transMsg, "desc.validation.policyDesc"),
+    valid_targetId: getText(transMsg, "desc.validation.targetId"),
+    reservation: getText(transMsg, "word.reservation"),
+    time: getText(transMsg, "word.time"),
+    valid_wifiFrmwrVer: getText(transMsg, "desc.validation.wifiFrmwrVer"),
+    valid_mcuFrmwrVer: getText(transMsg, "desc.validation.mcuFrmwrVer"),
+    save: getText(transMsg, "word.save"),
+    cancel: getText(transMsg, "word.cancel"),
+  };
+
   const [rows, setRows] = useState([]);
   const columns = [
     {
       field: "frmwrType",
-      headerName: "펌웨어 유형",
+      headerName: text.firmware + " " + text.type,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -112,7 +151,7 @@ const FotaPolicyManagementDetailPage = (props) => {
     },
     {
       field: "devModelCode",
-      headerName: "기기모델코드",
+      headerName: text.devModelCode,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -120,7 +159,7 @@ const FotaPolicyManagementDetailPage = (props) => {
     },
     {
       field: "frmwrName",
-      headerName: "펌웨어 이름",
+      headerName: text.firmware + " " + text.name,
       width: 300,
       editable: false,
       headerAlign: "center",
@@ -128,7 +167,7 @@ const FotaPolicyManagementDetailPage = (props) => {
     },
     {
       field: "frmwrVer",
-      headerName: "펌웨어 버전",
+      headerName: text.firmware + " " + text.ver,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -136,7 +175,7 @@ const FotaPolicyManagementDetailPage = (props) => {
     },
     {
       field: "frmwrId",
-      headerName: "펌웨어 아이디",
+      headerName: text.firmware + " " + text.id,
       width: 400,
       editable: false,
       headerAlign: "center",
@@ -439,23 +478,25 @@ const FotaPolicyManagementDetailPage = (props) => {
   return (
     <form>
       {alertMessage.isSuccess === "success" && (
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          <strong> Firmware 정책 관리 registration successful!</strong>
-        </Alert>
+        <AlertMessage
+          isSuccess={true}
+          title={"Success"}
+          message={text.registerSuccess}
+        />
       )}
       {alertMessage.isSuccess === "fail" && (
-        <Alert severity="error">
-          <AlertTitle>error</AlertTitle>
-          <strong> {alertMessage.message} Fail!</strong>
-        </Alert>
+        <AlertMessage
+          isSuccess={false}
+          title={"Error"}
+          message={alertMessage.message}
+        />
       )}
       <CCard className="p-5">
         <div className="row justify-content-center">
           {/* 정책 이름 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer01" className="form-label">
-              정책 이름
+              {text.policy + " " + text.name}
             </label>
             <input
               type="text"
@@ -467,14 +508,12 @@ const FotaPolicyManagementDetailPage = (props) => {
               autoComplete="off"
               className={`form-control ${validation.policyName}`}
             />
-            <div className="invalid-feedback">
-              정책 이름을 입력해주세요. (128자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_policyName}</div>
           </div>
           {/*  정책 설명 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer02" className="form-label">
-              정책 설명
+              {text.policy + " " + text.desc}
             </label>
             <input
               type="text"
@@ -486,14 +525,12 @@ const FotaPolicyManagementDetailPage = (props) => {
               onChange={onChageFormData}
               className={`form-control ${validation.policyDesc}`}
             />
-            <div className="invalid-feedback">
-              정책 설명을 입력해주세요. (2048자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_policyDesc}</div>
           </div>
           {/* 대상 아이디 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer02" className="form-label">
-              대상 아이디
+              {text.target + " " + text.id}
             </label>
             <input
               type="text"
@@ -505,14 +542,12 @@ const FotaPolicyManagementDetailPage = (props) => {
               onChange={onChageFormData}
               className={`form-control ${validation.targetId}`}
             />
-            <div className="invalid-feedback">
-              대상 아이디를 입력해주세요. (18자 이내)
-            </div>
+            <div className="invalid-feedback">{text.valid_targetId}</div>
           </div>
           {/* 배포 대상 유형 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer04" className="form-label">
-              배포 대상 유형
+              {text.publish + " " + text.target + " " + text.type}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -539,7 +574,7 @@ const FotaPolicyManagementDetailPage = (props) => {
           {/* 배포 유형 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer04" className="form-label">
-              배포 유형
+              {text.publish + " " + text.type}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -566,11 +601,10 @@ const FotaPolicyManagementDetailPage = (props) => {
           {/* 예약 시간 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer04" className="form-label">
-              예약 시간
+              {text.reservation + " " + text.time}
             </label>
             <TextField
               id="datetime-local"
-              // label="기간"
               type="datetime-local"
               InputLabelProps={{
                 shrink: true,
@@ -585,7 +619,7 @@ const FotaPolicyManagementDetailPage = (props) => {
           {/* WIFI 펌웨어 버전 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer02" className="form-label mt-1">
-              WIFI 펌웨어 버전
+              {text.wifi + " " + text.firmware + " " + text.ver}
             </label>
             <TextField
               className={`form-control ${validation.wifiFrmwrVer}`}
@@ -604,14 +638,12 @@ const FotaPolicyManagementDetailPage = (props) => {
                 ),
               }}
             />
-            <div className="invalid-feedback">
-              WIFI 펌웨어 버전을 선택해 주세요.
-            </div>
+            <div className="invalid-feedback">{text.valid_wifiFrmwrVer}</div>
           </div>
           {/* MCU 펌웨어 버전 */}
           <div className="col-md-5 mb-4 ms-5">
             <label htmlFor="validationServer02" className="form-label mt-1">
-              MCU 펌웨어 버전
+              {text.mcu + " " + text.firmware + " " + text.ver}
             </label>
             <TextField
               className={`form-control ${validation.mcuFrmwrVer}`}
@@ -630,14 +662,12 @@ const FotaPolicyManagementDetailPage = (props) => {
                 ),
               }}
             />
-            <div className="invalid-feedback">
-              MCU 펌웨어 버전을 선택해 주세요.
-            </div>
+            <div className="invalid-feedback">{text.valid_mcuFrmwrVer}</div>
           </div>
           {/* 정책 상태 */}
           <div className="col-md-5 mb-4">
             <label htmlFor="validationServer04" className="form-label">
-              정책 상태
+              {text.policy + " " + text.status}
             </label>
             <FormControl fullWidth size="small">
               <Select
@@ -675,7 +705,7 @@ const FotaPolicyManagementDetailPage = (props) => {
                       name="useYn"
                     />
                   }
-                  label="사용 여부"
+                  label={text.use + " " + text.yn}
                 />
               </FormControl>
             </div>
@@ -687,7 +717,7 @@ const FotaPolicyManagementDetailPage = (props) => {
             type="button"
             onClick={saveFotaPolicy}
           >
-            저장
+            {text.save}
           </button>
           <button
             className="btn btn-dark cancel_btn ms-3"
@@ -696,7 +726,7 @@ const FotaPolicyManagementDetailPage = (props) => {
               history.goBack();
             }}
           >
-            취소
+            {text.cancel}
           </button>
         </div>
         {/* WIFI , MCU 펌웨어 버전 검색 */}
@@ -711,9 +741,9 @@ const FotaPolicyManagementDetailPage = (props) => {
           >
             <div>
               {isClickWifiVer ? (
-                <span>WIFI 펌웨어 버전</span>
+                <span>{text.wifi + " " + text.firmware + " " + text.ver}</span>
               ) : (
-                <span>MCU 펌웨어 버전</span>
+                <span>{text.mcu + " " + text.firmware + " " + text.ver}</span>
               )}
               <Button
                 aria-label="upload picture"

@@ -22,6 +22,10 @@ const initialState = {
     list: [],
     totalElements: 0,
   },
+  fotaHistory: {
+    list: [],
+    totalElements: 0,
+  },
   loading: false,
   error: false,
 };
@@ -161,6 +165,16 @@ export const getStatusList = createAsyncThunk(
     return response.data;
   }
 );
+/**
+ * 이력 조회
+ */
+export const getHistoryList = createAsyncThunk(
+  `${name}/getHistoryList`,
+  async ({ param }, thunkAPI) => {
+    const response = await fotaAPI.getHistoryList(param);
+    return response.data;
+  }
+);
 
 const fotaInfoSlice = createSlice({
   name,
@@ -181,7 +195,7 @@ const fotaInfoSlice = createSlice({
       } else {
         state.firmwareMng.list = isNull(payload.content)
           ? initialState.firmwareMng.list
-          : makeRowsFormat(payload.content);
+          : payload.content;
         state.firmwareMng.totalElements = payload.totalElements;
       }
     },
@@ -239,7 +253,7 @@ const fotaInfoSlice = createSlice({
       } else {
         state.fotaPolicy.list = isNull(payload.content)
           ? initialState.fotaPolicy.list
-          : makeRowsFormat(payload.content);
+          : payload.content;
         state.fotaPolicy.totalElements = payload.totalElements;
       }
     },
@@ -296,7 +310,7 @@ const fotaInfoSlice = createSlice({
       } else {
         state.certPolicy.list = isNull(payload.content)
           ? initialState.certPolicy.list
-          : makeRowsFormat(payload.content);
+          : payload.content;
         state.certPolicy.totalElements = payload.totalElements;
       }
     },
@@ -354,11 +368,33 @@ const fotaInfoSlice = createSlice({
       } else {
         state.fotaStatus.list = isNull(payload.content)
           ? initialState.fotaStatus.list
-          : makeRowsFormat(payload.content);
+          : payload.content;
         state.fotaStatus.totalElements = payload.totalElements;
       }
     },
     [getStatusList.rejected.type]: (state, action) => {
+      state.loading = false;
+      state.error = true;
+    },
+    [getHistoryList.pending.type]: (state, action) => {
+      state.loading = true;
+      state.error = false;
+    },
+    [getHistoryList.fulfilled.type]: (state, action) => {
+      state.loading = false;
+      state.error = false;
+      const payload = action.payload.payload;
+
+      if (isNull(payload)) {
+        state.fotaHistory = initialState.fotaHistory;
+      } else {
+        state.fotaHistory.list = isNull(payload.content)
+          ? initialState.fotaHistory.list
+          : payload.content;
+        state.fotaHistory.totalElements = payload.totalElements;
+      }
+    },
+    [getHistoryList.rejected.type]: (state, action) => {
       state.loading = false;
       state.error = true;
     },

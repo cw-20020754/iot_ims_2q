@@ -63,12 +63,12 @@ const _nav = [
       {
         component: CNavItem,
         name: "상태조회",
-        to: "/fota/status",
+        to: "/fota/fotaStatusSearchPage",
       },
       {
         component: CNavItem,
         name: "이력조회",
-        to: "/fota/history",
+        to: "/fota/fotaHistorySearchPage",
       },
     ],
   },

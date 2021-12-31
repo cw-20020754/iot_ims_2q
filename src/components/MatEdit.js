@@ -7,13 +7,14 @@ import {
   getFotaPolicyList,
 } from "../redux/reducers/fotaInfoSlice";
 import { isNull, makeQuery } from "../common/utils/CowayUtils";
-import { Button, Collapse } from "@mui/material";
+import { Button } from "@mui/material";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HistoryIcon from "@mui/icons-material/History";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 const MatEdit = ({ category, param, searchOption }) => {
   // console.log("category >> ", category, param, searchOption);
@@ -54,7 +55,6 @@ const MatEdit = ({ category, param, searchOption }) => {
   };
   // 삭제
   const handleDeleteClick = async () => {
-    console.log("handleDeleteClick !!! ", param);
     let result = null;
     switch (category) {
       case "firmwareMng": {
@@ -81,7 +81,7 @@ const MatEdit = ({ category, param, searchOption }) => {
       }
       case "certPolicyMng": {
         result = await dispatch(deleteCertPolicy({ policyId: param.policyId }));
-        console.log("result >> ", JSON.stringify(result));
+        // console.log("result >> ", JSON.stringify(result));
         if (!isNull(result)) {
           dispatch(
             getCertPolicyList({
@@ -96,44 +96,76 @@ const MatEdit = ({ category, param, searchOption }) => {
     }
   };
 
+  // 상세 팝업
+  const handleDetailClick = (type) => {
+    // console.log('detail >> ' , type);
+  };
+
   return (
     <div
       className="d-flex justify-content-between align-items-center"
       style={{ cursor: "pointer" }}
     >
-      {category === "fotaStatus" ? (
-        <Button
-          title="Edit"
-          aria-label="Edit"
-          size="large"
-          onClick={handleEditClick}
-          style={{ minWidth: "35px" }}
-          sx={{ color: "#2196f3" }}
-        >
-          <HistoryIcon fontSize="small" style={{ color: "#2196f3" }} />
-        </Button>
+      {category !== "fotaStatus" ? (
+        <>
+          <Button
+            title="Edit"
+            aria-label="Edit"
+            size="large"
+            onClick={handleEditClick}
+            style={{ minWidth: "35px" }}
+            sx={{ color: "#2196f3" }}
+          >
+            <EditIcon fontSize="small" style={{ color: "#2196f3" }} />
+          </Button>
+          <Button
+            title="Clear"
+            aria-label="Clear"
+            size="large"
+            onClick={handleDeleteClick}
+            style={{ minWidth: "35px" }}
+            sx={{ color: "#2196f3" }}
+          >
+            <DeleteIcon fontSize="small" style={{ color: "#8a93a2" }} />
+          </Button>
+        </>
       ) : (
-        <Button
-          title="Edit"
-          aria-label="Edit"
-          size="large"
-          onClick={handleEditClick}
-          style={{ minWidth: "35px" }}
-          sx={{ color: "#2196f3" }}
-        >
-          <EditIcon fontSize="small" style={{ color: "#2196f3" }} />
-        </Button>
+        <>
+          <Button
+            title="More Info"
+            aria-label="More Info"
+            size="small"
+            onClick={() => handleDetailClick("more")}
+            style={{ minWidth: "25px" }}
+            sx={{ color: "#2196f3" }}
+          >
+            <ArrowForwardIosIcon
+              fontSize="small"
+              style={{ color: "#6a7079" }}
+            />
+          </Button>
+          <Button
+            title="History"
+            aria-label="History"
+            size="small"
+            onClick={() => handleDetailClick("history")}
+            style={{ minWidth: "35px" }}
+            sx={{ color: "#2196f3" }}
+          >
+            <HistoryIcon fontSize="small" style={{ color: "#2196f3" }} />
+          </Button>
+          <Button
+            title="Clear"
+            aria-label="Clear"
+            size="large"
+            onClick={handleDeleteClick}
+            style={{ minWidth: "35px" }}
+            sx={{ color: "#2196f3" }}
+          >
+            <DeleteIcon fontSize="small" style={{ color: "#8a93a2" }} />
+          </Button>
+        </>
       )}
-      <Button
-        title="Clear"
-        aria-label="Clear"
-        size="large"
-        onClick={handleDeleteClick}
-        style={{ minWidth: "35px" }}
-        sx={{ color: "#2196f3" }}
-      >
-        <DeleteIcon fontSize="small" style={{ color: "#8a93a2" }} />
-      </Button>
     </div>
   );
 };

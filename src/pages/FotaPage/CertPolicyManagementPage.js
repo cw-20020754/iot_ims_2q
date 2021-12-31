@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import { Button, InputLabel } from "@mui/material";
+import { Button } from "@mui/material";
 import { Select, TextField } from "@material-ui/core";
 import SearchIcon from "@mui/icons-material/Search";
 import {
+  dateFormatConvert,
   getCodeCategoryItems,
+  getText,
   isNull,
   makeQuery,
 } from "../../common/utils/CowayUtils";
@@ -14,6 +16,8 @@ import { getCertPolicyList } from "../../redux/reducers/fotaInfoSlice";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import MatEdit from "../../components/MatEdit";
+import { POLICY_STATUS } from "../../common/constants";
+import AlertMessage from "../../components/AlertMessage";
 
 /**
  * 인증서 정책관리
@@ -21,9 +25,10 @@ import MatEdit from "../../components/MatEdit";
 
 const CertPolicyManagementPage = (props) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
-  const options = useSelector((state) => state.getData.codes);
+  const options = useSelector((state) => state.sharedInfo.codes);
   const [startDate, setStartDate] = useState(
     dayjs(new Date())
       .add(-7, "days")
@@ -51,6 +56,28 @@ const CertPolicyManagementPage = (props) => {
   const certPolicyTotal = useSelector(
     (state) => state.fotaInfo.certPolicy.totalElements
   );
+
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+  const text = {
+    devModelCode: getText(transMsg, "word.devModelCode"),
+    policy: getText(transMsg, "word.policy"),
+    name: getText(transMsg, "word.name"),
+    desc: getText(transMsg, "word.desc"),
+    status: getText(transMsg, "word.status"),
+    target: getText(transMsg, "word.target"),
+    publish: getText(transMsg, "word.publish"),
+    type: getText(transMsg, "word.type"),
+    regId: getText(transMsg, "word.regId"),
+    regDate: getText(transMsg, "word.regDate"),
+    updId: getText(transMsg, "word.updId"),
+    updDate: getText(transMsg, "word.updDate"),
+    use: getText(transMsg, "word.use"),
+    yn: getText(transMsg, "word.yn"),
+    valid_tempError: getText(transMsg, "desc.tempError"),
+    search: getText(transMsg, "word.search"),
+    id: getText(transMsg, "word.id"),
+    term: getText(transMsg, "word.term"),
+  };
   const columns = [
     {
       field: "editDelete",
@@ -77,7 +104,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "devModelCode",
-      headerName: "기기모델코드",
+      headerName: text.devModelCode,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -85,7 +112,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "policyName",
-      headerName: "정책 이름",
+      headerName: text.policy + " " + text.name,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -93,7 +120,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "policyDesc",
-      headerName: "정책 설명",
+      headerName: text.policy + " " + text.desc,
       width: 300,
       editable: false,
       headerAlign: "center",
@@ -101,7 +128,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "policyStatusName",
-      headerName: "정책 상태",
+      headerName: text.policy + " " + text.status,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -109,7 +136,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "targetId",
-      headerName: "대상 아이디",
+      headerName: text.target + " " + text.id,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -117,7 +144,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "targetType",
-      headerName: "배포 대상유형",
+      headerName: text.publish + " " + text.target + text.type,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -125,7 +152,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "regId",
-      headerName: "등록자 아이디",
+      headerName: text.regId,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -133,7 +160,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "regDate",
-      headerName: "등록일시",
+      headerName: text.regDate,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -141,7 +168,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "updId",
-      headerName: "수정자 아이디",
+      headerName: text.updId,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -149,7 +176,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "updDate",
-      headerName: "수정 일시",
+      headerName: text.updDate,
       width: 250,
       editable: false,
       headerAlign: "center",
@@ -157,7 +184,7 @@ const CertPolicyManagementPage = (props) => {
     },
     {
       field: "useYn",
-      headerName: "사용 여부",
+      headerName: text.use + " " + text.yn,
       width: 150,
       editable: false,
       headerAlign: "center",
@@ -199,6 +226,59 @@ const CertPolicyManagementPage = (props) => {
       hide: true,
     },
   ];
+
+  const [isFail, setIsFail] = useState(false);
+
+  const onFetchData = useCallback(
+    async (data) => {
+      if (initial) {
+        setInitial(false);
+      }
+
+      setIsLoading(true);
+      let params = isNull(data) ? param : data;
+      let option = initial ? "" : searchOption;
+
+      const result = await dispatch(
+        getCertPolicyList({
+          param: makeQuery(params, option),
+        })
+      );
+
+      if (!isNull(result)) {
+        setIsLoading(false);
+
+        if (isNull(result.payload)) {
+          setIsFail(true);
+
+          setTimeout(() => {
+            setIsFail(false);
+          }, 3000);
+        }
+      }
+    },
+    [dispatch, param, searchOption, initial]
+  );
+
+  const makeRowsFormat = (res, category) => {
+    let rows = [];
+    if (res.length > 0) {
+      res.map((item, index) => {
+        rows.push({
+          ...item,
+          id: index,
+          useYn: item.useYn ? "Y" : "N",
+          regDate: dateFormatConvert(item.regDate),
+          updDate: dateFormatConvert(item.updDate),
+          targetType: item.targetType === 1 ? "제품군" : "단일제품",
+          policyStatusName: POLICY_STATUS[item.policyStatus],
+        });
+        return rows;
+      });
+    }
+    // console.log("rows >> ", rows);
+    return rows;
+  };
 
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
@@ -248,26 +328,19 @@ const CertPolicyManagementPage = (props) => {
 
   useEffect(() => {
     if (initial) {
-      dispatch(
-        getCertPolicyList({
-          param: makeQuery(param),
-        })
-      );
-      setInitial(false);
+      onFetchData();
     }
-  }, [initial, dispatch, param]);
-
-  const onFetchData = () => {
-    console.log("onFetchData >> ", param, searchOption);
-    dispatch(
-      getCertPolicyList({
-        param: makeQuery(param, searchOption),
-      })
-    );
-  };
+  }, [onFetchData, initial]);
 
   return (
     <div>
+      {isFail && (
+        <AlertMessage
+          isSuccess={false}
+          title={"Error"}
+          message={text.valid_tempError}
+        />
+      )}
       {/* 검색 */}
       <div className="accordion mb-2" id="accordionExample">
         <div className="accordion-item">
@@ -281,7 +354,7 @@ const CertPolicyManagementPage = (props) => {
               aria-controls="flush-collapseOne"
               onClick={onHandleSearch}
             >
-              검색
+              {text.search}
             </button>
           </h2>
           <div
@@ -303,7 +376,7 @@ const CertPolicyManagementPage = (props) => {
               >
                 <TextField
                   id="datetime-local"
-                  label="기간"
+                  label={text.term}
                   type="datetime-local"
                   InputLabelProps={{
                     shrink: true,
@@ -316,7 +389,7 @@ const CertPolicyManagementPage = (props) => {
                 <span className="p-3 mb-4"> ~ </span>
                 <TextField
                   id="datetime-local"
-                  label="기간"
+                  label={text.term}
                   type="datetime-local"
                   value={searchOption.endDate}
                   InputLabelProps={{
@@ -342,7 +415,7 @@ const CertPolicyManagementPage = (props) => {
             <div className="row ms-4">
               <div className="col-md-2 mb-4">
                 <label htmlFor="inputState" className="form-label">
-                  정책 상태
+                  {text.policy + " " + text.status}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
@@ -371,7 +444,7 @@ const CertPolicyManagementPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="validationServer04" className="form-label">
-                  기기모델 코드
+                  {text.devModelCode}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
@@ -400,7 +473,7 @@ const CertPolicyManagementPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
-                  정책 이름
+                  {text.policy + " " + text.name}
                 </label>
                 <input
                   type="text"
@@ -413,7 +486,7 @@ const CertPolicyManagementPage = (props) => {
               </div>
               <div className="col-md-3 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
-                  대상 아이디
+                  {text.target + " " + text.id}
                 </label>
                 <input
                   type="text"
@@ -430,11 +503,12 @@ const CertPolicyManagementPage = (props) => {
       </div>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={!isNull(certPolicyList) && certPolicyList}
+        rows={!isNull(certPolicyList) && makeRowsFormat(certPolicyList)}
         columns={columns}
         totalElement={certPolicyTotal}
+        isLoading={isLoading}
         searchOption={searchOption}
-        category={"certPolicyMng"}
+        category={"certPolicyManage"}
         onFetchData={onFetchData}
         onRefresh={onRefresh}
       />

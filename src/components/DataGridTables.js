@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
@@ -14,15 +14,14 @@ import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
 import { createTheme, styled } from "@mui/material/styles";
 import { createStyles, makeStyles } from "@mui/styles";
-import { Pagination, PaginationItem } from "@mui/material";
+import { LinearProgress, Pagination, PaginationItem } from "@mui/material";
 import { Button, Paper, Typography } from "@material-ui/core";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import EditIcon from "@material-ui/icons/Edit";
 import {
   checkResult,
+  getText,
   isNull,
   makeExcelFormat,
   makeQuery,
@@ -30,21 +29,22 @@ import {
 } from "../common/utils/CowayUtils";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import { CPagination, CPaginationItem } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilPencil, cilSpeedometer } from "@coreui/icons";
-import { blue } from "@mui/material/colors";
 import { useHistory } from "react-router-dom";
 import {
   getCertPolicyList,
   getFirmwareList,
   getFotaPolicyList,
+  getHistoryList,
 } from "../redux/reducers/fotaInfoSlice";
 import Box from "@mui/material/Box";
 import { CSVLink } from "react-csv";
 import xlsx from "xlsx";
+import { TITLE } from "../common/constants";
 
 const DataGridTables = (props) => {
+  const defaultTheme = createTheme();
+  const history = useHistory();
+  const dispatch = useDispatch();
   const [pages, setPages] = useState(0);
   const [pageSize, setPageSize] = React.useState(10);
   const columns = !isNull(props) ? props.columns : [];
@@ -52,32 +52,26 @@ const DataGridTables = (props) => {
   const totalElement = !isNull(props) ? props.totalElement : 10;
   const searchOption = !isNull(props) ? props.searchOption : {};
   const category = !isNull(props) ? props.category : "";
-  // console.log("rows >> ", rows);
-  // console.log("columns >> ", columns);
+  const isLoading = !isNull(props) ? props.isLoading : false;
 
-  // const [test, setTest] = useState([]);
-  // const [searchText, setSearchText] = React.useState("");
-  // const data = {
-  //   dataSet: "Commodity",
-  //   rowLength: 1000,
-  //   maxColumns: 100,
-  // };
+  const transMsg = useSelector((state) => state.sharedInfo.messages);
+  const text = {
+    firmware: getText(transMsg, "word.firmware"),
+    manage: getText(transMsg, "word.manage"),
+    fota: getText(transMsg, "word.fota"),
+    policy: getText(transMsg, "word.policy"),
+    cert: getText(transMsg, "word.cert"),
 
-  const defaultTheme = createTheme();
-  const history = useHistory();
-  const dispatch = useDispatch();
-
-  const testData = [
-    { field: "name", headerName: "Name", email: "jekim2@gmail.com" },
-    { field: "gggg", headerName: "Email", email: "jekim79@gmail.com" },
-    { field: "emdddddail", headerName: "Email", email: "jekim66@gmail.com" },
-  ];
-
-  const headers = [
-    { label: "field", key: "field" },
-    { label: "headerName", key: "headerName" },
-    { label: "email", key: "email" },
-  ];
+    list: getText(transMsg, "word.list"),
+    firmwareManage:
+      getText(transMsg, "word.firmware") +
+      " " +
+      getText(transMsg, "word.manage"),
+    fotaPolicyManage: getText(transMsg, "word.fotaPolicyManage"),
+    certPolicyManage: getText(transMsg, "word.certPolicyManage"),
+    statusSearch: getText(transMsg, "word.statusSearch"),
+    historySearch: getText(transMsg, "word.historySearch"),
+  };
 
   useEffect(() => {}, []);
 
@@ -86,16 +80,6 @@ const DataGridTables = (props) => {
       createStyles({
         root: {
           flexGrow: 1,
-          // backgroundColor: "#dcdcdc",
-          // "& .MuiDataGrid-cell--textCenter": {
-          //   align: "center",
-          // },
-          // width: "100%",
-          // height: "600px",
-          // textAlign: "center",
-          // "& .MuiDataGrid-columnsContainer": {
-          //   backgroundColor: theme.palette.mode === "light" ? "red" : "red",
-          // },
         },
         menuButton: {
           marginRight: theme.spacing(2),
@@ -159,6 +143,16 @@ const DataGridTables = (props) => {
   const escapeRegExp = (value) => {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   };
+
+  function CustomLoadingOverlay() {
+    return (
+      <GridOverlay>
+        <div style={{ position: "absolute", top: 0, width: "100%" }}>
+          <LinearProgress />
+        </div>
+      </GridOverlay>
+    );
+  }
 
   // const requestSearch = (searchValue) => {
   //   setSearchText(searchValue);
@@ -261,8 +255,8 @@ const DataGridTables = (props) => {
 
     let title = "";
     switch (category) {
-      case "firmwareMng":
-        title = "펌웨어 목록";
+      case "firmwareManage":
+        title = text.firmwareManage;
         result = await dispatch(
           getFirmwareList({
             param: makeQuery(
@@ -272,8 +266,8 @@ const DataGridTables = (props) => {
           })
         );
         break;
-      case "fotaPolicyMng":
-        title = "FOTA 정책 관리 목록";
+      case "fotaPolicyManage":
+        title = text.fotaPolicyManage;
         result = await dispatch(
           getFotaPolicyList({
             param: makeQuery(
@@ -283,10 +277,21 @@ const DataGridTables = (props) => {
           })
         );
         break;
-      case "certPolicyMng":
-        title = "인증서 정책관리";
+      case "certPolicyManage":
+        title = text.certPolicyManage;
         result = await dispatch(
           getCertPolicyList({
+            param: makeQuery(
+              { page: 0, size: totalElement, totalItem: totalElement },
+              searchOption
+            ),
+          })
+        );
+        break;
+      case "historySearch":
+        title = text.historySearch;
+        result = await dispatch(
+          getHistoryList({
             param: makeQuery(
               { page: 0, size: totalElement, totalItem: totalElement },
               searchOption
@@ -317,19 +322,19 @@ const DataGridTables = (props) => {
   const goRegsiterPage = () => {
     // console.log("category >> ", category);
     switch (category) {
-      case "firmwareMng":
+      case "firmwareManage":
         history.push({
           pathname: "/fota/firmwareManagementDetail",
           state: { isEdit: false },
         });
         break;
-      case "fotaPolicyMng":
+      case "fotaPolicyManage":
         history.push({
           pathname: "/fota/policyManagementDetail",
           state: { isEdit: false },
         });
         break;
-      case "certPolicyMng":
+      case "certPolicyManage":
         history.push({
           pathname: "/fota/certPolicyManagementDetail",
           state: { isEdit: false },
@@ -346,16 +351,18 @@ const DataGridTables = (props) => {
       <Paper className={classes.content}>
         <div className={classes.toolbar}>
           <Typography variant="h6" component="h2">
-            펌웨어 리스트
+            {text[category]}
           </Typography>
-          <Button
-            variant="outlined"
-            style={{ color: "#1976DE" }}
-            startIcon={<AppRegistrationIcon />}
-            onClick={() => goRegsiterPage()}
-          >
-            Registration
-          </Button>
+          {category !== "historySearch" && category !== "fotaStatus" && (
+            <Button
+              variant="outlined"
+              style={{ color: "#1976DE" }}
+              startIcon={<AppRegistrationIcon />}
+              onClick={() => goRegsiterPage()}
+            >
+              Registration
+            </Button>
+          )}
         </div>
         <div
           className="w-100"
@@ -364,7 +371,9 @@ const DataGridTables = (props) => {
           <DataGrid
             components={{
               NoRowsOverlay: CustomNoRowsOverlay,
+              LoadingOverlay: CustomLoadingOverlay,
             }}
+            loading={isLoading}
             rows={rows}
             columns={columns}
             pagination
@@ -389,6 +398,8 @@ const DataGridTables = (props) => {
             rowCount={totalElement}
             paginationMode="server"
             autoHeight={totalElement > 0}
+            columnBuffer={2}
+            columnThreshold={2}
             // pagination
             // className={classes.test}
             // cell--textCenter={true}
