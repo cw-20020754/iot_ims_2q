@@ -19,7 +19,10 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
-            
+
+      - name: Setup yarn
+        run: npm install -g yarn
+        
       - name: Install Dependencies
         uses: borales/actions-yarn@v2.3.0
         with:
