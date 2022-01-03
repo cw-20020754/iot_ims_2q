@@ -10,6 +10,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -32,3 +33,4 @@ yarn-error.log*
 .eslintcache
 package-lock.json
 yarn.lock
+settings.json
