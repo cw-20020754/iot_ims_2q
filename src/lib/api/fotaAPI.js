@@ -1,5 +1,4 @@
 import axios from "axios";
-import apiController from "./apiController";
 import { API } from "../../common/constants";
 import { checkResult, makeurlQeuryString } from "../../common/utils/CowayUtils";
 // import client from "./client";
@@ -235,17 +234,16 @@ export const getStatusList = (param) => {
  */
 export const getHistoryList = (param) => {
   return axios
-      .get(
-          makeurlQeuryString(`${API.FOTA_URL}/iot/v1/shadow/history/shadow`, param),
-          {
-            headers: API.HEADERS,
-          }
-      )
-      .then((response) => {
-        return response;
-      })
-      .catch((err) => {
-        if (err.response) return err.response;
-      });
+    .get(
+      makeurlQeuryString(`${API.FOTA_URL}/iot/v1/shadow/history/shadow`, param),
+      {
+        headers: API.HEADERS,
+      }
+    )
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      if (err.response) return err.response;
+    });
 };
-

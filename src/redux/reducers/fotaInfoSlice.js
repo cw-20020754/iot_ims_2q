@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { apiController, fotaAPI } from "../../lib/api";
-import { isNull, makeRowsFormat } from "../../common/utils/CowayUtils";
+import { fotaAPI } from "../../lib/api";
+import { isNull } from "../../common/utils/CowayUtils";
 
 const name = "fotaInfo";
 
