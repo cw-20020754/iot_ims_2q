@@ -1,22 +1,49 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Select, TextField } from "@material-ui/core";
-import { Alert, AlertTitle, Button } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import {
-  dateFormatConvert,
+  checkResult,
+  escapeRegExp,
   getCodeCategoryItems,
   getText,
   isNull,
   makeQuery,
+  makeRowsFormat,
+  reformatData,
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
-import DataGridTables from "../../components/DataGridTables";
+import DataGridTables from "../../components/table/DataGridTables";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import MatEdit from "../../components/MatEdit";
-import { getStatusList } from "../../redux/reducers/fotaInfoSlice";
+import MatEdit from "../../components/table/MatEdit";
+import {
+  getHistoryList,
+  getStatusList,
+} from "../../redux/reducers/fotaInfoSlice";
 import AlertMessage from "../../components/AlertMessage";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { DataGrid } from "@mui/x-data-grid";
+import Box from "@mui/material/Box";
+import ClearIcon from "@mui/icons-material/Clear";
+import PropTypes from "prop-types";
+import CustomLoadingOverlay from "../../components/table/CustomLoadingOverlay";
+import CustomNoRowsOverlay from "../../components/table/CustomNoRowsOverlay";
 
 /**
  * 포타 상태 조회
@@ -25,9 +52,10 @@ import AlertMessage from "../../components/AlertMessage";
 const FotaStatusSearchPage = (props) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
-  const options = useSelector((state) => state.sharedInfo.codes);
+  const codes = useSelector((state) => state.sharedInfo.codes);
   const [startDate, setStartDate] = useState(
     dayjs(new Date())
       .add(-7, "days")
@@ -41,22 +69,28 @@ const FotaStatusSearchPage = (props) => {
     dayjs(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
   );
   const [searchOption, setSearchOption] = useState({
-    policyName: "",
-    policyStatus: "",
+    fotaStatus: "",
     devModelCode: "",
-    targetId: "",
     startDate: startDate,
     endDate: endDate,
+    serial: "",
+    certStatus: "",
   });
 
-  const [param, setParam] = useState({ page: 0, size: 10 });
+  const [param, setParam] = useState({ page: 0, size: 5 });
 
   const fotaStatusList = useSelector((state) => state.fotaInfo.fotaStatus.list);
   const fotaStatusTotal = useSelector(
     (state) => state.fotaInfo.fotaStatus.totalElements
   );
+  const [searchText, setSearchText] = React.useState("");
+  const [desiredList, setDesiredList] = useState(null);
+  const [reportedList, setReportedList] = useState(null);
 
   const transMsg = useSelector((state) => state.sharedInfo.messages);
+
+  const [openDetails, setOpenDetails] = useState(false);
+  const [openHistory, setOpenHistory] = useState(false);
 
   const text = {
     serialNum: getText(transMsg, "word.serialNum"),
@@ -75,7 +109,141 @@ const FotaStatusSearchPage = (props) => {
     name: getText(transMsg, "word.name"),
     target: getText(transMsg, "word.target"),
     id: getText(transMsg, "word.id"),
+    wifi: getText(transMsg, "word.wifi"),
+    firmware: getText(transMsg, "word.firmware"),
+    file: getText(transMsg, "word.file"),
+    ver: getText(transMsg, "word.ver"),
+    size: getText(transMsg, "word.size"),
+    url: getText(transMsg, "word.url"),
+    mcu: getText(transMsg, "word.mcu"),
+    expired: getText(transMsg, "word.expired"),
+    expected: getText(transMsg, "word.expected"),
+    yn: getText(transMsg, "word.yn"),
+    history: getText(transMsg, "word.history"),
+    originDt: getText(transMsg, "word.originDt"),
+    query: getText(transMsg, "word.query"),
+    type: getText(transMsg, "word.type"),
   };
+  const [historyParam, setHistoryParam] = useState({ page: 0, size: 5 });
+
+  const [historyRows, setHistoryRows] = useState([]);
+  const [totalHistoryRows, setTotalHistoryRows] = useState([]);
+  const [rowData, setRowData] = useState(null);
+
+  const historyColumns = [
+    {
+      field: "originDt",
+      headerName: text.originDt,
+      width: 200,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "devModelCode",
+      headerName: text.devModelCode,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "serial",
+      headerName: text.serialNum,
+      width: 250,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "certStatusName",
+      headerName: text.cert + text.status,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "wifiFotaStatus",
+      headerName: text.wifi + " " + text.fota + " " + text.status,
+      width: 200,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "wifiFrmwrVer",
+      headerName: text.wifi + " " + text.firmware + " " + text.ver,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "mcuFotaStatus",
+      headerName: text.mcu + " " + text.fota + " " + text.status,
+      width: 200,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "mcuFrmwrVer",
+      headerName: text.mcu + " " + text.firmware + " " + text.ver,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "isCertExpired",
+      headerName: text.cert + " " + text.expired + text.yn,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "queryType",
+      headerName: text.query + " " + text.type,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "regId",
+      headerName: text.regId,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "regDate",
+      headerName: text.regDate,
+      width: 250,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "updId",
+      headerName: text.updId,
+      width: 150,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "updDate",
+      headerName: text.updDate,
+      width: 250,
+      editable: false,
+      headerAlign: "center",
+      align: "center",
+    },
+  ];
 
   const columns = [
     {
@@ -93,7 +261,9 @@ const FotaStatusSearchPage = (props) => {
           <MatEdit
             category={"fotaStatus"}
             param={params.row}
+            pages={param}
             searchOption={searchOption}
+            handleDetailClick={handleDetailClick}
           />
         );
       },
@@ -115,7 +285,7 @@ const FotaStatusSearchPage = (props) => {
       align: "center",
     },
     {
-      field: "fotaShadowStatusName",
+      field: "fotaShadowStatus",
       headerName: text.fota + " " + text.status,
       width: 150,
       editable: false,
@@ -123,7 +293,7 @@ const FotaStatusSearchPage = (props) => {
       align: "center",
     },
     {
-      field: "certShadowStatusName",
+      field: "certShadowStatus",
       headerName: text.cert + " " + text.status,
       width: 150,
       editable: false,
@@ -164,25 +334,88 @@ const FotaStatusSearchPage = (props) => {
     },
   ];
 
+  const columnsDetail = [
+    {
+      field: "wifiFileName",
+      headerName: text.wifi + " " + text.firmware + text.file + text.name,
+    },
+    {
+      field: "wifiFrmwrVer",
+      headerName: text.wifi + " " + text.firmware + " " + text.ver,
+    },
+    {
+      field: "wifiFileSize",
+      headerName: text.wifi + " " + text.firmware + " " + text.file + text.size,
+    },
+    {
+      field: "wifiFileUrl",
+      headerName:
+        text.wifi + " " + text.firmware + " " + text.file + " " + text.url,
+    },
+    {
+      field: "wifiFotaStatus",
+      headerName: text.wifi + " " + text.fota + " " + text.status,
+    },
+    {
+      field: "mcuFileName",
+      headerName: text.mcu + " " + text.firmware + text.file + text.name,
+    },
+    {
+      field: "mcuFrmwrVer",
+      headerName: text.mcu + " " + text.firmware + " " + text.ver,
+    },
+    {
+      field: "mcuFileSize",
+      headerName: text.mcu + " " + text.firmware + " " + text.file + text.size,
+    },
+    {
+      field: "mcuFileUrl",
+      headerName:
+        text.mcu + " " + text.firmware + " " + text.file + " " + text.url,
+    },
+    {
+      field: "mcuFotaStatus",
+      headerName: text.mcu + " " + text.fota + " " + text.status,
+    },
+    {
+      field: "certStatusName",
+      headerName: text.cert + text.status,
+    },
+    {
+      field: "isCertExpired",
+      headerName:
+        text.cert + " " + text.expired + text.expected + " " + text.yn,
+    },
+    {
+      field: "regId",
+      headerName: text.regId,
+    },
+    {
+      field: "regDate",
+      headerName: text.regDate,
+    },
+    {
+      field: "updId",
+      headerName: text.updId,
+    },
+    {
+      field: "updDate",
+      headerName: text.updDate,
+    },
+  ];
+
+  const rowDetail = (data) => {
+    window.scrollTo(0, 0);
+    setOpenDetails(false);
+    setDesiredList(data.desired);
+    setReportedList(data.reported);
+    setRowData(data);
+    setOpenDetails(true);
+  };
+
   const [isFail, setIsFail] = useState(false);
 
-  const makeRowsFormat = (res, category) => {
-    // console.log("makeRowsFormat >> ", res);
-    let rows = [];
-    if (res.length > 0) {
-      res.map((item, index) => {
-        rows.push({
-          ...item,
-          id: index,
-          regDate: dateFormatConvert(item.regDate),
-          updDate: dateFormatConvert(item.updDate),
-        });
-        return rows;
-      });
-    }
-    // console.log("rows >> ", rows);
-    return rows;
-  };
+  const [totalHistory, setTotalHistory] = useState(0);
 
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
@@ -190,12 +423,84 @@ const FotaStatusSearchPage = (props) => {
 
   const onChangeFormData = (e) => {
     const { name, value } = e.target;
-    // console.log("name, value >> ", name, value);
 
     setSearchOption((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+  };
+
+  const handleDetailClick = async (type, data) => {
+    if (type === "info") {
+      rowDetail(data);
+    } else if (type === "history") {
+      setRowData(data);
+      setHistoryRows([]);
+
+      setHistoryLoading(true);
+      setOpenHistory(true);
+
+      const result = await dispatch(
+        getHistoryList({
+          param: makeQuery(param, {
+            devModelCode: data.devModelCode,
+            serial: data.serial,
+          }),
+        })
+      );
+      // console.log("result  >> ", result);
+      if (checkResult(result)) {
+        setHistoryLoading(false);
+        if (result.payload.payload.content.length > 0) {
+          setHistoryRows(makeRowsFormat(result.payload.payload.content, codes));
+          setTotalHistory(result.payload.payload.totalElements);
+          const totalResult = await dispatch(
+            getHistoryList({
+              param: makeQuery({
+                page: 0,
+                size: result.payload.payload.totalElements,
+                totalItem: result.payload.payload.totalElements,
+                serial: data.serial,
+                devModelCode: data.devModelCode,
+              }),
+            })
+          );
+          if (checkResult(totalResult)) {
+            setTotalHistoryRows(
+              makeRowsFormat(totalResult.payload.payload.content, codes)
+            );
+          }
+        } else {
+          historyRows([]);
+          setTotalHistory(0);
+        }
+        setHistoryLoading(false);
+      } else {
+        historyRows([]);
+        setTotalHistory(0);
+        setHistoryLoading(false);
+      }
+    }
+  };
+
+  const handleSearchClick = async (param) => {
+    setHistoryLoading(true);
+
+    const result = await dispatch(
+      getHistoryList({
+        param: makeQuery(param, {
+          devModelCode: rowData.devModelCode,
+          serial: rowData.serial,
+        }),
+      })
+    );
+
+    if (!isNull(result)) {
+      setOpenHistory(true);
+      setHistoryRows(makeRowsFormat(result.payload.payload.content, codes));
+      setTotalHistory(result.payload.payload.totalElements);
+      setHistoryLoading(false);
+    }
   };
 
   // 리프레시 누른 경우
@@ -217,14 +522,13 @@ const FotaStatusSearchPage = (props) => {
     );
 
     setSearchOption({
-      policyName: "",
-      policyStatus: "",
+      fotaStatus: "",
       devModelCode: "",
-      targetId: "",
       startDate: startDate,
       endDate: endDate,
+      serial: "",
+      certStatus: "",
     });
-
     setShowSearch(false);
     onFetchData();
     window.scrollTo(0, 0);
@@ -235,9 +539,16 @@ const FotaStatusSearchPage = (props) => {
       if (initial) {
         setInitial(false);
       }
-
+      setOpenDetails(false);
       setIsLoading(true);
-      let params = isNull(data) ? param : data;
+
+      let params = null;
+      if (isNull(data)) {
+        params = param;
+      } else {
+        params = data;
+        setParam(data);
+      }
       let option = initial ? "" : searchOption;
 
       const result = await dispatch(
@@ -261,11 +572,143 @@ const FotaStatusSearchPage = (props) => {
     [dispatch, param, searchOption, initial]
   );
 
+  const DenseTable = (props) => {
+    const { type } = props;
+
+    return (
+      <TableContainer>
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              {columnsDetail.map((column, index) => {
+                return <TableCell key={index}>{column.headerName}</TableCell>;
+              })}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              {columnsDetail.map((row) => (
+                <TableCell align={"center"} key={row.headerName}>
+                  {type === "desired"
+                    ? isNull(desiredList) || isNull(desiredList[row.field])
+                      ? "-"
+                      : reformatData(row.field, desiredList[row.field], codes)
+                    : isNull(reportedList) || isNull(reportedList[row.field])
+                    ? "-"
+                    : reformatData(row.field, reportedList[row.field], codes)}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  };
+
+  const FotaStatusDetail = () => {
+    return (
+      <>
+        <div className="mb-3 mt-3 bg_white">
+          <Alert variant="outlined" severity="info" className="mb-3 scrollable">
+            Desired Data
+            <DenseTable type="desired" />
+          </Alert>
+        </div>
+        <div className="mb-3 mt-3 bg_white">
+          <Alert variant="outlined" severity="info" className="mb-3 scrollable">
+            Reported Data
+            <DenseTable type="reported" />
+          </Alert>
+        </div>
+      </>
+    );
+  };
+
+  function QuickSearchToolbar(props) {
+    return (
+      <Box
+        sx={{
+          p: 2,
+          pb: 1,
+          justifyContent: "space-between",
+          display: "flex",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          {/*<GridToolbarFilterButton />*/}
+          {/*<GridToolbarDensitySelector />*/}
+        </div>
+        <TextField
+          variant="standard"
+          value={props.value}
+          onChange={props.onChange}
+          autoFocus={true}
+          placeholder="Search…"
+          InputProps={{
+            startAdornment: <SearchIcon fontSize="small" />,
+            endAdornment: (
+              <IconButton
+                title="Clear"
+                aria-label="Clear"
+                size="small"
+                style={{ visibility: props.value ? "visible" : "hidden" }}
+                onClick={props.clearSearch}
+              >
+                <ClearIcon fontSize="small" />
+              </IconButton>
+            ),
+          }}
+          sx={{
+            width: {
+              xs: 1,
+              sm: "auto",
+            },
+            m: (theme) => theme.spacing(1, 0.5, 1.5),
+            "& .MuiSvgIcon-root": {
+              mr: 0.5,
+            },
+            "& .MuiInput-underline:before": {
+              borderBottom: 1,
+              borderColor: "divider",
+            },
+          }}
+        />
+      </Box>
+    );
+  }
+
+  QuickSearchToolbar.propTypes = {
+    clearSearch: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired,
+  };
+
+  const requestSearch = (searchValue) => {
+    setSearchText(searchValue);
+    const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
+    const filteredRows = totalHistoryRows.filter((row) => {
+      return Object.keys(row).some((field) => {
+        return searchRegex.test(row[field]);
+      });
+    });
+    setHistoryRows(filteredRows);
+    setTotalHistory(filteredRows.length);
+  };
+
   useEffect(() => {
+    // 검색 결과 1개인 경우
+    if (fotaStatusTotal === 1) {
+      setOpenDetails(true);
+      rowDetail(fotaStatusList[0]);
+    }
     if (initial) {
       onFetchData();
     }
-  }, [onFetchData, initial]);
+  }, [onFetchData, initial, fotaStatusTotal, fotaStatusList]);
 
   return (
     <div>
@@ -350,16 +793,16 @@ const FotaStatusSearchPage = (props) => {
             <div className="row ms-4">
               <div className="col-md-2 mb-4">
                 <label htmlFor="inputState" className="form-label">
-                  {text.policy + " " + text.status}
+                  {text.fota + " " + text.status}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
                     defaultValue=""
-                    value={searchOption.policyStatus}
-                    name="policyStatus"
+                    value={searchOption.fotaStatus}
+                    name="fotaStatus"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "fotaShadowStatus").map(
+                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
                       (name) => (
                         <MenuItem
                           key={name.value}
@@ -377,7 +820,36 @@ const FotaStatusSearchPage = (props) => {
                   </Select>
                 </FormControl>
               </div>
-              <div className="col-md-3 mb-4">
+              <div className="col-md-2 mb-4">
+                <label htmlFor="inputState" className="form-label">
+                  {text.cert + " " + text.status}
+                </label>
+                <FormControl fullWidth size="small">
+                  <Select
+                    defaultValue=""
+                    value={searchOption.certStatus}
+                    name="certStatus"
+                    onChange={onChangeFormData}
+                  >
+                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
+                      (name) => (
+                        <MenuItem
+                          key={name.value}
+                          value={name.value}
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            padding: "10px",
+                          }}
+                        >
+                          {name.text}
+                        </MenuItem>
+                      )
+                    )}
+                  </Select>
+                </FormControl>
+              </div>
+              <div className="col-md-2 mb-4">
                 <label htmlFor="validationServer04" className="form-label">
                   {text.devModelCode}
                 </label>
@@ -388,47 +860,32 @@ const FotaStatusSearchPage = (props) => {
                     name="devModelCode"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "devModelCode").map(
-                      (name) => (
-                        <MenuItem
-                          key={name.value}
-                          value={name.value}
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            padding: "10px",
-                          }}
-                        >
-                          {name.text}
-                        </MenuItem>
-                      )
-                    )}
+                    {getCodeCategoryItems(codes, "devModelCode").map((name) => (
+                      <MenuItem
+                        key={name.value}
+                        value={name.value}
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-start",
+                          padding: "10px",
+                        }}
+                      >
+                        {name.text}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </div>
-              <div className="col-md-3 mb-4">
+              <div className="col-md-4 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
-                  {text.policy + " " + text.name}
+                  {text.serialNum}
                 </label>
                 <input
                   type="text"
                   className="form-control"
                   id="inputEmail4"
-                  value={searchOption.policyName}
-                  name="policyName"
-                  onChange={onChangeFormData}
-                />
-              </div>
-              <div className="col-md-3 mb-4">
-                <label htmlFor="inputEmail4" className="form-label">
-                  {text.target + " " + text.id}
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="inputEmail4"
-                  value={searchOption.targetId}
-                  name="targetId"
+                  value={searchOption.serial}
+                  name="serial"
                   onChange={onChangeFormData}
                 />
               </div>
@@ -436,15 +893,114 @@ const FotaStatusSearchPage = (props) => {
           </div>
         </div>
       </div>
+      {openDetails && <FotaStatusDetail />}
+      {/* 상태 이력 검색 */}
+      <Dialog
+        fullWidth={true}
+        className="w-100"
+        maxWidth="lg"
+        open={openHistory}
+      >
+        <DialogTitle
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <div>
+            <span>{text.fota + " " + text.history}</span>
+            <Button
+              aria-label="upload picture"
+              component="span"
+              className="ms-2"
+              style={{ color: "#357a38" }}
+              onClick={() => {
+                onRefresh();
+              }}
+            >
+              <RefreshIcon />
+            </Button>
+          </div>
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={() => {
+              setOpenHistory(false);
+              setSearchText("");
+            }}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <div style={{ height: totalHistory > 0 ? "auto" : "400px" }}>
+            <DataGrid
+              loading={historyLoading}
+              rows={historyRows}
+              columns={historyColumns}
+              components={{
+                Toolbar: QuickSearchToolbar,
+                NoRowsOverlay: CustomNoRowsOverlay,
+                LoadingOverlay: CustomLoadingOverlay,
+              }}
+              componentsProps={{
+                toolbar: {
+                  value: searchText,
+                  onChange: (event) => requestSearch(event.target.value),
+                  clearSearch: () => {
+                    setHistoryParam((prevState) => ({
+                      ...prevState,
+                      size: 5,
+                    }));
+                    requestSearch("");
+                  },
+                },
+              }}
+              pageSize={historyParam.size}
+              pagination
+              paginationMode="server"
+              rowCount={totalHistory}
+              autoHeight={totalHistory > 0}
+              maxWidth={"xl"}
+              rowsPerPageOptions={[5, 10, 20]}
+              onPageSizeChange={(newPageSize) => {
+                setHistoryParam((prevState) => ({
+                  ...prevState,
+                  size: newPageSize,
+                }));
+
+                handleSearchClick({
+                  page: historyParam.page,
+                  size: newPageSize,
+                });
+              }}
+              onPageChange={(newPages) => {
+                setHistoryParam((prevState) => ({
+                  ...prevState,
+                  page: newPages,
+                }));
+                handleSearchClick({
+                  page: newPages,
+                  size: historyParam.size,
+                });
+              }}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={!isNull(fotaStatusList) && makeRowsFormat(fotaStatusList)}
+        rows={
+          !isNull(fotaStatusList) &&
+          fotaStatusList.length > 0 &&
+          makeRowsFormat(fotaStatusList, codes)
+        }
         columns={columns}
+        param={param}
         totalElement={fotaStatusTotal}
         isLoading={isLoading}
         searchOption={searchOption}
         category={"statusSearch"}
         onFetchData={onFetchData}
+        rowDetail={rowDetail}
         onRefresh={onRefresh}
       />
     </div>

@@ -1,15 +1,9 @@
 import axios from "axios";
 import { API } from "../../common/constants";
-import { checkResult, makeurlQeuryString } from "../../common/utils/CowayUtils";
-// import client from "./client";
+import { makeurlQeuryString } from "../../common/utils/CowayUtils";
 
 // 펌웨어 목록
 export const getFirmwareList = (param) => {
-  // console.log(
-  //   "getFirmwareList >>> ",
-  //   param,
-  //   makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, param)
-  // );
   return axios
     .get(
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, param),
@@ -57,19 +51,11 @@ export const putFirmware = (body) => {
 // fota 펌웨어 삭제
 export const deleteFirmware = (policyId) => {
   return axios
-    .delete(
-      // makeurlQeuryString(
-      //   `${API.FOTA_URL}/iot/v1/fota/manager/firmware`,
-      //   frmwrId
-      // ),
-      `${API.FOTA_URL}/iot/v1/fota/manager/firmware/${policyId}`,
-      {
-        headers: API.HEADERS,
-      }
-    )
+    .delete(`${API.FOTA_URL}/iot/v1/fota/manager/firmware/${policyId}`, {
+      headers: API.HEADERS,
+    })
     .then((response) => {
       return response;
-      // console.log("response >> ", JSON.stringify(response));
     })
     .catch((err) => {
       if (err.response) return err.response;
@@ -91,7 +77,6 @@ export const getFotaPolicyList = (param) => {
       }
     )
     .then((response) => {
-      // console.log("response >> ", JSON.stringify(response.data));
       return response;
     })
     .catch((err) => {
@@ -226,9 +211,20 @@ export const getStatusList = (param) => {
     });
 };
 
-/**
- * 이력 조회
- */
+// 상태 초기화
+export const deleteStatus = (serial) => {
+  return axios
+    .delete(`${API.FOTA_URL}/iot/v1/test/shadow/reset/${serial}`, {
+      headers: API.HEADERS,
+    })
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      if (err.response) return err.response;
+    });
+};
+
 /**
  * 이력 조회
  */

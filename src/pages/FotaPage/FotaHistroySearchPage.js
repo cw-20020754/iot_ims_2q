@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Select, TextField } from "@material-ui/core";
-import { Alert, AlertTitle, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import {
@@ -11,7 +11,7 @@ import {
   makeQuery,
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
-import DataGridTables from "../../components/DataGridTables";
+import DataGridTables from "../../components/table/DataGridTables";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { getHistoryList } from "../../redux/reducers/fotaInfoSlice";
@@ -26,7 +26,7 @@ const FotaHistroySearchPage = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
-  const options = useSelector((state) => state.sharedInfo.codes);
+  const codes = useSelector((state) => state.sharedInfo.codes);
   const [startDate, setStartDate] = useState(
     dayjs(new Date())
       .add(-7, "days")
@@ -229,10 +229,10 @@ const FotaHistroySearchPage = (props) => {
           updDate: dateFormatConvert(item.updDate),
           originDt: dateFormatConvert(item.originDt),
           certStatusName: item.certStatusName,
-          wifiFotaStatus: getCodeCategoryItems(options, "fotaStatus").filter(
+          wifiFotaStatus: getCodeCategoryItems(codes, "fotaStatus").filter(
             (el) => el.value === item.wifiFotaStatus
           )[0].text,
-          mcuFotaStatus: getCodeCategoryItems(options, "fotaStatus").filter(
+          mcuFotaStatus: getCodeCategoryItems(codes, "fotaStatus").filter(
             (el) => el.value === item.mcuFotaStatus
           )[0].text,
           isCertExpired: item.isCertExpired ? "Y" : "N",
@@ -404,7 +404,7 @@ const FotaHistroySearchPage = (props) => {
                     name="isCertExpired"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "yn").map((name) => (
+                    {getCodeCategoryItems(codes, "yn").map((name) => (
                       <MenuItem
                         key={name.value}
                         value={name.value}
@@ -431,7 +431,7 @@ const FotaHistroySearchPage = (props) => {
                     name="certStatus"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "certStatus").map((name) => (
+                    {getCodeCategoryItems(codes, "certStatus").map((name) => (
                       <MenuItem
                         key={name.value}
                         value={name.value}
@@ -458,21 +458,19 @@ const FotaHistroySearchPage = (props) => {
                     name="devModelCode"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "devModelCode").map(
-                      (name) => (
-                        <MenuItem
-                          key={name.value}
-                          value={name.value}
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            padding: "10px",
-                          }}
-                        >
-                          {name.text}
-                        </MenuItem>
-                      )
-                    )}
+                    {getCodeCategoryItems(codes, "devModelCode").map((name) => (
+                      <MenuItem
+                        key={name.value}
+                        value={name.value}
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-start",
+                          padding: "10px",
+                        }}
+                      >
+                        {name.text}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </div>
@@ -495,8 +493,13 @@ const FotaHistroySearchPage = (props) => {
       </div>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={!isNull(fotaHistoryList) && makeRowsFormat(fotaHistoryList)}
+        rows={
+          !isNull(fotaHistoryList) &&
+          fotaHistoryList.length > 0 &&
+          makeRowsFormat(fotaHistoryList, codes)
+        }
         columns={columns}
+        param={param}
         totalElement={fotaHistoryTotal}
         isLoading={isLoading}
         searchOption={searchOption}

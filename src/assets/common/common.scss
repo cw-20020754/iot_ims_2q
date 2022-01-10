@@ -11,6 +11,7 @@
     &:last-child {margin-bottom: 0;}
     button + button {margin-left:15px;}
 }
+.bg_white { background-color: #ffffff}
 .save_btn { width: 15%; background: none; color: $blue_02 }
 .cancel_btn { width: 15%; background: none; color: $grey_02 }
 .alignr {text-align:right !important;}
@@ -60,6 +61,7 @@
 
 /*** sideBar ***/
 .sidebar-brand { background:$primary;}
+.sidebar-nav .nav-link.active {color: #2196f3;}
 .sideBar { background-color: $black_01; }
 .c-sidebar.c-sidebar-light .c-sidebar-nav-link {color : #777e88;}
 .c-sidebar.c-sidebar-light .c-sidebar-nav-dropdown-toggle .c-sidebar-nav-icon:hover {color: #27292d }

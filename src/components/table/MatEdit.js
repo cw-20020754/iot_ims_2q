@@ -1,27 +1,31 @@
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   deleteCertPolicy,
   deleteFirmware,
   deleteFotaPolicy,
+  deleteStatus,
   getCertPolicyList,
   getFirmwareList,
   getFotaPolicyList,
-} from "../redux/reducers/fotaInfoSlice";
-import { isNull, makeQuery } from "../common/utils/CowayUtils";
+  getStatusList,
+} from "../../redux/reducers/fotaInfoSlice";
+import { isNull, makeQuery } from "../../common/utils/CowayUtils";
 import { Button } from "@mui/material";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HistoryIcon from "@mui/icons-material/History";
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import InfoIcon from "@mui/icons-material/Info";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
-const MatEdit = ({ category, param, searchOption }) => {
+const MatEdit = (props) => {
   // console.log("category >> ", category, param, searchOption);
 
   const history = useHistory();
   const dispatch = useDispatch();
   const [page, setPage] = useState({ page: 0, size: 10 });
+  const { category, param, searchOption, pages } = props;
 
   // 수정
   const handleEditClick = () => {
@@ -62,7 +66,7 @@ const MatEdit = ({ category, param, searchOption }) => {
         if (!isNull(result)) {
           dispatch(
             getFirmwareList({
-              param: makeQuery(page, searchOption),
+              param: makeQuery(pages, searchOption),
             })
           );
         }
@@ -73,7 +77,7 @@ const MatEdit = ({ category, param, searchOption }) => {
         if (!isNull(result)) {
           dispatch(
             getFotaPolicyList({
-              param: makeQuery(page, searchOption),
+              param: makeQuery(pages, searchOption),
             })
           );
         }
@@ -81,11 +85,21 @@ const MatEdit = ({ category, param, searchOption }) => {
       }
       case "certPolicyMng": {
         result = await dispatch(deleteCertPolicy({ policyId: param.policyId }));
-        // console.log("result >> ", JSON.stringify(result));
         if (!isNull(result)) {
           dispatch(
             getCertPolicyList({
-              param: makeQuery(page, searchOption),
+              param: makeQuery(pages, searchOption),
+            })
+          );
+        }
+        break;
+      }
+      case "fotaStatus": {
+        result = await dispatch(deleteStatus({ serial: param.serial }));
+        if (!isNull(result)) {
+          dispatch(
+            getStatusList({
+              param: makeQuery(pages, searchOption),
             })
           );
         }
@@ -96,18 +110,13 @@ const MatEdit = ({ category, param, searchOption }) => {
     }
   };
 
-  // 상세 팝업
-  const handleDetailClick = (type) => {
-    // console.log('detail >> ' , type);
-  };
-
   return (
-    <div
-      className="d-flex justify-content-between align-items-center"
-      style={{ cursor: "pointer" }}
-    >
+    <>
       {category !== "fotaStatus" ? (
-        <>
+        <div
+          className="d-flex justify-content-between align-items-center"
+          style={{ cursor: "pointer" }}
+        >
           <Button
             title="Edit"
             aria-label="Edit"
@@ -128,45 +137,40 @@ const MatEdit = ({ category, param, searchOption }) => {
           >
             <DeleteIcon fontSize="small" style={{ color: "#8a93a2" }} />
           </Button>
-        </>
+        </div>
       ) : (
         <>
-          <Button
-            title="More Info"
-            aria-label="More Info"
-            size="small"
-            onClick={() => handleDetailClick("more")}
-            style={{ minWidth: "25px" }}
-            sx={{ color: "#2196f3" }}
-          >
-            <ArrowForwardIosIcon
-              fontSize="small"
-              style={{ color: "#6a7079" }}
-            />
-          </Button>
           <Button
             title="History"
             aria-label="History"
             size="small"
-            onClick={() => handleDetailClick("history")}
-            style={{ minWidth: "35px" }}
-            sx={{ color: "#2196f3" }}
+            onClick={() => props.handleDetailClick("history", param)}
+            style={{ minWidth: "0px" }}
           >
             <HistoryIcon fontSize="small" style={{ color: "#2196f3" }} />
           </Button>
           <Button
-            title="Clear"
-            aria-label="Clear"
-            size="large"
+            title="Status clear"
+            aria-label="Status clear"
+            size="small"
             onClick={handleDeleteClick}
+            style={{ minWidth: "0px" }}
+          >
+            <RestartAltIcon fontSize="small" style={{ color: "#8a93a2" }} />
+          </Button>
+          <Button
+            title="More Info"
+            aria-label="More Info"
+            size="small"
+            onClick={() => props.handleDetailClick("info", param)}
             style={{ minWidth: "35px" }}
             sx={{ color: "#2196f3" }}
           >
-            <DeleteIcon fontSize="small" style={{ color: "#8a93a2" }} />
+            <InfoIcon fontSize="small" style={{ color: "#1976d2" }} />
           </Button>
         </>
       )}
-    </div>
+    </>
   );
 };
 

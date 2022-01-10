@@ -22,6 +22,16 @@ const getCodeCategoryItems = (list, category) => {
   return list.find((el) => el.category === category).items;
 };
 
+const getCodeToText = (category, data, options) => {
+  if (isNull(data)) {
+    return "";
+  }
+  const result = getCodeCategoryItems(options, category).find(
+    (el) => el.value === data
+  );
+  return !isNull(result) ? result.text : data;
+};
+
 const getText = (list, msgId) => {
   return list.find((el) => el.msgId === msgId).msg;
 };
@@ -97,27 +107,82 @@ const fileSize = (size) => {
   return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
-const makeRowsFormat = (res, category) => {
-  // console.log("makeRowsFormat >> ", res);
+const makeRowsFormat = (list, codes) => {
   let rows = [];
-  if (res.length > 0) {
-    res.map((item, index) => {
+  if (list.length > 0) {
+    list.map((item, index) => {
       rows.push({
         ...item,
         id: index,
-        frmwrType: item.frmwrType === 1 ? "WIFI" : "MCU",
-        fileSizeTxt: fileSize(item.fileSize),
-        useYn: item.useYn ? "Y" : "N",
-        regDate: dateFormatConvert(item.regDate),
-        updDate: dateFormatConvert(item.updDate),
-        targetType: item.targetType === 1 ? "제품군" : "단일제품",
-        policyStatusName: POLICY_STATUS[item.policyStatus],
+        frmwrType: reformatData("frmwrType", item.frmwrType, codes),
+        fileSizeTxt: reformatData("fileSizeTxt", item.fileSize),
+        useYn: reformatData("useYn", item.useYn),
+        regDate: reformatData("regDate", item.regDate),
+        updDate: reformatData("updDate", item.updDate),
+        targetType: reformatData("targetType", item.targetType, codes),
+        policyStatusName: reformatData(
+          "policyStatus",
+          item.policyStatus,
+          codes
+        ),
+        originDt: reformatData("originDt", item.originDt),
+        wifiFotaStatus: reformatData("originDt", item.originDt, codes),
+        mcuFotaStatus: reformatData("mcuFotaStatus", item.mcuFotaStatus, codes),
+        fotaShadowStatus: reformatData(
+          "fotaShadowStatus",
+          item.fotaShadowStatus,
+          codes
+        ),
+        certShadowStatus: reformatData(
+          "certShadowStatus",
+          item.certShadowStatus,
+          codes
+        ),
+        isCertExpired: reformatData("isCertExpired", item.isCertExpired),
       });
       return rows;
     });
+    return rows;
   }
-  // console.log("rows >> ", rows);
-  return rows;
+};
+
+/**
+ *
+ * @param field 구분자
+ * @param data value
+ * @param codes text info
+ // 데이터 formatting
+ */
+const reformatData = (field, data, codes) => {
+  // console.log("field, data, codes >> ", field, data, codes);
+  switch (field) {
+    case "frmwrType":
+      return getCodeToText("frmwrType", data, codes);
+    case "wifiFileSize":
+    case "mcuFileSize":
+    case "fileSizeTxt":
+      return fileSize(data);
+    case "wifiFotaStatus":
+    case "mcuFotaStatus":
+      return getCodeToText("fotaStatus", data, codes);
+    case "fotaShadowStatus":
+      return getCodeToText("fotaShadowStatus", data, codes);
+    case "certShadowStatus":
+      return getCodeToText("certShadowStatus", data, codes);
+    case "targetType":
+      return getCodeToText("targetType", data, codes);
+    case "policyStatusName":
+      return getCodeToText("policyStatus", data, codes);
+    case "useYn":
+    case "isCertExpired":
+      return data ? "Y" : "N";
+    case "regDate":
+    case "updDate":
+    case "originDt":
+      return dateFormatConvert(data);
+    default:
+      return data;
+  }
 };
 
 // excel data 형태로 변형
@@ -139,6 +204,10 @@ const makeExcelFormat = (row, column) => {
   return result;
 };
 
+const escapeRegExp = (value) => {
+  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
 export {
   isNull,
   getCodeCategoryItems,
@@ -151,4 +220,6 @@ export {
   makeQuery,
   makeExcelFormat,
   getText,
+  escapeRegExp,
+  reformatData,
 };
