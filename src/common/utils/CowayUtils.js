@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import * as queryString from "querystring";
-import { POLICY_STATUS } from "../constants";
+import qs from "qs";
+
 /**
  * 공통 Util
  */
@@ -53,9 +53,7 @@ const dateToTimestampConvert = (date) => {
 
 const makeurlQeuryString = (url, param) => {
   if (param) {
-    url =
-      url +
-      (typeof param === "string" ? param : "?" + queryString.stringify(param));
+    url = url + (typeof param === "string" ? param : "?" + qs.stringify(param));
     return url;
   } else {
     return url;
@@ -93,8 +91,6 @@ const checkResult = (res) => {
   ) {
     return false;
   }
-
-  // console.log(result);
 
   return result;
 };

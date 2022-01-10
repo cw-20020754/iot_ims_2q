@@ -1,4 +1,3 @@
-import * as querystring from "querystring";
 import axios from "axios";
 import * as Constants from "../../common/constants";
 // import { getAccessToken } from './accessToken';
