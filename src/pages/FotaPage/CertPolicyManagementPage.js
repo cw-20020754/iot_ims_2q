@@ -482,6 +482,7 @@ const CertPolicyManagementPage = (props) => {
       <DataGridTables
         rows={
           !isNull(certPolicyList) &&
+          Array.isArray(certPolicyList) &&
           certPolicyList.length > 0 &&
           makeRowsFormat(certPolicyList, codes)
         }

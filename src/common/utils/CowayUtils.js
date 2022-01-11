@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import * as queryString from "querystring";
-import { POLICY_STATUS } from "../constants";
+import qs from "qs";
+
 /**
  * 공통 Util
  */
@@ -22,11 +22,11 @@ const getCodeCategoryItems = (list, category) => {
   return list.find((el) => el.category === category).items;
 };
 
-const getCodeToText = (category, data, options) => {
+const getCodeToText = (category, data, codes) => {
   if (isNull(data)) {
     return "";
   }
-  const result = getCodeCategoryItems(options, category).find(
+  const result = getCodeCategoryItems(codes, category).find(
     (el) => el.value === data
   );
   return !isNull(result) ? result.text : data;
@@ -52,11 +52,11 @@ const dateToTimestampConvert = (date) => {
 };
 
 const makeurlQeuryString = (url, param) => {
+  let fullUrl = "";
   if (param) {
-    url =
-      url +
-      (typeof param === "string" ? param : "?" + queryString.stringify(param));
-    return url;
+    fullUrl =
+      url + (typeof param === "string" ? param : "?" + qs.stringify(param));
+    return fullUrl;
   } else {
     return url;
   }
@@ -94,8 +94,6 @@ const checkResult = (res) => {
     return false;
   }
 
-  // console.log(result);
-
   return result;
 };
 
@@ -109,79 +107,70 @@ const fileSize = (size) => {
 
 const makeRowsFormat = (list, codes) => {
   let rows = [];
-  if (list.length > 0) {
-    list.map((item, index) => {
+  if (Array.isArray(list) && list.length > 0) {
+    list.forEach((item, index) => {
       rows.push({
         ...item,
         id: index,
-        frmwrType: reformatData("frmwrType", item.frmwrType, codes),
-        fileSizeTxt: reformatData("fileSizeTxt", item.fileSize),
-        useYn: reformatData("useYn", item.useYn),
-        regDate: reformatData("regDate", item.regDate),
-        updDate: reformatData("updDate", item.updDate),
-        targetType: reformatData("targetType", item.targetType, codes),
+        frmwrType: reformatData("text", item.frmwrType, "frmwrType", codes),
+        fileSizeTxt: reformatData("fileSize", item.fileSize),
+        useYn: reformatData("yn", item.useYn),
+        regDate: reformatData("date", item.regDate),
+        updDate: reformatData("date", item.updDate),
+        targetType: reformatData("text", item.targetType, "targetType", codes),
         policyStatusName: reformatData(
-          "policyStatus",
+          "text",
           item.policyStatus,
+          "policyStatus",
           codes
         ),
-        originDt: reformatData("originDt", item.originDt),
-        wifiFotaStatus: reformatData("originDt", item.originDt, codes),
-        mcuFotaStatus: reformatData("mcuFotaStatus", item.mcuFotaStatus, codes),
+        originDt: reformatData("date", item.originDt),
+        wifiFotaStatus: reformatData("text", item.originDt, "originDt", codes),
+        mcuFotaStatus: reformatData(
+          "text",
+          item.mcuFotaStatus,
+          "mcuFotaStatus",
+          codes
+        ),
         fotaShadowStatus: reformatData(
-          "fotaShadowStatus",
+          "text",
           item.fotaShadowStatus,
+          "fotaShadowStatus",
           codes
         ),
         certShadowStatus: reformatData(
-          "certShadowStatus",
+          "text",
           item.certShadowStatus,
+          "certShadowStatus",
           codes
         ),
-        isCertExpired: reformatData("isCertExpired", item.isCertExpired),
+        isCertExpired: reformatData("yn", item.isCertExpired),
       });
-      return rows;
     });
-    return rows;
   }
+  return rows;
 };
 
 /**
  *
- * @param field 구분자
- * @param data value
- * @param codes text info
- // 데이터 formatting
+ * @param type 분류 값
+ * @param value data value
+ * @param catetory text 구분자
+ * @param codes codes text info
+ * @returns {string|*|string}
  */
-const reformatData = (field, data, codes) => {
-  // console.log("field, data, codes >> ", field, data, codes);
-  switch (field) {
-    case "frmwrType":
-      return getCodeToText("frmwrType", data, codes);
-    case "wifiFileSize":
-    case "mcuFileSize":
-    case "fileSizeTxt":
-      return fileSize(data);
-    case "wifiFotaStatus":
-    case "mcuFotaStatus":
-      return getCodeToText("fotaStatus", data, codes);
-    case "fotaShadowStatus":
-      return getCodeToText("fotaShadowStatus", data, codes);
-    case "certShadowStatus":
-      return getCodeToText("certShadowStatus", data, codes);
-    case "targetType":
-      return getCodeToText("targetType", data, codes);
-    case "policyStatusName":
-      return getCodeToText("policyStatus", data, codes);
-    case "useYn":
-    case "isCertExpired":
-      return data ? "Y" : "N";
-    case "regDate":
-    case "updDate":
-    case "originDt":
-      return dateFormatConvert(data);
+const reformatData = (type, value, catetory, codes) => {
+  switch (type) {
+    case "text":
+      return getCodeToText(catetory, value, codes);
+    case "date":
+      return dateFormatConvert(value);
+    case "fileSize":
+      return fileSize(value);
+    case "yn":
+      return value ? "Y" : "N";
     default:
-      return data;
+      break;
   }
 };
 

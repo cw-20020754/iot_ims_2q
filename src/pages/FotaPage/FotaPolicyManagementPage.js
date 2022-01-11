@@ -525,6 +525,7 @@ const FotaPolicyManagementPage = (props) => {
       <DataGridTables
         rows={
           !isNull(fotaPolicyList) &&
+          Array.isArray(fotaPolicyList) &&
           fotaPolicyList.length > 0 &&
           makeRowsFormat(fotaPolicyList, codes)
         }

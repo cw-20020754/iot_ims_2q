@@ -479,6 +479,7 @@ const FirmwareManagementPage = (props) => {
       <DataGridTables
         rows={
           !isNull(firmwareMngList) &&
+          Array.isArray(firmwareMngList) &&
           firmwareMngList.length > 0 &&
           makeRowsFormat(firmwareMngList, codes)
         }

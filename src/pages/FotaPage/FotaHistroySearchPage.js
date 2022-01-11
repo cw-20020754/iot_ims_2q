@@ -9,6 +9,7 @@ import {
   getText,
   isNull,
   makeQuery,
+  makeRowsFormat,
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
 import DataGridTables from "../../components/table/DataGridTables";
@@ -216,31 +217,6 @@ const FotaHistroySearchPage = (props) => {
       ...prevState,
       [name]: value,
     }));
-  };
-
-  const makeRowsFormat = (list) => {
-    let rows = [];
-    if (list.length > 0) {
-      list.map((item, index) => {
-        rows.push({
-          ...item,
-          id: index,
-          regDate: dateFormatConvert(item.regDate),
-          updDate: dateFormatConvert(item.updDate),
-          originDt: dateFormatConvert(item.originDt),
-          certStatusName: item.certStatusName,
-          wifiFotaStatus: getCodeCategoryItems(codes, "fotaStatus").filter(
-            (el) => el.value === item.wifiFotaStatus
-          )[0].text,
-          mcuFotaStatus: getCodeCategoryItems(codes, "fotaStatus").filter(
-            (el) => el.value === item.mcuFotaStatus
-          )[0].text,
-          isCertExpired: item.isCertExpired ? "Y" : "N",
-        });
-        return rows;
-      });
-    }
-    return rows;
   };
 
   // 리프레시 누른 경우
@@ -495,6 +471,7 @@ const FotaHistroySearchPage = (props) => {
       <DataGridTables
         rows={
           !isNull(fotaHistoryList) &&
+          Array.isArray(fotaHistoryList) &&
           fotaHistoryList.length > 0 &&
           makeRowsFormat(fotaHistoryList, codes)
         }

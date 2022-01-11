@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import "./assets/common/common.scss";
 
+require("dotenv").config();
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

@@ -990,6 +990,7 @@ const FotaStatusSearchPage = (props) => {
       <DataGridTables
         rows={
           !isNull(fotaStatusList) &&
+          Array.isArray(fotaStatusList) &&
           fotaStatusList.length > 0 &&
           makeRowsFormat(fotaStatusList, codes)
         }
