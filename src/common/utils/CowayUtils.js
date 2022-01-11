@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import * as queryString from "querystring";
-import { POLICY_STATUS } from "../constants";
+import qs from "qs";
+
 /**
  * 공통 Util
  */
@@ -20,6 +20,16 @@ const isNull = (data) => {
 
 const getCodeCategoryItems = (list, category) => {
   return list.find((el) => el.category === category).items;
+};
+
+const getCodeToText = (category, data, codes) => {
+  if (isNull(data)) {
+    return "";
+  }
+  const result = getCodeCategoryItems(codes, category).find(
+    (el) => el.value === data
+  );
+  return !isNull(result) ? result.text : data;
 };
 
 const getText = (list, msgId) => {
@@ -42,11 +52,11 @@ const dateToTimestampConvert = (date) => {
 };
 
 const makeurlQeuryString = (url, param) => {
+  let fullUrl = "";
   if (param) {
-    url =
-      url +
-      (typeof param === "string" ? param : "?" + queryString.stringify(param));
-    return url;
+    fullUrl =
+      url + (typeof param === "string" ? param : "?" + qs.stringify(param));
+    return fullUrl;
   } else {
     return url;
   }
@@ -84,8 +94,6 @@ const checkResult = (res) => {
     return false;
   }
 
-  // console.log(result);
-
   return result;
 };
 
@@ -97,27 +105,73 @@ const fileSize = (size) => {
   return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
-const makeRowsFormat = (res, category) => {
-  // console.log("makeRowsFormat >> ", res);
+const makeRowsFormat = (list, codes) => {
   let rows = [];
-  if (res.length > 0) {
-    res.map((item, index) => {
+  if (Array.isArray(list) && list.length > 0) {
+    list.forEach((item, index) => {
       rows.push({
         ...item,
         id: index,
-        frmwrType: item.frmwrType === 1 ? "WIFI" : "MCU",
-        fileSizeTxt: fileSize(item.fileSize),
-        useYn: item.useYn ? "Y" : "N",
-        regDate: dateFormatConvert(item.regDate),
-        updDate: dateFormatConvert(item.updDate),
-        targetType: item.targetType === 1 ? "제품군" : "단일제품",
-        policyStatusName: POLICY_STATUS[item.policyStatus],
+        frmwrType: reformatData("text", item.frmwrType, "frmwrType", codes),
+        fileSizeTxt: reformatData("fileSize", item.fileSize),
+        useYn: reformatData("yn", item.useYn),
+        regDate: reformatData("date", item.regDate),
+        updDate: reformatData("date", item.updDate),
+        targetType: reformatData("text", item.targetType, "targetType", codes),
+        policyStatusName: reformatData(
+          "text",
+          item.policyStatus,
+          "policyStatus",
+          codes
+        ),
+        originDt: reformatData("date", item.originDt),
+        wifiFotaStatus: reformatData("text", item.originDt, "originDt", codes),
+        mcuFotaStatus: reformatData(
+          "text",
+          item.mcuFotaStatus,
+          "mcuFotaStatus",
+          codes
+        ),
+        fotaShadowStatus: reformatData(
+          "text",
+          item.fotaShadowStatus,
+          "fotaShadowStatus",
+          codes
+        ),
+        certShadowStatus: reformatData(
+          "text",
+          item.certShadowStatus,
+          "certShadowStatus",
+          codes
+        ),
+        isCertExpired: reformatData("yn", item.isCertExpired),
       });
-      return rows;
     });
   }
-  // console.log("rows >> ", rows);
   return rows;
+};
+
+/**
+ *
+ * @param type 분류 값
+ * @param value data value
+ * @param catetory text 구분자
+ * @param codes codes text info
+ * @returns {string|*|string}
+ */
+const reformatData = (type, value, catetory, codes) => {
+  switch (type) {
+    case "text":
+      return getCodeToText(catetory, value, codes);
+    case "date":
+      return dateFormatConvert(value);
+    case "fileSize":
+      return fileSize(value);
+    case "yn":
+      return value ? "Y" : "N";
+    default:
+      break;
+  }
 };
 
 // excel data 형태로 변형
@@ -139,6 +193,10 @@ const makeExcelFormat = (row, column) => {
   return result;
 };
 
+const escapeRegExp = (value) => {
+  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
 export {
   isNull,
   getCodeCategoryItems,
@@ -151,4 +209,6 @@ export {
   makeQuery,
   makeExcelFormat,
   getText,
+  escapeRegExp,
+  reformatData,
 };

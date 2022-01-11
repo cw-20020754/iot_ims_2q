@@ -12,6 +12,7 @@ import { Button, Select, Slide, Switch, TextField } from "@material-ui/core";
 import {
   checkResult,
   dateToTimestampConvert,
+  escapeRegExp,
   getCodeCategoryItems,
   getText,
   isNull,
@@ -37,6 +38,7 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import rules from "../../common/utils/rules";
 import AlertMessage from "../../components/AlertMessage";
+import CustomNoRowsOverlay from "../../components/table/CustomNoRowsOverlay";
 
 /**
  * FOTA 정책 상세 페이지
@@ -186,13 +188,13 @@ const FotaPolicyManagementDetailPage = (props) => {
   const requestSearch = (searchValue) => {
     setSearchText(searchValue);
     const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
-
     const filteredRows = totalRows.filter((row) => {
       return Object.keys(row).some((field) => {
-        return searchRegex.test(row[field].toString());
+        return searchRegex.test(row[field]);
       });
     });
     setRows(filteredRows);
+    setTotalElement(filteredRows.length);
   };
 
   const [totalElement, setTotalElement] = useState(0);
@@ -208,10 +210,6 @@ const FotaPolicyManagementDetailPage = (props) => {
       backgroundColor: "#1976de",
     },
   }));
-
-  function escapeRegExp(value) {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  }
 
   function QuickSearchToolbar(props) {
     return (
@@ -233,7 +231,7 @@ const FotaPolicyManagementDetailPage = (props) => {
           variant="standard"
           value={props.value}
           onChange={props.onChange}
-          autoFocus="autoFocus"
+          autoFocus={true}
           placeholder="Search…"
           InputProps={{
             startAdornment: <SearchIcon fontSize="small" />,
@@ -442,7 +440,7 @@ const FotaPolicyManagementDetailPage = (props) => {
       })
     );
     if (checkResult(result)) {
-      setRows(makeRowsFormat(result.payload.payload.content));
+      setRows(makeRowsFormat(result.payload.payload.content, options));
 
       setTotalElement(result.payload.payload.totalElements);
 
@@ -461,8 +459,9 @@ const FotaPolicyManagementDetailPage = (props) => {
             ),
           })
         );
-        // console.log("totalResult >> ", totalResult);
-        setTotalRows(makeRowsFormat(totalResult.payload.payload.content));
+        setTotalRows(
+          makeRowsFormat(totalResult.payload.payload.content, options)
+        );
       }
       setOpenDialog(true);
     } else {
@@ -760,7 +759,10 @@ const FotaPolicyManagementDetailPage = (props) => {
             <IconButton
               edge="end"
               color="inherit"
-              onClick={() => setOpenDialog(false)}
+              onClick={() => {
+                setOpenDialog(false);
+                setSearchText("");
+              }}
               aria-label="close"
             >
               <CloseIcon />
@@ -769,9 +771,12 @@ const FotaPolicyManagementDetailPage = (props) => {
           <DialogContent dividers>
             <div style={{ height: totalElement > 0 ? "auto" : "400px" }}>
               <DataGrid
+                components={{
+                  Toolbar: QuickSearchToolbar,
+                  NoRowsOverlay: CustomNoRowsOverlay,
+                }}
                 rows={rows}
                 columns={columns}
-                components={{ Toolbar: QuickSearchToolbar }}
                 componentsProps={{
                   toolbar: {
                     value: searchText,

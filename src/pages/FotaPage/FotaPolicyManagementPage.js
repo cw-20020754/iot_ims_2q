@@ -4,18 +4,18 @@ import { Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import {
-  dateFormatConvert,
   getCodeCategoryItems,
   getText,
   isNull,
   makeQuery,
+  makeRowsFormat,
 } from "../../common/utils/CowayUtils";
 import MenuItem from "@mui/material/MenuItem";
 import dayjs from "dayjs";
 import { getFotaPolicyList } from "../../redux/reducers/fotaInfoSlice";
 import { useDispatch, useSelector } from "react-redux";
-import DataGridTables from "../../components/DataGridTables";
-import MatEdit from "../../components/MatEdit";
+import DataGridTables from "../../components/table/DataGridTables";
+import MatEdit from "../../components/table/MatEdit";
 import AlertMessage from "../../components/AlertMessage";
 
 /**
@@ -26,7 +26,7 @@ const FotaPolicyManagementPage = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [initial, setInitial] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
-  const options = useSelector((state) => state.sharedInfo.codes);
+  const codes = useSelector((state) => state.sharedInfo.codes);
   const [startDate, setStartDate] = useState(
     dayjs(new Date())
       .add(-7, "days")
@@ -303,24 +303,6 @@ const FotaPolicyManagementPage = (props) => {
     window.scrollTo(0, 0);
   };
 
-  const makeRowsFormat = (list) => {
-    let rows = [];
-    if (list.length > 0) {
-      list.map((item, index) => {
-        rows.push({
-          ...item,
-          id: index,
-          useYn: item.useYn ? "Y" : "N",
-          targetType: item.targetType === 1 ? "제품군" : "단일제품",
-          regDate: dateFormatConvert(item.regDate),
-          updDate: dateFormatConvert(item.updDate),
-        });
-        return rows;
-      });
-    }
-    return rows;
-  };
-
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
   };
@@ -464,7 +446,7 @@ const FotaPolicyManagementPage = (props) => {
                     name="policyStatus"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "fotaShadowStatus").map(
+                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
                       (name) => (
                         <MenuItem
                           key={name.value}
@@ -493,21 +475,19 @@ const FotaPolicyManagementPage = (props) => {
                     name="devModelCode"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "devModelCode").map(
-                      (name) => (
-                        <MenuItem
-                          key={name.value}
-                          value={name.value}
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            padding: "10px",
-                          }}
-                        >
-                          {name.text}
-                        </MenuItem>
-                      )
-                    )}
+                    {getCodeCategoryItems(codes, "devModelCode").map((name) => (
+                      <MenuItem
+                        key={name.value}
+                        value={name.value}
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-start",
+                          padding: "10px",
+                        }}
+                      >
+                        {name.text}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </div>
@@ -543,8 +523,14 @@ const FotaPolicyManagementPage = (props) => {
       </div>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={!isNull(fotaPolicyList) && makeRowsFormat(fotaPolicyList)}
+        rows={
+          !isNull(fotaPolicyList) &&
+          Array.isArray(fotaPolicyList) &&
+          fotaPolicyList.length > 0 &&
+          makeRowsFormat(fotaPolicyList, codes)
+        }
         columns={columns}
+        param={param}
         totalElement={fotaPolicyTotal}
         isLoading={isLoading}
         searchOption={searchOption}

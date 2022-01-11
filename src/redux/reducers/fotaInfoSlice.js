@@ -165,6 +165,15 @@ export const getStatusList = createAsyncThunk(
     return response.data;
   }
 );
+
+export const deleteStatus = createAsyncThunk(
+  `${name}/deleteStatus`,
+  async ({ serial }, thunkAPI) => {
+    const response = await fotaAPI.deleteStatus(serial);
+    return response.data;
+  }
+);
+
 /**
  * 이력 조회
  */
@@ -373,6 +382,18 @@ const fotaInfoSlice = createSlice({
       }
     },
     [getStatusList.rejected.type]: (state, action) => {
+      state.loading = false;
+      state.error = true;
+    },
+    [deleteStatus.pending.type]: (state, action) => {
+      state.loading = true;
+      state.error = false;
+    },
+    [deleteStatus.fulfilled.type]: (state, action) => {
+      state.loading = false;
+      state.error = false;
+    },
+    [deleteStatus.rejected.type]: (state, action) => {
       state.loading = false;
       state.error = true;
     },

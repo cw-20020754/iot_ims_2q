@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Select, TextField } from "@material-ui/core";
-import { Alert, AlertTitle, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getFirmwareList } from "../../redux/reducers/fotaInfoSlice";
-import DataGridTables from "../../components/DataGridTables";
+import DataGridTables from "../../components/table/DataGridTables";
 import {
-  dateFormatConvert,
-  fileSize,
   getCodeCategoryItems,
   getText,
   isNull,
   makeQuery,
+  makeRowsFormat,
 } from "../../common/utils/CowayUtils";
 import dayjs from "dayjs";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import SearchIcon from "@mui/icons-material/Search";
-import MatEdit from "../../components/MatEdit";
+import MatEdit from "../../components/table/MatEdit";
 import AlertMessage from "../../components/AlertMessage";
 /**
  * 펌웨어관리
@@ -39,7 +38,7 @@ const FirmwareManagementPage = (props) => {
   const [endDate, setEndDate] = useState(
     dayjs(new Date()).hour(23).minute(59).second(59).format("YYYY-MM-DDTHH:mm")
   );
-  const options = useSelector((state) => state.sharedInfo.codes);
+  const codes = useSelector((state) => state.sharedInfo.codes);
   const [searchOption, setSearchOption] = useState({
     frmwrName: "",
     frmwrType: "",
@@ -307,25 +306,6 @@ const FirmwareManagementPage = (props) => {
     }));
   };
 
-  const makeRowsFormat = (list) => {
-    let rows = [];
-    if (list.length > 0) {
-      list.map((item, index) => {
-        rows.push({
-          ...item,
-          id: index,
-          frmwrType: item.frmwrType === 1 ? "WIFI" : "MCU",
-          fileSizeTxt: fileSize(item.fileSize),
-          useYn: item.useYn ? "Y" : "N",
-          regDate: dateFormatConvert(item.regDate),
-          updDate: dateFormatConvert(item.updDate),
-        });
-        return rows;
-      });
-    }
-    return rows;
-  };
-
   const onHandleSearch = () => {
     setShowSearch(!showSearch);
   };
@@ -422,7 +402,7 @@ const FirmwareManagementPage = (props) => {
                     name="frmwrType"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "frmwrType").map((name) => (
+                    {getCodeCategoryItems(codes, "frmwrType").map((name) => (
                       <MenuItem
                         key={name.value}
                         value={name.value}
@@ -449,21 +429,19 @@ const FirmwareManagementPage = (props) => {
                     name="devModelCode"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(options, "devModelCode").map(
-                      (name) => (
-                        <MenuItem
-                          key={name.value}
-                          value={name.value}
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            padding: "10px",
-                          }}
-                        >
-                          {name.text}
-                        </MenuItem>
-                      )
-                    )}
+                    {getCodeCategoryItems(codes, "devModelCode").map((name) => (
+                      <MenuItem
+                        key={name.value}
+                        value={name.value}
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-start",
+                          padding: "10px",
+                        }}
+                      >
+                        {name.text}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </div>
@@ -499,8 +477,14 @@ const FirmwareManagementPage = (props) => {
       </div>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={!isNull(firmwareMngList) && makeRowsFormat(firmwareMngList)}
+        rows={
+          !isNull(firmwareMngList) &&
+          Array.isArray(firmwareMngList) &&
+          firmwareMngList.length > 0 &&
+          makeRowsFormat(firmwareMngList, codes)
+        }
         columns={columns}
+        param={param}
         totalElement={firmwareMngTotal}
         isLoading={isLoading}
         searchOption={searchOption}

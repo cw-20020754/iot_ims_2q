@@ -4,7 +4,6 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import {
   DataGrid,
-  GridOverlay,
   GridToolbarDensitySelector,
   GridToolbarFilterButton,
   useGridApiContext,
@@ -22,24 +21,24 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {
   checkResult,
   getText,
-  isNull,
   makeExcelFormat,
   makeQuery,
   makeRowsFormat,
-} from "../common/utils/CowayUtils";
+} from "../../common/utils/CowayUtils";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { useHistory } from "react-router-dom";
+import { CSVLink } from "react-csv";
+import xlsx from "xlsx";
 import {
   getCertPolicyList,
   getFirmwareList,
   getFotaPolicyList,
   getHistoryList,
-} from "../redux/reducers/fotaInfoSlice";
-import Box from "@mui/material/Box";
-import { CSVLink } from "react-csv";
-import xlsx from "xlsx";
-import { TITLE } from "../common/constants";
+  getStatusList,
+} from "../../lib/api/fotaAPI";
+import CustomNoRowsOverlay from "./CustomNoRowsOverlay";
+import CustomLoadingOverlay from "./CustomLoadingOverlay";
 
 const DataGridTables = (props) => {
   const defaultTheme = createTheme();
@@ -47,13 +46,16 @@ const DataGridTables = (props) => {
   const dispatch = useDispatch();
   const [pages, setPages] = useState(0);
   const [pageSize, setPageSize] = React.useState(10);
-  const columns = !isNull(props) ? props.columns : [];
-  const rows = !isNull(props) ? props.rows : [];
-  const totalElement = !isNull(props) ? props.totalElement : 10;
-  const searchOption = !isNull(props) ? props.searchOption : {};
-  const category = !isNull(props) ? props.category : "";
-  const isLoading = !isNull(props) ? props.isLoading : false;
-
+  const {
+    columns,
+    rows,
+    totalElement,
+    searchOption,
+    category,
+    isLoading,
+    param,
+  } = props;
+  const options = useSelector((state) => state.sharedInfo.codes);
   const transMsg = useSelector((state) => state.sharedInfo.messages);
   const text = {
     firmware: getText(transMsg, "word.firmware"),
@@ -140,31 +142,6 @@ const DataGridTables = (props) => {
     value: PropTypes.string.isRequired,
   };
 
-  const escapeRegExp = (value) => {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  };
-
-  function CustomLoadingOverlay() {
-    return (
-      <GridOverlay>
-        <div style={{ position: "absolute", top: 0, width: "100%" }}>
-          <LinearProgress />
-        </div>
-      </GridOverlay>
-    );
-  }
-
-  // const requestSearch = (searchValue) => {
-  //   setSearchText(searchValue);
-  //   const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
-  //   const filteredRows = rows.filter((row) => {
-  //     return Object.keys(row).some((field) => {
-  //       return searchRegex.test(row[field].toString());
-  //     });
-  //   });
-  //   setRows(filteredRows);
-  // };
-
   const CustomPagination = () => {
     const apiRef = useGridApiContext();
     const [state] = useGridState(apiRef);
@@ -182,130 +159,43 @@ const DataGridTables = (props) => {
       />
     );
   };
-  const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
-    flexDirection: "column",
-    "& .ant-empty-img-1": {
-      fill: theme.palette.mode === "light" ? "#aeb8c2" : "#262626",
-    },
-    "& .ant-empty-img-2": {
-      fill: theme.palette.mode === "light" ? "#f5f5f7" : "#595959",
-    },
-    "& .ant-empty-img-3": {
-      fill: theme.palette.mode === "light" ? "#dce0e6" : "#434343",
-    },
-    "& .ant-empty-img-4": {
-      fill: theme.palette.mode === "light" ? "#fff" : "#1c1c1c",
-    },
-    "& .ant-empty-img-5": {
-      fillOpacity: theme.palette.mode === "light" ? "0.8" : "0.08",
-      fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
-    },
-  }));
-
-  function CustomNoRowsOverlay() {
-    return (
-      <StyledGridOverlay>
-        <svg
-          width="120"
-          height="100"
-          viewBox="0 0 184 152"
-          aria-hidden
-          focusable="false"
-        >
-          <g fill="none" fillRule="evenodd">
-            <g transform="translate(24 31.67)">
-              <ellipse
-                className="ant-empty-img-5"
-                cx="67.797"
-                cy="106.89"
-                rx="67.797"
-                ry="12.668"
-              />
-              <path
-                className="ant-empty-img-1"
-                d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z"
-              />
-              <path
-                className="ant-empty-img-2"
-                d="M33.83 0h67.933a4 4 0 0 1 4 4v93.344a4 4 0 0 1-4 4H33.83a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z"
-              />
-              <path
-                className="ant-empty-img-3"
-                d="M42.678 9.953h50.237a2 2 0 0 1 2 2V36.91a2 2 0 0 1-2 2H42.678a2 2 0 0 1-2-2V11.953a2 2 0 0 1 2-2zM42.94 49.767h49.713a2.262 2.262 0 1 1 0 4.524H42.94a2.262 2.262 0 0 1 0-4.524zM42.94 61.53h49.713a2.262 2.262 0 1 1 0 4.525H42.94a2.262 2.262 0 0 1 0-4.525zM121.813 105.032c-.775 3.071-3.497 5.36-6.735 5.36H20.515c-3.238 0-5.96-2.29-6.734-5.36a7.309 7.309 0 0 1-.222-1.79V69.675h26.318c2.907 0 5.25 2.448 5.25 5.42v.04c0 2.971 2.37 5.37 5.277 5.37h34.785c2.907 0 5.277-2.421 5.277-5.393V75.1c0-2.972 2.343-5.426 5.25-5.426h26.318v33.569c0 .617-.077 1.216-.221 1.789z"
-              />
-            </g>
-            <path
-              className="ant-empty-img-3"
-              d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z"
-            />
-            <g className="ant-empty-img-4" transform="translate(149.65 15.383)">
-              <ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815" />
-              <path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z" />
-            </g>
-          </g>
-        </svg>
-        <Box sx={{ mt: 1 }}>No Data</Box>
-      </StyledGridOverlay>
-    );
-  }
 
   const excelDownload = async () => {
     // console.log("totalElement >> ", totalElement, searchOption);
     let result = "";
 
     let title = "";
+    let query = makeQuery(
+      { page: 0, size: totalElement, totalItem: totalElement },
+      searchOption
+    );
+
     switch (category) {
       case "firmwareManage":
         title = text.firmwareManage;
-        result = await dispatch(
-          getFirmwareList({
-            param: makeQuery(
-              { page: 0, size: totalElement, totalItem: totalElement },
-              searchOption
-            ),
-          })
-        );
+        result = await getFirmwareList(query);
         break;
       case "fotaPolicyManage":
         title = text.fotaPolicyManage;
-        result = await dispatch(
-          getFotaPolicyList({
-            param: makeQuery(
-              { page: 0, size: totalElement, totalItem: totalElement },
-              searchOption
-            ),
-          })
-        );
+        result = await getFotaPolicyList(query);
         break;
       case "certPolicyManage":
         title = text.certPolicyManage;
-        result = await dispatch(
-          getCertPolicyList({
-            param: makeQuery(
-              { page: 0, size: totalElement, totalItem: totalElement },
-              searchOption
-            ),
-          })
-        );
+        result = await getCertPolicyList(query);
+        break;
+      case "statusSearch":
+        title = text.statusSearch + " " + text.list;
+        result = await getStatusList(query);
         break;
       case "historySearch":
-        title = text.historySearch;
-        result = await dispatch(
-          getHistoryList({
-            param: makeQuery(
-              { page: 0, size: totalElement, totalItem: totalElement },
-              searchOption
-            ),
-          })
-        );
+        title = text.historySearch + " " + text.list;
+        result = await getHistoryList(query);
         break;
       default:
         break;
     }
-    // console.log("@@@ excel download result >> ", Date.now());
-
-    if (checkResult(result)) {
-      const row = makeRowsFormat(result.payload.payload.content);
+    if (checkResult(result.data)) {
+      const row = makeRowsFormat(result.data.payload.content, options);
       const data = makeExcelFormat(row, columns);
       const ws = xlsx.utils.json_to_sheet(data);
       const wb = xlsx.utils.book_new();
@@ -353,7 +243,7 @@ const DataGridTables = (props) => {
           <Typography variant="h6" component="h2">
             {text[category]}
           </Typography>
-          {category !== "historySearch" && category !== "fotaStatus" && (
+          {category !== "historySearch" && category !== "statusSearch" && (
             <Button
               variant="outlined"
               style={{ color: "#1976DE" }}
@@ -377,8 +267,14 @@ const DataGridTables = (props) => {
             rows={rows}
             columns={columns}
             pagination
-            pageSize={pageSize}
+            pageSize={param.size}
             rowsPerPageOptions={[5, 10, 20]}
+            onCellClick={(param) => {
+              // console.log("onCellClick >> ", param);
+              if (category === "statusSearch" && param.field !== "editDelete") {
+                props.rowDetail(param.row);
+              }
+            }}
             onPageSizeChange={(newPageSize) => {
               props.onFetchData({
                 page: pages,
@@ -390,7 +286,7 @@ const DataGridTables = (props) => {
             onPageChange={(newPages) => {
               props.onFetchData({
                 page: newPages,
-                size: pageSize,
+                size: param.size,
               });
 
               setPages(newPages);
