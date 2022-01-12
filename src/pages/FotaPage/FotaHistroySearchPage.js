@@ -4,7 +4,6 @@ import { Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FormControl from "@mui/material/FormControl";
 import {
-  dateFormatConvert,
   getCodeCategoryItems,
   getText,
   isNull,
@@ -17,6 +16,12 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { getHistoryList } from "../../redux/reducers/fotaInfoSlice";
 import AlertMessage from "../../components/AlertMessage";
+import {
+  CAccordion,
+  CAccordionBody,
+  CAccordionHeader,
+  CAccordionItem,
+} from "@coreui/react";
 
 /**
  * Fota 이력 조회
@@ -298,29 +303,10 @@ const FotaHistroySearchPage = (props) => {
         />
       )}
       {/* 검색 */}
-      <div className="accordion mb-2" id="accordionExample">
-        <div className="accordion-item">
-          <h2 className="accordion-header" id="headingOne">
-            <button
-              type="button"
-              className={`accordion-button ${showSearch ? "collapsed" : ""}`}
-              data-coreui-toggle="collapse"
-              data-coreui-target="#flush-collapseOne"
-              aria-expanded="false"
-              aria-controls="flush-collapseOne"
-              onClick={onHandleSearch}
-            >
-              {text.search}
-            </button>
-          </h2>
-          <div
-            id="collapseOne"
-            className={`accordion-collapse collapse ${
-              showSearch ? "show" : ""
-            }`}
-            aria-labelledby="headingOne"
-            data-coreui-parent="#accordionExample"
-          >
+      <CAccordion flush={true}>
+        <CAccordionItem>
+          <CAccordionHeader>{text.search}</CAccordionHeader>
+          <CAccordionBody className="mb-2">
             {/* 캘린더 Native pickers */}
             <div className="p-3">
               <div
@@ -332,7 +318,7 @@ const FotaHistroySearchPage = (props) => {
               >
                 <TextField
                   id="datetime-local"
-                  label={text.term}
+                  label="기간"
                   type="datetime-local"
                   InputLabelProps={{
                     shrink: true,
@@ -371,33 +357,35 @@ const FotaHistroySearchPage = (props) => {
             <div className="row ms-4">
               <div className="col-md-2 mb-4">
                 <label htmlFor="inputState" className="form-label">
-                  {text.cert + " " + text.expired + text.yn}
+                  {text.fota + " " + text.status}
                 </label>
                 <FormControl fullWidth size="small">
                   <Select
                     defaultValue=""
-                    value={searchOption.isCertExpired}
-                    name="isCertExpired"
+                    value={searchOption.fotaStatus}
+                    name="fotaStatus"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(codes, "yn").map((name) => (
-                      <MenuItem
-                        key={name.value}
-                        value={name.value}
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-start",
-                          padding: "10px",
-                        }}
-                      >
-                        {name.text}
-                      </MenuItem>
-                    ))}
+                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
+                      (name) => (
+                        <MenuItem
+                          key={name.value}
+                          value={name.value}
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            padding: "10px",
+                          }}
+                        >
+                          {name.text}
+                        </MenuItem>
+                      )
+                    )}
                   </Select>
                 </FormControl>
               </div>
-              <div className="col-md-3 mb-4">
-                <label htmlFor="validationServer04" className="form-label">
+              <div className="col-md-2 mb-4">
+                <label htmlFor="inputState" className="form-label">
                   {text.cert + " " + text.status}
                 </label>
                 <FormControl fullWidth size="small">
@@ -407,23 +395,25 @@ const FotaHistroySearchPage = (props) => {
                     name="certStatus"
                     onChange={onChangeFormData}
                   >
-                    {getCodeCategoryItems(codes, "certStatus").map((name) => (
-                      <MenuItem
-                        key={name.value}
-                        value={name.value}
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-start",
-                          padding: "10px",
-                        }}
-                      >
-                        {name.text}
-                      </MenuItem>
-                    ))}
+                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
+                      (name) => (
+                        <MenuItem
+                          key={name.value}
+                          value={name.value}
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            padding: "10px",
+                          }}
+                        >
+                          {name.text}
+                        </MenuItem>
+                      )
+                    )}
                   </Select>
                 </FormControl>
               </div>
-              <div className="col-md-3 mb-4">
+              <div className="col-md-2 mb-4">
                 <label htmlFor="validationServer04" className="form-label">
                   {text.devModelCode}
                 </label>
@@ -450,7 +440,7 @@ const FotaHistroySearchPage = (props) => {
                   </Select>
                 </FormControl>
               </div>
-              <div className="col-md-3 mb-4">
+              <div className="col-md-4 mb-4">
                 <label htmlFor="inputEmail4" className="form-label">
                   {text.serialNum}
                 </label>
@@ -464,9 +454,9 @@ const FotaHistroySearchPage = (props) => {
                 />
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </CAccordionBody>
+        </CAccordionItem>
+      </CAccordion>
       {/* 테이블 영역 */}
       <DataGridTables
         rows={

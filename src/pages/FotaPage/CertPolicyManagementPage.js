@@ -17,6 +17,12 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import MatEdit from "../../components/table/MatEdit";
 import AlertMessage from "../../components/AlertMessage";
+import {
+  CAccordion,
+  CAccordionBody,
+  CAccordionHeader,
+  CAccordionItem,
+} from "@coreui/react";
 
 /**
  * 인증서 정책관리
@@ -321,29 +327,10 @@ const CertPolicyManagementPage = (props) => {
         />
       )}
       {/* 검색 */}
-      <div className="accordion mb-2" id="accordionExample">
-        <div className="accordion-item">
-          <h2 className="accordion-header" id="headingOne">
-            <button
-              type="button"
-              className={`accordion-button ${showSearch ? "collapsed" : ""}`}
-              data-coreui-toggle="collapse"
-              data-coreui-target="#flush-collapseOne"
-              aria-expanded="false"
-              aria-controls="flush-collapseOne"
-              onClick={onHandleSearch}
-            >
-              {text.search}
-            </button>
-          </h2>
-          <div
-            id="collapseOne"
-            className={`accordion-collapse collapse ${
-              showSearch ? "show" : ""
-            }`}
-            aria-labelledby="headingOne"
-            data-coreui-parent="#accordionExample"
-          >
+      <CAccordion flush={true}>
+        <CAccordionItem>
+          <CAccordionHeader>{text.search}</CAccordionHeader>
+          <CAccordionBody className="mb-2">
             {/* 캘린더 Native pickers */}
             <div className="p-3">
               <div
@@ -475,9 +462,9 @@ const CertPolicyManagementPage = (props) => {
                 />
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </CAccordionBody>
+        </CAccordionItem>
+      </CAccordion>
       {/* 테이블 영역 */}
       <DataGridTables
         rows={

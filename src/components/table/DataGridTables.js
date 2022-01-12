@@ -11,11 +11,10 @@ import {
 } from "@mui/x-data-grid";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
-import { createTheme, styled } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 import { createStyles, makeStyles } from "@mui/styles";
-import { LinearProgress, Pagination, PaginationItem } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import { Button, Paper, Typography } from "@material-ui/core";
-import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {
@@ -39,6 +38,7 @@ import {
 } from "../../lib/api/fotaAPI";
 import CustomNoRowsOverlay from "./CustomNoRowsOverlay";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
+import AddIcon from "@material-ui/icons/Add";
 
 const DataGridTables = (props) => {
   const defaultTheme = createTheme();
@@ -240,19 +240,46 @@ const DataGridTables = (props) => {
     <div>
       <Paper className={classes.content}>
         <div className={classes.toolbar}>
-          <Typography variant="h6" component="h2">
+          <Typography variant="h6" component="h2" className="p-1">
             {text[category]}
           </Typography>
-          {category !== "historySearch" && category !== "statusSearch" && (
+          <div>
+            {category !== "historySearch" && category !== "statusSearch" && (
+              <Button
+                variant="outlined"
+                style={{ color: "#1976DE" }}
+                className="ms-2"
+                startIcon={<AddIcon />}
+                onClick={() => goRegsiterPage()}
+              >
+                New
+              </Button>
+            )}
             <Button
               variant="outlined"
-              style={{ color: "#1976DE" }}
-              startIcon={<AppRegistrationIcon />}
-              onClick={() => goRegsiterPage()}
+              aria-label="Refresh"
+              component="span"
+              className="ms-2"
+              style={{ color: "#1769aa" }}
+              startIcon={<RefreshIcon />}
+              onClick={() => {
+                props.onRefresh();
+              }}
             >
-              Registration
+              Refresh
             </Button>
-          )}
+            <Button
+              variant="outlined"
+              aria-label="Excel Download"
+              component="span"
+              className="ms-2"
+              startIcon={<FileDownloadIcon />}
+              onClick={excelDownload}
+              style={{ color: "#357a38" }}
+            >
+              Excel Download
+            </Button>
+          </div>
         </div>
         <div
           className="w-100"
@@ -322,44 +349,39 @@ const DataGridTables = (props) => {
           {/*  </CPaginationItem>*/}
           {/*</CPagination>*/}
         </div>
-        <div className="mt-4">
-          {/* refresh */}
+        <div>
+          {category !== "historySearch" && category !== "statusSearch" && (
+            <Button
+              variant="outlined"
+              style={{ color: "#1976DE" }}
+              className="ms-2"
+              startIcon={<AddIcon />}
+              onClick={() => goRegsiterPage()}
+            >
+              New
+            </Button>
+          )}
           <Button
             variant="outlined"
-            aria-label="upload picture"
+            aria-label="Refresh"
             component="span"
             className="ms-2"
-            style={{ color: "#357a38" }}
+            style={{ color: "#1769aa" }}
+            startIcon={<RefreshIcon />}
             onClick={() => {
               props.onRefresh();
             }}
           >
-            <RefreshIcon />
+            Refresh
           </Button>
-          {/*<Button*/}
-          {/*  variant="outlined"*/}
-          {/*  aria-label="upload picture"*/}
-          {/*  component="span"*/}
-          {/*  className="ms-3"*/}
-          {/*  startIcon={<FileDownloadIcon />}*/}
-          {/*>*/}
-          {/*  <CSVLink*/}
-          {/*    data={testData}*/}
-          {/*    headers={headers}*/}
-          {/*    style={{ color: "#1769aa", textDecoration: "none" }}*/}
-          {/*  >*/}
-          {/*    {" "}*/}
-          {/*    CSV Download*/}
-          {/*  </CSVLink>*/}
-          {/*</Button>*/}
           <Button
             variant="outlined"
-            aria-label="upload picture"
+            aria-label="Excel Download"
             component="span"
-            className="ms-3"
+            className="ms-2"
             startIcon={<FileDownloadIcon />}
             onClick={excelDownload}
-            style={{ color: "#1769aa", textDecoration: "none" }}
+            style={{ color: "#357a38" }}
           >
             Excel Download
           </Button>

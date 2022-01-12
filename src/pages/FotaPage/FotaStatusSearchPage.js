@@ -44,6 +44,12 @@ import ClearIcon from "@mui/icons-material/Clear";
 import PropTypes from "prop-types";
 import CustomLoadingOverlay from "../../components/table/CustomLoadingOverlay";
 import CustomNoRowsOverlay from "../../components/table/CustomNoRowsOverlay";
+import {
+  CAccordion,
+  CAccordionBody,
+  CAccordionHeader,
+  CAccordionItem,
+} from "@coreui/react";
 
 /**
  * 포타 상태 조회
@@ -572,6 +578,43 @@ const FotaStatusSearchPage = (props) => {
     [dispatch, param, searchOption, initial]
   );
 
+  const setColumnDetail = (type, row) => {
+    const { field } = row;
+
+    if (
+      type === "desired" &&
+      (isNull(desiredList) || isNull(desiredList[field]))
+    ) {
+      return "-";
+    }
+
+    if (
+      type === "reported" &&
+      (isNull(reportedList) || isNull(reportedList[field]))
+    ) {
+      return "-";
+    }
+
+    const value = type === "desired" ? desiredList[field] : reportedList[field];
+
+    switch (field) {
+      case "originDt":
+      case "regDate":
+      case "updDate":
+        return reformatData("date", value, field, codes);
+      case "wifiFileSize":
+      case "mcuFileSize":
+        return reformatData("fileSize", value, field, codes);
+      case "wifiFotaStatus":
+      case "mcuFotaStatus":
+        return reformatData("text", value, "fotaStatus", codes);
+      case "isCertExpired":
+        return reformatData("yn", value);
+      default:
+        return value;
+    }
+  };
+
   const DenseTable = (props) => {
     const { type } = props;
 
@@ -591,13 +634,7 @@ const FotaStatusSearchPage = (props) => {
             >
               {columnsDetail.map((row) => (
                 <TableCell align={"center"} key={row.headerName}>
-                  {type === "desired"
-                    ? isNull(desiredList) || isNull(desiredList[row.field])
-                      ? "-"
-                      : reformatData(row.field, desiredList[row.field], codes)
-                    : isNull(reportedList) || isNull(reportedList[row.field])
-                    ? "-"
-                    : reformatData(row.field, reportedList[row.field], codes)}
+                  {setColumnDetail(type, row)}
                 </TableCell>
               ))}
             </TableRow>
@@ -720,29 +757,10 @@ const FotaStatusSearchPage = (props) => {
         />
       )}
       {/* 검색 */}
-      <div className="accordion mb-2" id="accordionExample">
-        <div className="accordion-item">
-          <h2 className="accordion-header" id="headingOne">
-            <button
-              type="button"
-              className={`accordion-button ${showSearch ? "collapsed" : ""}`}
-              data-coreui-toggle="collapse"
-              data-coreui-target="#flush-collapseOne"
-              aria-expanded="false"
-              aria-controls="flush-collapseOne"
-              onClick={onHandleSearch}
-            >
-              {text.search}
-            </button>
-          </h2>
-          <div
-            id="collapseOne"
-            className={`accordion-collapse collapse ${
-              showSearch ? "show" : ""
-            }`}
-            aria-labelledby="headingOne"
-            data-coreui-parent="#accordionExample"
-          >
+      <CAccordion flush={true}>
+        <CAccordionItem>
+          <CAccordionHeader>{text.search}</CAccordionHeader>
+          <CAccordionBody className="mb-2">
             {/* 캘린더 Native pickers */}
             <div className="p-3">
               <div
@@ -890,9 +908,9 @@ const FotaStatusSearchPage = (props) => {
                 />
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </CAccordionBody>
+        </CAccordionItem>
+      </CAccordion>
       {openDetails && <FotaStatusDetail />}
       {/* 상태 이력 검색 */}
       <Dialog
