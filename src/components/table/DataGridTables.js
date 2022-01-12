@@ -349,43 +349,6 @@ const DataGridTables = (props) => {
           {/*  </CPaginationItem>*/}
           {/*</CPagination>*/}
         </div>
-        <div>
-          {category !== "historySearch" && category !== "statusSearch" && (
-            <Button
-              variant="outlined"
-              style={{ color: "#1976DE" }}
-              className="ms-2"
-              startIcon={<AddIcon />}
-              onClick={() => goRegsiterPage()}
-            >
-              New
-            </Button>
-          )}
-          <Button
-            variant="outlined"
-            aria-label="Refresh"
-            component="span"
-            className="ms-2"
-            style={{ color: "#1769aa" }}
-            startIcon={<RefreshIcon />}
-            onClick={() => {
-              props.onRefresh();
-            }}
-          >
-            Refresh
-          </Button>
-          <Button
-            variant="outlined"
-            aria-label="Excel Download"
-            component="span"
-            className="ms-2"
-            startIcon={<FileDownloadIcon />}
-            onClick={excelDownload}
-            style={{ color: "#357a38" }}
-          >
-            Excel Download
-          </Button>
-        </div>
       </Paper>
     </div>
   );
