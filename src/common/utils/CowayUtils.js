@@ -52,11 +52,10 @@ const dateToTimestampConvert = (date) => {
 };
 
 const makeurlQeuryString = (url, param) => {
-  let fullUrl = "";
   if (param) {
-    fullUrl =
-      url + (typeof param === "string" ? param : "?" + qs.stringify(param));
-    return fullUrl;
+    return (
+      url + (typeof param === "string" ? param : "?" + qs.stringify(param))
+    );
   } else {
     return url;
   }
@@ -160,17 +159,22 @@ const makeRowsFormat = (list, codes) => {
  * @returns {string|*|string}
  */
 const reformatData = (type, value, catetory, codes) => {
-  switch (type) {
-    case "text":
-      return getCodeToText(catetory, value, codes);
-    case "date":
-      return dateFormatConvert(value);
-    case "fileSize":
-      return fileSize(value);
-    case "yn":
-      return value ? "Y" : "N";
-    default:
-      break;
+  // console.log(type, value, catetory, codes);
+  if (!isNull(value)) {
+    switch (type) {
+      case "text":
+        return getCodeToText(catetory, value, codes);
+      case "date":
+        return dateFormatConvert(value);
+      case "fileSize":
+        return fileSize(value);
+      case "yn":
+        return value ? "Y" : "N";
+      default:
+        break;
+    }
+  } else {
+    return value;
   }
 };
 

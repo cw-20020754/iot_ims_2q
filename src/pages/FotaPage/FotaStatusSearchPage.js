@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Select, TextField } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import {
   Alert,
   Button,
@@ -14,18 +14,15 @@ import {
   TableRow,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import FormControl from "@mui/material/FormControl";
 import {
   checkResult,
   escapeRegExp,
-  getCodeCategoryItems,
   getText,
   isNull,
   makeQuery,
   makeRowsFormat,
   reformatData,
 } from "../../common/utils/CowayUtils";
-import MenuItem from "@mui/material/MenuItem";
 import DataGridTables from "../../components/table/DataGridTables";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -44,6 +41,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import PropTypes from "prop-types";
 import CustomLoadingOverlay from "../../components/table/CustomLoadingOverlay";
 import CustomNoRowsOverlay from "../../components/table/CustomNoRowsOverlay";
+import SearchCondition from "../../components/SearchCondition";
 
 /**
  * 포타 상태 조회
@@ -129,6 +127,32 @@ const FotaStatusSearchPage = (props) => {
   const [historyRows, setHistoryRows] = useState([]);
   const [totalHistoryRows, setTotalHistoryRows] = useState([]);
   const [rowData, setRowData] = useState(null);
+
+  const conditionFormList = [
+    {
+      id: "fotaStatus",
+      category: "fotaStatus",
+      label: text.fota + " " + text.status,
+      type: "selectBox",
+    },
+    {
+      id: "certStatus",
+      category: "certStatus",
+      label: text.cert + " " + text.status,
+      type: "selectBox",
+    },
+    {
+      id: "devModelCode",
+      category: "devModelCode",
+      label: text.devModelCode,
+      type: "selectBox",
+    },
+    {
+      id: "serial",
+      label: text.serialNum,
+      type: "textBox",
+    },
+  ];
 
   const historyColumns = [
     {
@@ -417,19 +441,6 @@ const FotaStatusSearchPage = (props) => {
 
   const [totalHistory, setTotalHistory] = useState(0);
 
-  const onHandleSearch = () => {
-    setShowSearch(!showSearch);
-  };
-
-  const onChangeFormData = (e) => {
-    const { name, value } = e.target;
-
-    setSearchOption((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
   const handleDetailClick = async (type, data) => {
     if (type === "info") {
       rowDetail(data);
@@ -521,21 +532,14 @@ const FotaStatusSearchPage = (props) => {
         .format("YYYY-MM-DDTHH:mm")
     );
 
-    setSearchOption({
-      fotaStatus: "",
-      devModelCode: "",
-      startDate: startDate,
-      endDate: endDate,
-      serial: "",
-      certStatus: "",
-    });
+    setSearchOption(null);
     setShowSearch(false);
     onFetchData();
     window.scrollTo(0, 0);
   };
 
   const onFetchData = useCallback(
-    async (data) => {
+    async (data, conditions) => {
       if (initial) {
         setInitial(false);
       }
@@ -549,7 +553,14 @@ const FotaStatusSearchPage = (props) => {
         params = data;
         setParam(data);
       }
-      let option = initial ? "" : searchOption;
+      let option = "";
+
+      if (!isNull(conditions)) {
+        option = conditions;
+        setSearchOption(conditions);
+      } else if (!isNull(searchOption)) {
+        option = searchOption;
+      }
 
       const result = await dispatch(
         getStatusList({
@@ -572,6 +583,43 @@ const FotaStatusSearchPage = (props) => {
     [dispatch, param, searchOption, initial]
   );
 
+  const setColumnDetail = (type, row) => {
+    const { field } = row;
+
+    if (
+      type === "desired" &&
+      (isNull(desiredList) || isNull(desiredList[field]))
+    ) {
+      return "-";
+    }
+
+    if (
+      type === "reported" &&
+      (isNull(reportedList) || isNull(reportedList[field]))
+    ) {
+      return "-";
+    }
+
+    const value = type === "desired" ? desiredList[field] : reportedList[field];
+
+    switch (field) {
+      case "originDt":
+      case "regDate":
+      case "updDate":
+        return reformatData("date", value, field, codes);
+      case "wifiFileSize":
+      case "mcuFileSize":
+        return reformatData("fileSize", value, field, codes);
+      case "wifiFotaStatus":
+      case "mcuFotaStatus":
+        return reformatData("text", value, "fotaStatus", codes);
+      case "isCertExpired":
+        return reformatData("yn", value);
+      default:
+        return value;
+    }
+  };
+
   const DenseTable = (props) => {
     const { type } = props;
 
@@ -591,13 +639,7 @@ const FotaStatusSearchPage = (props) => {
             >
               {columnsDetail.map((row) => (
                 <TableCell align={"center"} key={row.headerName}>
-                  {type === "desired"
-                    ? isNull(desiredList) || isNull(desiredList[row.field])
-                      ? "-"
-                      : reformatData(row.field, desiredList[row.field], codes)
-                    : isNull(reportedList) || isNull(reportedList[row.field])
-                    ? "-"
-                    : reformatData(row.field, reportedList[row.field], codes)}
+                  {setColumnDetail(type, row)}
                 </TableCell>
               ))}
             </TableRow>
@@ -720,179 +762,10 @@ const FotaStatusSearchPage = (props) => {
         />
       )}
       {/* 검색 */}
-      <div className="accordion mb-2" id="accordionExample">
-        <div className="accordion-item">
-          <h2 className="accordion-header" id="headingOne">
-            <button
-              type="button"
-              className={`accordion-button ${showSearch ? "collapsed" : ""}`}
-              data-coreui-toggle="collapse"
-              data-coreui-target="#flush-collapseOne"
-              aria-expanded="false"
-              aria-controls="flush-collapseOne"
-              onClick={onHandleSearch}
-            >
-              {text.search}
-            </button>
-          </h2>
-          <div
-            id="collapseOne"
-            className={`accordion-collapse collapse ${
-              showSearch ? "show" : ""
-            }`}
-            aria-labelledby="headingOne"
-            data-coreui-parent="#accordionExample"
-          >
-            {/* 캘린더 Native pickers */}
-            <div className="p-3">
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "baseline",
-                  justifyContent: "center",
-                }}
-              >
-                <TextField
-                  id="datetime-local"
-                  label="기간"
-                  type="datetime-local"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  name="startDate"
-                  value={searchOption.startDate}
-                  className="col-md-5 mb-4"
-                  onChange={onChangeFormData}
-                />
-                <span className="p-3 mb-4"> ~ </span>
-                <TextField
-                  id="datetime-local"
-                  label={text.term}
-                  type="datetime-local"
-                  value={searchOption.endDate}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  name="endDate"
-                  className="col-md-5 mb-4 ms-3"
-                  onChange={onChangeFormData}
-                />
-              </div>
-              <Button
-                variant="outlined"
-                className="ms-4"
-                style={{ color: "#1976DE" }}
-                startIcon={<SearchIcon />}
-                onClick={() => {
-                  onFetchData();
-                }}
-              >
-                Search
-              </Button>
-            </div>
-            <div className="row ms-4">
-              <div className="col-md-2 mb-4">
-                <label htmlFor="inputState" className="form-label">
-                  {text.fota + " " + text.status}
-                </label>
-                <FormControl fullWidth size="small">
-                  <Select
-                    defaultValue=""
-                    value={searchOption.fotaStatus}
-                    name="fotaStatus"
-                    onChange={onChangeFormData}
-                  >
-                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
-                      (name) => (
-                        <MenuItem
-                          key={name.value}
-                          value={name.value}
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            padding: "10px",
-                          }}
-                        >
-                          {name.text}
-                        </MenuItem>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="col-md-2 mb-4">
-                <label htmlFor="inputState" className="form-label">
-                  {text.cert + " " + text.status}
-                </label>
-                <FormControl fullWidth size="small">
-                  <Select
-                    defaultValue=""
-                    value={searchOption.certStatus}
-                    name="certStatus"
-                    onChange={onChangeFormData}
-                  >
-                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
-                      (name) => (
-                        <MenuItem
-                          key={name.value}
-                          value={name.value}
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            padding: "10px",
-                          }}
-                        >
-                          {name.text}
-                        </MenuItem>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="col-md-2 mb-4">
-                <label htmlFor="validationServer04" className="form-label">
-                  {text.devModelCode}
-                </label>
-                <FormControl fullWidth size="small">
-                  <Select
-                    defaultValue=""
-                    value={searchOption.devModelCode}
-                    name="devModelCode"
-                    onChange={onChangeFormData}
-                  >
-                    {getCodeCategoryItems(codes, "devModelCode").map((name) => (
-                      <MenuItem
-                        key={name.value}
-                        value={name.value}
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-start",
-                          padding: "10px",
-                        }}
-                      >
-                        {name.text}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="col-md-4 mb-4">
-                <label htmlFor="inputEmail4" className="form-label">
-                  {text.serialNum}
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="inputEmail4"
-                  value={searchOption.serial}
-                  name="serial"
-                  onChange={onChangeFormData}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SearchCondition
+        onFetchData={onFetchData}
+        conditionFormList={conditionFormList}
+      />
       {openDetails && <FotaStatusDetail />}
       {/* 상태 이력 검색 */}
       <Dialog
@@ -988,12 +861,7 @@ const FotaStatusSearchPage = (props) => {
       </Dialog>
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={
-          !isNull(fotaStatusList) &&
-          Array.isArray(fotaStatusList) &&
-          fotaStatusList.length > 0 &&
-          makeRowsFormat(fotaStatusList, codes)
-        }
+        rows={!isNull(fotaStatusList) && makeRowsFormat(fotaStatusList, codes)}
         columns={columns}
         param={param}
         totalElement={fotaStatusTotal}
