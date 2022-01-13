@@ -4,7 +4,7 @@ const TITLE = {
 };
 
 const API = {
-  FOTA_URL: "https://tfota-api.iocareus.com",
+  FOTA_URL: process.env.REACT_APP_FOTA_URL,
   HEADERS: {
     "Content-Type": "application/json",
     Authorization: "",
@@ -15,13 +15,4 @@ const API = {
   },
 };
 
-const POLICY_STATUS = {
-  0: "NONE",
-  1: "신규",
-  2: "배포대기",
-  3: "배포중",
-  4: "성공",
-  5: "실패",
-};
-
-export { TITLE, API, POLICY_STATUS };
+export { TITLE, API };

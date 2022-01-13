@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import { Button } from "@mui/material";
-import { Select, TextField } from "@material-ui/core";
-import SearchIcon from "@mui/icons-material/Search";
 import {
-  getCodeCategoryItems,
   getText,
   isNull,
   makeQuery,
@@ -17,12 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import MatEdit from "../../components/table/MatEdit";
 import AlertMessage from "../../components/AlertMessage";
-import {
-  CAccordion,
-  CAccordionBody,
-  CAccordionHeader,
-  CAccordionItem,
-} from "@coreui/react";
+import SearchCondition from "../../components/SearchCondition";
 
 /**
  * 인증서 정책관리
@@ -83,6 +72,32 @@ const CertPolicyManagementPage = (props) => {
     id: getText(transMsg, "word.id"),
     term: getText(transMsg, "word.term"),
   };
+
+  const conditionFormList = [
+    {
+      id: "policyStatus",
+      category: "fotaShadowStatus",
+      label: text.policy + " " + text.status,
+      type: "selectBox",
+    },
+    {
+      id: "devModelCode",
+      category: "devModelCode",
+      label: text.devModelCode,
+      type: "selectBox",
+    },
+    {
+      id: "policyName",
+      label: text.policy + " " + text.name,
+      type: "textBox",
+    },
+    {
+      id: "targetId",
+      label: text.target + " " + text.id,
+      type: "textBox",
+    },
+  ];
+
   const columns = [
     {
       field: "editDelete",
@@ -235,14 +250,21 @@ const CertPolicyManagementPage = (props) => {
   const [isFail, setIsFail] = useState(false);
 
   const onFetchData = useCallback(
-    async (data) => {
+    async (data, conditions) => {
       if (initial) {
         setInitial(false);
       }
 
       setIsLoading(true);
       let params = isNull(data) ? param : data;
-      let option = initial ? "" : searchOption;
+      let option = "";
+
+      if (!isNull(conditions)) {
+        option = conditions;
+        setSearchOption(conditions);
+      } else if (!isNull(searchOption)) {
+        option = searchOption;
+      }
 
       const result = await dispatch(
         getCertPolicyList({
@@ -265,20 +287,6 @@ const CertPolicyManagementPage = (props) => {
     [dispatch, param, searchOption, initial]
   );
 
-  const onHandleSearch = () => {
-    setShowSearch(!showSearch);
-  };
-
-  const onChangeFormData = (e) => {
-    const { name, value } = e.target;
-    // console.log("name, value >> ", name, value);
-
-    setSearchOption((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
   // 리프레시 누른 경우
   const onRefresh = () => {
     setStartDate(
@@ -297,14 +305,7 @@ const CertPolicyManagementPage = (props) => {
         .format("YYYY-MM-DDTHH:mm")
     );
 
-    setSearchOption({
-      policyName: "",
-      policyStatus: "",
-      devModelCode: "",
-      targetId: "",
-      startDate: startDate,
-      endDate: endDate,
-    });
+    setSearchOption(null);
 
     setShowSearch(false);
     onFetchData();
@@ -327,152 +328,13 @@ const CertPolicyManagementPage = (props) => {
         />
       )}
       {/* 검색 */}
-      <CAccordion flush={true}>
-        <CAccordionItem>
-          <CAccordionHeader>{text.search}</CAccordionHeader>
-          <CAccordionBody className="mb-2">
-            {/* 캘린더 Native pickers */}
-            <div className="p-3">
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "baseline",
-                  justifyContent: "center",
-                }}
-              >
-                <TextField
-                  id="datetime-local"
-                  label={text.term}
-                  type="datetime-local"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  name="startDate"
-                  value={searchOption.startDate}
-                  className="col-md-5 mb-4"
-                  onChange={onChangeFormData}
-                />
-                <span className="p-3 mb-4"> ~ </span>
-                <TextField
-                  id="datetime-local"
-                  label={text.term}
-                  type="datetime-local"
-                  value={searchOption.endDate}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  name="endDate"
-                  className="col-md-5 mb-4 ms-3"
-                  onChange={onChangeFormData}
-                />
-              </div>
-              <Button
-                variant="outlined"
-                className="ms-4"
-                style={{ color: "#1976DE" }}
-                startIcon={<SearchIcon />}
-                onClick={() => {
-                  onFetchData();
-                }}
-              >
-                Search
-              </Button>
-            </div>
-            <div className="row ms-4">
-              <div className="col-md-2 mb-4">
-                <label htmlFor="inputState" className="form-label">
-                  {text.policy + " " + text.status}
-                </label>
-                <FormControl fullWidth size="small">
-                  <Select
-                    defaultValue=""
-                    value={searchOption.policyStatus}
-                    name="policyStatus"
-                    onChange={onChangeFormData}
-                  >
-                    {getCodeCategoryItems(codes, "fotaShadowStatus").map(
-                      (name) => (
-                        <MenuItem
-                          key={name.value}
-                          value={name.value}
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            padding: "10px",
-                          }}
-                        >
-                          {name.text}
-                        </MenuItem>
-                      )
-                    )}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="col-md-3 mb-4">
-                <label htmlFor="validationServer04" className="form-label">
-                  {text.devModelCode}
-                </label>
-                <FormControl fullWidth size="small">
-                  <Select
-                    defaultValue=""
-                    value={searchOption.devModelCode}
-                    name="devModelCode"
-                    onChange={onChangeFormData}
-                  >
-                    {getCodeCategoryItems(codes, "devModelCode").map((name) => (
-                      <MenuItem
-                        key={name.value}
-                        value={name.value}
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-start",
-                          padding: "10px",
-                        }}
-                      >
-                        {name.text}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="col-md-3 mb-4">
-                <label htmlFor="inputEmail4" className="form-label">
-                  {text.policy + " " + text.name}
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="inputEmail4"
-                  value={searchOption.policyName}
-                  name="policyName"
-                  onChange={onChangeFormData}
-                />
-              </div>
-              <div className="col-md-3 mb-4">
-                <label htmlFor="inputEmail4" className="form-label">
-                  {text.target + " " + text.id}
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="inputEmail4"
-                  value={searchOption.targetId}
-                  name="targetId"
-                  onChange={onChangeFormData}
-                />
-              </div>
-            </div>
-          </CAccordionBody>
-        </CAccordionItem>
-      </CAccordion>
+      <SearchCondition
+        onFetchData={onFetchData}
+        conditionFormList={conditionFormList}
+      />
       {/* 테이블 영역 */}
       <DataGridTables
-        rows={
-          !isNull(certPolicyList) &&
-          Array.isArray(certPolicyList) &&
-          certPolicyList.length > 0 &&
-          makeRowsFormat(certPolicyList, codes)
-        }
+        rows={!isNull(certPolicyList) && makeRowsFormat(certPolicyList, codes)}
         columns={columns}
         param={param}
         totalElement={certPolicyTotal}
