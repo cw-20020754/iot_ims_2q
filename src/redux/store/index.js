@@ -1,10 +1,10 @@
 import { logger } from "redux-logger";
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import reducer from "../reducers";
 
 const store = configureStore({
   reducer,
-  middleware:
+  middleware: (getDefaultMiddleware) =>
     process.env.NODE_ENV === "production"
       ? getDefaultMiddleware({
           serializableCheck: false,

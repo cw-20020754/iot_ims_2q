@@ -4,6 +4,9 @@ const name = "changeState";
 
 const initialState = {
   sidebarShow: true,
+  isLoading: false,
+  selectedNav: "",
+  collapsedOpen: false,
 };
 
 const changeStateSlice = createSlice({
@@ -13,9 +16,19 @@ const changeStateSlice = createSlice({
     setSidebarShow(state, action) {
       state.sidebarShow = action.payload;
     },
+    setIsLoading(state, action) {
+      state.isLoading = action.payload;
+    },
+    setCurrentNav(state, action) {
+      state.selectedNav = action.payload;
+    },
+    setCollapsedOpen(state, action) {
+      state.collapsedOpen = action.payload;
+    },
   },
   extraReducers: {},
 });
 
-export const { setSidebarShow } = changeStateSlice.actions;
+export const { setSidebarShow, setIsLoading, setCurrentNav, setCollapsedOpen } =
+  changeStateSlice.actions;
 export default changeStateSlice.reducer;

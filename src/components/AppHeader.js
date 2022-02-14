@@ -1,83 +1,53 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  CContainer,
-  CHeader,
-  CHeaderBrand,
-  CHeaderDivider,
-  CHeaderNav,
-  CHeaderToggler,
-  CNavLink,
-  CNavItem,
-} from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from "@coreui/icons";
-
-import { AppBreadcrumb } from "./index";
-import { AppHeaderDropdown } from "./header/index";
+import { styled } from "@mui/material/styles";
+import { IconButton, Toolbar } from "@mui/material";
+import MuiAppBar from "@mui/material/AppBar";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useDispatch, useSelector } from "react-redux";
 import { setSidebarShow } from "../redux/reducers/changeStateSlice";
 
 const AppHeader = () => {
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.changeState.sidebarShow);
+  // styles ----------------------------------------------------------------------
+
+  const drawerWidth = 240;
+
+  const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== "open",
+  })(({ theme, open }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    backgroundColor: `${theme.palette.background.paper}`,
+    ...(open && {
+      marginLeft: drawerWidth,
+      width: `calc(100% - ${drawerWidth}px)`,
+      transition: theme.transitions.create(["width", "margin"], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    }),
+    boxShadow: theme.shadows[2],
+  }));
 
   return (
-    <CHeader position="sticky" className="mb-4">
-      <CContainer fluid>
-        <CHeaderToggler
-          className="ps-1"
-          onClick={() => dispatch(setSidebarShow(!sidebarShow))}
+    <AppBar position="fixed" open={sidebarShow} enableColorOnDark elevation={0}>
+      <Toolbar>
+        <IconButton
+          color="neutral"
+          aria-label="open drawer"
+          onClick={() => {
+            dispatch(setSidebarShow(!sidebarShow));
+          }}
+          edge="start"
         >
-          <CIcon icon={cilMenu} size="lg" />
-        </CHeaderToggler>
-        <CHeaderBrand className="mx-auto d-md-none" to="/">
-          <h2 style={{ color: "#00a7e1 " }}> Coway </h2>
-          {/*<CIcon icon={logo} height={48} alt="Logo" />*/}
-        </CHeaderBrand>
-        <CHeaderNav className="d-none d-md-flex me-auto">
-          <CNavItem>
-            <CNavLink
-              to="/dashboard"
-              component={NavLink}
-              activeClassName="active"
-            >
-              Dashboard
-            </CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">Users</CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">Settings</CNavLink>
-          </CNavItem>
-        </CHeaderNav>
-        <CHeaderNav>
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilBell} size="lg" />
-            </CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilList} size="lg" />
-            </CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilEnvelopeOpen} size="lg" />
-            </CNavLink>
-          </CNavItem>
-        </CHeaderNav>
-        <CHeaderNav className="ms-3">
-          <AppHeaderDropdown />
-        </CHeaderNav>
-      </CContainer>
-      <CHeaderDivider />
-      <CContainer fluid>
-        <AppBreadcrumb />
-      </CContainer>
-    </CHeader>
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
   );
 };
 

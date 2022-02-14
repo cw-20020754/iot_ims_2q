@@ -1,19 +1,22 @@
-import React from 'react'
-import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
+import React from "react";
+import { Box, CssBaseline } from "@mui/material";
+import AppHeader from "../components/AppHeader";
+import AppSidebar from "../components/Sidebar/AppSidebar";
+import AppContent from "../components/AppContent";
+import AppFooter from "../components/AppFooter";
 
 const DefaultLayout = () => {
   return (
-    <div>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      {/* header */}
+      <AppHeader />
       <AppSidebar />
-      <div className="wrapper d-flex flex-column min-vh-100 bg-light">
-        <AppHeader />
-        <div className="body flex-grow-1 px-3">
-          <AppContent />
-        </div>
-        <AppFooter />
-      </div>
-    </div>
-  )
-}
+      {/* main */}
+      <AppContent />
+      <AppFooter />
+    </Box>
+  );
+};
 
-export default DefaultLayout
+export default DefaultLayout;

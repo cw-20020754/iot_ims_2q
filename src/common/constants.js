@@ -1,7 +1,5 @@
-const TITLE = {
-  dashboard: "대시보드",
-  deviceMonitoring: "디바이스 통합 모니터링",
-};
+export const DRAWER_WIDTH = 240;
+export const GRID_SPACING = 3;
 
 const API = {
   FOTA_URL: process.env.REACT_APP_FOTA_URL,
@@ -15,4 +13,4 @@ const API = {
   },
 };
 
-export { TITLE, API };
+export { API };
