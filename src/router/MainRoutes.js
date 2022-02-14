@@ -1,9 +1,8 @@
 import React, { lazy } from "react";
+import DashBoard from "../pages/DashBoard";
+import DevIntegratedMonitor from "../pages/DeviceMonitoring";
+import DeviceSearch from "../pages/DeviceSearch";
 const DefaultLayout = lazy(() => import("../layout/DefaultLayout"));
-const DashBoard = lazy(() => import("../pages/DashBoard"));
-const DevIntegratedMonitor = lazy(() => import("../pages/DeviceMonitoring"));
-const DeviceSearch = lazy(() => import("../pages/DeviceSearch"));
-const Login = lazy(() => import("../pages/Auth/Login"));
 
 // ==============================|| MAIN ROUTING ||============================== //
 

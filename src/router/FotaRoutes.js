@@ -1,10 +1,10 @@
-import React, { lazy } from "react";
-const DefaultLayout = lazy(() => import("../layout/DefaultLayout"));
-const FirmwareManage = lazy(() => import("../pages/Fota/FirmwareManage"));
-const FotaPolicy = lazy(() => import("../pages/Fota/FotaPolicy"));
-const CertPolicy = lazy(() => import("../pages/Fota/CertPolicy"));
-const FotaStatus = lazy(() => import("../pages/Fota/FotaStatus"));
-const FotaHistory = lazy(() => import("../pages/Fota/FotaHistory"));
+import React from "react";
+import { FirmwareManage } from "../pages/Fota";
+import FotaPolicy from "../pages/Fota/FotaPolicy";
+import CertPolicy from "../pages/Fota/CertPolicy";
+import FotaStatus from "../pages/Fota/FotaStatus";
+import FotaHistory from "../pages/Fota/FotaHistory";
+import DefaultLayout from "../layout/DefaultLayout";
 
 // ==============================|| FOTA ROUTING ||============================== //
 
