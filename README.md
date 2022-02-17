@@ -1,70 +1,131 @@
-# Getting Started with Create React App
+# iotims-admin-web-client
+통합관제 리뉴얼 WEB(react)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
 
-In the project directory, you can run:
+## ⛏Project Setup
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### `yarn`
+npm을 대체할 수 있는 도구로 npm보다 더 빠르며 효율적인 캐시 시스템과 기타 부가 기능을
+제공  [(yarn 공식사이트)](https://classic.yarnpkg.com/en/docs/install#windows-stable)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+ ```txt
+yarn install
 
-### `npm test`
+yarn start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+### `yarn test`
+Run your tests.  [running tests](https://facebook.github.io/create-react-app/docs/running-tests)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `yarn build`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Compiles and minifies for production. [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `yarn eject`
+The built-in environment setting file is displayed in the project root path.
 
-### `npm run eject`
+### `material-UI` & `Core_UI`
+UI 관련 libaray  
+[(material-Ui)](https://material-ui.com/)  
+[(core-Ui)](https://coreui.io/react/docs/4.1/getting-started/introduction/)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+ ```txt
+yarn add @material-ui/core
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+yarn add @material-ui/icons
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+yarn add @coreui/react
+```
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### `router`
+react-router
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+ ```txt
+yarn add react-router-dom
+```
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### `Redux`
+상태 관리 라이브러리
 
-### Analyzing the Bundle Size
+ ```txt
+ 
+yarn add redux react-redux redux-devtools-extension redux-logger redux-thunk
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
 
-### Making a Progressive Web App
+<br>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### `Redux toolkit` [(redux-toolkit)](https://redux-toolkit.js.org/introduction/getting-started)
+Redux를 더 사용하기 쉽게 만들기 위해 Redux에서 공식 제공하는 개발도구
+```txt
+yarn add @reduxjs/toolkit
+```
 
-### Advanced Configuration
+<br>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
+### `Day.js` [(Day.js)](https://day.js.org/)
+Day.js는 moment.js 축소된 버전으로 moment.js와 동일한 API지만 용량이 적기 때문에 해당 library를 적용함.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```txt
+yarn add dayjs
+```
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## ⛏ screen configuration
+../page/
+
+|폴더|router|화면|설명|
+|---|---|---|-----|
+|DashboardPage/index.js|/dashboard|대시보드|대시보드 메인 페이지|
+|DeviceIntegratedMonitoringPage/index.js|/deviceMonitoring|디바이스 통합 모니터링|통합 모니터링 페이지|
+|FotaPage/FirmwareManagementPage.js|/fota/firmwareManagement|FOTA Firmware 관리|FOTA Firmware 리스트, 펌웨어 리스트 추가 수정 삭제 및 엑셀 다운로드 기능|
+|FotaPage/FirmwareManagementDetailPage.js|/fota/firmwareManagementDetail|FOTA Firmware 관리 상세|Firmware 등록 및 수정|
+|FotaPage/FotaPolicyManagementPage.js|/fota/policyManagement|FOTA 정책관리|FOTA 정책 리스트, 정책 추가 수정 삭제 및 엑셀 다운로드 기능|
+|FotaPage/FotaPolicyManagementDetailPage.js|/fota/policyManagementDetail|FOTA 정책관리 상세|FOTA 정책 등록 및 수정|
+|FotaPage/CertPolicyManagementPage.js|/fota/certPolicyManagement|인증서 정책관리|인증서 정책 리스트, 인증서 추가 수정 삭제 및 엑셀 다운로드 기능|
+|FotaPage/CertPolicyManagementDetailPage.js|/fota/certPolicyManagementDetail|인증서 정책관리 상세|인증서 정책 등록 및 수정|
+|FotaPage/FotaStatusSearchPage.js|/fota/fotaStatusSearchPage|FOTA 상태 조회|Fota 상태 조회 리스트, 펌웨어 파일 상세 및 이력 조회 |
+|FotaPage/FotaHistroySearchPage.js|/fota/fotaHistorySearchPage|FOTA 이력 조회|Fota 이력 조회 리스트|
+
+
+## ⛏ File Structure
+
+
+```
+iotims-admin-web-client
+├── public/          #static files
+│   └── index.html   #html template
+│
+├── src/             #project root
+│   ├── assets/      #assets - js icons object
+    │     ├── common   # scss (related style)
+    │     └── ...      # font, icon, images ..
+    ├── common/      #product data with common utils, components
+    │   ├── data/  #container source - template layout
+|   │   ├── _nav.js  #sidebar config
+|   │   └── ...   
+    │── components/  #reusable component folder
+    │── layout/      #layout
+    ├── lib/         # api related
+    │     └── api      
+    ├── pages/       # navigation related detail pages
+│   ├── redux/       #redux
+│   │    ├── reducers #redux reducers
+    │    └── store   # redux store
+│   ├── views/       # views source (common button, theme...)
+    ├── _nav.js/     # navigation with icon, router..
+│   ├── App.js
+│   ├── index.js
+│   ├── routes.js    #routes config
+│   └── store.js     #template state example 
+│
+└── package.json
+```
+
