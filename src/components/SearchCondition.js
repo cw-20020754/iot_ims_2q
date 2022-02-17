@@ -25,6 +25,7 @@ import { getCodeCategoryItems, isNull } from '../common/utils';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import InputField from './UiComponent/input-group/InputField';
 const SearchCondition = (props) => {
   const { conditionList } = props;
   const classes = AppStyles();
@@ -80,32 +81,15 @@ const SearchCondition = (props) => {
                 xs={item.size.xs}
                 lg={item.size.lg}
                 md={item.size.md}
-                key={item.id}
+                key={item.category}
               >
-                {item.type === 'dateRange' && (
-                  <TextField
-                    id="datetime-local"
-                    type="datetime-local"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    label={'기간'}
-                    value={searchOption.startDate}
-                    fullWidth
-                    name="startDate"
-                    variant={'standard'}
-                    onChange={onChangeFormData}
-                  />
-                )}
                 {item.type === 'textBox' && (
-                  <TextField
-                    // required
-                    name={item.id}
+                  <InputField
+                    id={item.id}
+                    name={item.category}
+                    type={item.id}
+                    value={item.value}
                     label={item.label}
-                    fullWidth
-                    autoComplete="shipping address-line1"
-                    variant="standard"
-                    onChange={onChangeFormData}
                   />
                 )}
                 {item.type === 'selectBox' && (

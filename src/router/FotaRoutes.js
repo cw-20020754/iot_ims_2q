@@ -5,6 +5,7 @@ import CertPolicy from '../pages/Fota/CertPolicy';
 import FotaStatus from '../pages/Fota/FotaStatus';
 import FotaHistory from '../pages/Fota/FotaHistory';
 import DefaultLayout from '../layout/DefaultLayout';
+import FirmwareManageDetail from '../pages/Fota/FirmwareManageDetail';
 
 // ==============================|| FOTA ROUTING ||============================== //
 
@@ -15,6 +16,10 @@ const FotaRoutes = {
     {
       path: '/fota/firmwareManage',
       element: <FirmwareManage />,
+    },
+    {
+      path: '/fota/FirmwareManageDetail',
+      element: <FirmwareManageDetail />,
     },
     {
       path: '/fota/fotaPolicy',

@@ -11,6 +11,7 @@ const deviceSearch = {
   path: '/deviceSearch',
   title: '디바이스 조회 및 제어',
   icon: icons.IconFileSearch,
+  show: true,
   children: [],
 };
 

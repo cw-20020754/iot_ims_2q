@@ -164,9 +164,16 @@ const FirmwareManage = () => {
 
   const conditionList = [
     {
-      id: 'startDate',
+      id: 'datetime-local',
+      category: 'startDate',
       label: t('word.term'),
-      type: 'dateRange',
+      type: 'textBox',
+      value: dayjs(new Date())
+        .add(-7, 'days')
+        .hour(0)
+        .minute(0)
+        .second(0)
+        .format('YYYY-MM-DDTHH:mm'),
       size: {
         xs: 3,
         lg: 3,
@@ -174,9 +181,15 @@ const FirmwareManage = () => {
       },
     },
     {
-      id: 'endDate',
+      id: 'datetime-local',
+      category: 'endDate',
       label: t('word.term'),
-      type: 'dateRange',
+      type: 'textBox',
+      value: dayjs(new Date())
+        .hour(23)
+        .minute(59)
+        .second(59)
+        .format('YYYY-MM-DDTHH:mm'),
       size: {
         xs: 3,
         lg: 3,
@@ -207,8 +220,10 @@ const FirmwareManage = () => {
     },
     {
       id: 'frmwrName',
+      category: 'frmwrName',
       label: t('word.firmware') + ' ' + t('word.name'),
       type: 'textBox',
+      value: '',
       size: {
         xs: 3,
         lg: 3,
@@ -217,8 +232,10 @@ const FirmwareManage = () => {
     },
     {
       id: 'frmwrVer',
+      category: 'frmwrVer',
       label: t('word.firmware') + ' ' + t('word.ver'),
       type: 'textBox',
+      value: '',
       size: {
         xs: 3,
         lg: 3,

@@ -11,6 +11,7 @@ const dashboard = {
   path: '/dashboard',
   title: 'Dashboard',
   icon: icons.IconDashboard,
+  show: true,
   children: [
     // {
     //   id: "dashboard",

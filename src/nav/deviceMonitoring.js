@@ -10,6 +10,7 @@ const deviceMonitoring = {
   type: 'item',
   path: '/devIntegratedMonitor',
   title: '디바이스 통합 모니터링',
+  show: true,
   icon: icons.IconDeviceDesktopAnalytics,
   children: [
     // {

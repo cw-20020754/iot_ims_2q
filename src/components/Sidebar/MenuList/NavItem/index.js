@@ -91,6 +91,7 @@ const NavItem = ({ item, level }) => {
 
   return (
     <ListItemButton
+      hidden
       {...listItemProps}
       disabled={item.disabled}
       sx={{
