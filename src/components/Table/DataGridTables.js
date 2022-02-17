@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   DataGrid,
   GridToolbar,
   GridToolbarContainer,
   GridToolbarExport,
-} from "@mui/x-data-grid";
+} from '@mui/x-data-grid';
 import {
   Box,
   Button,
@@ -15,15 +15,15 @@ import {
   IconButton,
   Paper,
   Stack,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import CustomNoRowsOverlay from "./CustomNoRowsOverlay";
-import CustomLoadingOverlay from "./CustomLoadingOverlay";
-import CustomToolbar from "./CustormToolbar";
-import { isNull } from "../../common/utils";
-import fotaStyles from "../../pages/Fota/FotaStyle";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import CustomNoRowsOverlay from './CustomNoRowsOverlay';
+import CustomLoadingOverlay from './CustomLoadingOverlay';
+import CustomToolbar from './CustormToolbar';
+import { isNull } from '../../common/utils';
+import fotaStyles from '../../pages/Fota/FotaStyle';
 
 const DataGridTables = (props) => {
   const {
@@ -47,10 +47,10 @@ const DataGridTables = (props) => {
     <Card
       sx={{
         marginTop: 1,
-        width: "100%",
+        width: '100%',
       }}
     >
-      <CardContent sx={{ height: totalElement > 0 ? "auto" : "400px" }}>
+      <CardContent sx={{ height: totalElement > 0 ? 'auto' : '400px' }}>
         <DataGrid
           rows={rows}
           columns={columns.map((item) => {
@@ -66,7 +66,7 @@ const DataGridTables = (props) => {
             LoadingOverlay: CustomLoadingOverlay,
           }}
           onCellClick={(param) => {
-            if (category === "statusSearch" && param.field !== "editDelete") {
+            if (category === 'statusSearch' && param.field !== 'editDelete') {
               props.rowDetail(param.row);
             }
           }}

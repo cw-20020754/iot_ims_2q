@@ -1,6 +1,6 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import fotaStyles from "./FotaStyle";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import fotaStyles from './FotaStyle';
 
 const FotaStatus = () => {
   const classes = fotaStyles();

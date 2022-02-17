@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
-import { Alert, Snackbar, ThemeProvider } from "@mui/material";
-import theme from "./assets/theme/theme";
-import Routes from "./router";
+import React, { Suspense } from 'react';
+import { Alert, Snackbar, ThemeProvider } from '@mui/material';
+import theme from './assets/theme/theme';
+import Routes from './router';
 
 const App = () => {
   return (

@@ -55,7 +55,7 @@
     "ver": "버전",
     "devModelCode": "기기모델코드",
     "status": "상태",
-    "reservation":  "예약",
+    "reservation": "예약",
     "id": "아이디",
     "time": "시간",
     "target": "대상",
@@ -86,7 +86,7 @@
     "originDt": "발생일시"
   },
   "desc": {
-    "ipNotAllowAlert" : "접근 가능한 IP가 아닙니다.",
+    "ipNotAllowAlert": "접근 가능한 IP가 아닙니다.",
     "sessionTimeExpiredAlert": "장시간 사용하지 않아 세션이 종료 되었습니다. 재로그인이 필요합니다.",
     "loginFailAlert": "ID나 패스워드가 잘 못 되었습니다.",
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",

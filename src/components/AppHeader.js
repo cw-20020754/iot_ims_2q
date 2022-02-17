@@ -1,10 +1,10 @@
-import React from "react";
-import { styled } from "@mui/material/styles";
-import { IconButton, Toolbar } from "@mui/material";
-import MuiAppBar from "@mui/material/AppBar";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useDispatch, useSelector } from "react-redux";
-import { setSidebarShow } from "../redux/reducers/changeStateSlice";
+import React from 'react';
+import { styled } from '@mui/material/styles';
+import { IconButton, Toolbar } from '@mui/material';
+import MuiAppBar from '@mui/material/AppBar';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSidebarShow } from '../redux/reducers/changeStateSlice';
 
 const AppHeader = () => {
   const dispatch = useDispatch();
@@ -14,10 +14,10 @@ const AppHeader = () => {
   const drawerWidth = 240;
 
   const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open",
+    shouldForwardProp: (prop) => prop !== 'open',
   })(({ theme, open }) => ({
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
@@ -25,7 +25,7 @@ const AppHeader = () => {
     ...(open && {
       marginLeft: drawerWidth,
       width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(["width", "margin"], {
+      transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),

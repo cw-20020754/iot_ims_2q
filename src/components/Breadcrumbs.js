@@ -1,9 +1,9 @@
-import React from "react";
-import { Breadcrumbs, Link, Typography } from "@mui/material";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { useLocation } from "react-router-dom";
-import routes from "../nav";
-import { useTheme } from "@mui/material/styles";
+import React from 'react';
+import { Breadcrumbs, Link, Typography } from '@mui/material';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { useLocation } from 'react-router-dom';
+import routes from '../nav';
+import { useTheme } from '@mui/material/styles';
 const Breadcrumb = () => {
   const theme = useTheme();
   const location = useLocation();
@@ -12,7 +12,7 @@ const Breadcrumb = () => {
   const getRouteName = (pathname) => {
     const currentRoute = routes.items.find(
       (route) =>
-        currentLocation.split("/").findIndex((id) => id === route.id) > -1
+        currentLocation.split('/').findIndex((id) => id === route.id) > -1,
     );
 
     if (currentRoute.children.length === 0) {
@@ -29,7 +29,7 @@ const Breadcrumb = () => {
       return [routeName];
     } else {
       const breadcrumb = routeName.find(
-        (route) => route.path === currentLocation
+        (route) => route.path === currentLocation,
       );
 
       return breadcrumb.meta.breadcrumb;
@@ -49,18 +49,18 @@ const Breadcrumb = () => {
       {breadcrumbs.map((breadcrumb, index) => {
         // console.log("breadcrumb >> ", breadcrumb);
         return breadcrumb.active ? (
-          <Typography key="3" color={theme.palette.primary.main} variant={"h3"}>
+          <Typography key="3" color={theme.palette.primary.main} variant={'h3'}>
             {breadcrumb.title}
           </Typography>
         ) : (
           <Link
             underline="hover"
             color={
-              breadcrumbs.length === 1 ? theme.palette.primary.main : "inherit"
+              breadcrumbs.length === 1 ? theme.palette.primary.main : 'inherit'
             }
             onClick={handleClick}
             key={index}
-            variant={"h3"}
+            variant={'h3'}
           >
             {breadcrumb.title}
           </Link>

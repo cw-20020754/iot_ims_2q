@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fotaAPI } from "../../api";
-import { isNull } from "../../common/utils";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { fotaAPI } from '../../api';
+import { isNull } from '../../common/utils';
 
-const name = "fotaInfo";
+const name = 'fotaInfo';
 
 const initialState = {
   firmwareInfo: null,
@@ -39,7 +39,7 @@ export const getFirmwareList = createAsyncThunk(
   async ({ param }, thunkAPI) => {
     const response = await fotaAPI.getFirmwareList(param);
     return response.data;
-  }
+  },
 );
 
 // 펌웨어 등록
@@ -49,7 +49,7 @@ export const postFirmware = createAsyncThunk(
     // console.log("postFirmware response >> ", JSON.stringify(response));
 
     return await fotaAPI.postFirmware(formData);
-  }
+  },
 );
 
 // 펌웨어 수정
@@ -58,7 +58,7 @@ export const putFirmware = createAsyncThunk(
   async ({ formData }, thunkAPI) => {
     const response = await fotaAPI.putFirmware(formData);
     return response.data;
-  }
+  },
 );
 
 // 펌웨어 삭제
@@ -67,7 +67,7 @@ export const deleteFirmware = createAsyncThunk(
   async ({ frmwrId }, thunkAPI) => {
     const response = await fotaAPI.deleteFirmware(frmwrId);
     return response.data;
-  }
+  },
 );
 
 // 엑셀 다운로드
@@ -76,7 +76,7 @@ export const refreshFirmwareExportList = createAsyncThunk(
   async ({ option }, thunkAPI) => {
     const response = await fotaAPI.refreshFirmwareExportList(option);
     return response.data;
-  }
+  },
 );
 
 /**
@@ -89,7 +89,7 @@ export const getFotaPolicyList = createAsyncThunk(
     // console.log("option >>> ", param);
     const response = await fotaAPI.getFotaPolicyList(param);
     return response.data;
-  }
+  },
 );
 // FOTA 정책 등록
 export const postFotaPolicy = createAsyncThunk(
@@ -97,7 +97,7 @@ export const postFotaPolicy = createAsyncThunk(
   async ({ formData }, thunkAPI) => {
     // console.log("postFirmware response >> ", JSON.stringify(response));
     return await fotaAPI.postFotaPolicy(formData);
-  }
+  },
 );
 // FOTA 정책 수정
 export const putFotaPolicy = createAsyncThunk(
@@ -105,7 +105,7 @@ export const putFotaPolicy = createAsyncThunk(
   async ({ formData }, thunkAPI) => {
     // console.log("postFirmware response >> ", JSON.stringify(response));
     return await fotaAPI.putFotaPolicy(formData);
-  }
+  },
 );
 // FOTA 정책 삭제
 export const deleteFotaPolicy = createAsyncThunk(
@@ -113,7 +113,7 @@ export const deleteFotaPolicy = createAsyncThunk(
   async ({ policyId }, thunkAPI) => {
     // console.log("postFirmware response >> ", JSON.stringify(response));
     return await fotaAPI.deleteFotaPolicy(policyId);
-  }
+  },
 );
 
 /**
@@ -126,7 +126,7 @@ export const getCertPolicyList = createAsyncThunk(
   async ({ param }, thunkAPI) => {
     const response = await fotaAPI.getCertPolicyList(param);
     return response.data;
-  }
+  },
 );
 
 // 인증서 정책 등록
@@ -134,7 +134,7 @@ export const postCertPolicy = createAsyncThunk(
   `${name}/postCertPolicy`,
   async ({ formData }, thunkAPI) => {
     return await fotaAPI.postCertPolicy(formData);
-  }
+  },
 );
 
 // 인증서 정책 수정
@@ -143,7 +143,7 @@ export const putCertPolicy = createAsyncThunk(
   async ({ formData }, thunkAPI) => {
     // console.log("postFirmware response >> ", JSON.stringify(response));
     return await fotaAPI.putCertPolicy(formData);
-  }
+  },
 );
 
 // 인증서 정책 삭제
@@ -152,7 +152,7 @@ export const deleteCertPolicy = createAsyncThunk(
   async ({ policyId }, thunkAPI) => {
     // console.log("postFirmware response >> ", JSON.stringify(response));
     return await fotaAPI.deleteCertPolicy(policyId);
-  }
+  },
 );
 
 /**
@@ -163,7 +163,7 @@ export const getStatusList = createAsyncThunk(
   async ({ param }, thunkAPI) => {
     const response = await fotaAPI.getStatusList(param);
     return response.data;
-  }
+  },
 );
 
 export const deleteStatus = createAsyncThunk(
@@ -171,7 +171,7 @@ export const deleteStatus = createAsyncThunk(
   async ({ serial }, thunkAPI) => {
     const response = await fotaAPI.deleteStatus(serial);
     return response.data;
-  }
+  },
 );
 
 /**
@@ -182,7 +182,7 @@ export const getHistoryList = createAsyncThunk(
   async ({ param }, thunkAPI) => {
     const response = await fotaAPI.getHistoryList(param);
     return response.data;
-  }
+  },
 );
 
 const fotaInfoSlice = createSlice({

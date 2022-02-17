@@ -1,25 +1,25 @@
-import React, { lazy } from "react";
-import DashBoard from "../pages/DashBoard";
-import DevIntegratedMonitor from "../pages/DeviceMonitoring";
-import DeviceSearch from "../pages/DeviceSearch";
-const DefaultLayout = lazy(() => import("../layout/DefaultLayout"));
+import React, { lazy } from 'react';
+import DashBoard from '../pages/DashBoard';
+import DevIntegratedMonitor from '../pages/DeviceMonitoring';
+import DeviceSearch from '../pages/DeviceSearch';
+const DefaultLayout = lazy(() => import('../layout/DefaultLayout'));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
-  path: "/",
+  path: '/',
   element: <DefaultLayout />,
   children: [
     {
-      path: "/dashboard",
+      path: '/dashboard',
       element: <DashBoard />,
     },
     {
-      path: "/devIntegratedMonitor",
+      path: '/devIntegratedMonitor',
       element: <DevIntegratedMonitor />,
     },
     {
-      path: "/deviceSearch",
+      path: '/deviceSearch',
       element: <DeviceSearch />,
     },
   ],

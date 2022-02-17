@@ -1,3 +1,3 @@
-import FirmwareManage from "./FirmwareManage";
+import FirmwareManage from './FirmwareManage';
 
 export { FirmwareManage };

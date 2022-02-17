@@ -1,25 +1,25 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { forwardRef, memo, useLayoutEffect } from "react";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { forwardRef, memo, useLayoutEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
-import { useTheme } from "@mui/material/styles";
+import { useTheme } from '@mui/material/styles';
 import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
   Typography,
   useMediaQuery,
-} from "@mui/material";
+} from '@mui/material';
 
 // assets
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   setCollapsedOpen,
   setCurrentNav,
-} from "../../../../redux/reducers/changeStateSlice";
+} from '../../../../redux/reducers/changeStateSlice';
 
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
@@ -32,8 +32,8 @@ const NavItem = ({ item, level }) => {
   const config = {
     // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
     // like '/berry-material-react/react/default'
-    basename: "",
-    defaultPath: "/",
+    basename: '',
+    defaultPath: '/',
     fontFamily: `'Roboto', sans-serif`,
     borderRadius: 12,
   };
@@ -47,13 +47,13 @@ const NavItem = ({ item, level }) => {
         width: 6,
         height: 6,
       }}
-      fontSize={level > 0 ? "inherit" : "medium"}
+      fontSize={level > 0 ? 'inherit' : 'medium'}
     />
   );
 
-  let itemTarget = "_self";
+  let itemTarget = '_self';
   if (item.target) {
-    itemTarget = "_blank";
+    itemTarget = '_blank';
   }
 
   let listItemProps = {
@@ -68,7 +68,7 @@ const NavItem = ({ item, level }) => {
     )),
   };
   if (item?.external) {
-    listItemProps = { component: "a", href: item.path, target: itemTarget };
+    listItemProps = { component: 'a', href: item.path, target: itemTarget };
   }
 
   const itemHandler = (id) => {
@@ -80,7 +80,7 @@ const NavItem = ({ item, level }) => {
   useLayoutEffect(() => {
     const currentIndex = document.location.pathname
       .toString()
-      .split("/")
+      .split('/')
       .findIndex((id) => id === item.id);
 
     if (currentIndex > -1) {
@@ -94,26 +94,26 @@ const NavItem = ({ item, level }) => {
       {...listItemProps}
       disabled={item.disabled}
       sx={{
-        borderRadius: "12px",
+        borderRadius: '12px',
         mb: 0.5,
-        alignItems: "flex-start",
-        backgroundColor: level > 1 ? "transparent !important" : "inherit",
+        alignItems: 'flex-start',
+        backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
         py: level > 1 ? 1 : 1.25,
         pl: `${level * 24}px`,
       }}
       selected={
         selectedNav === item.id ||
-        (document.location.pathname === "/" && item.id === "dashboard")
+        (document.location.pathname === '/' && item.id === 'dashboard')
       }
       onClick={() => itemHandler(item.id)}
     >
-      <ListItemIcon sx={{ my: "auto", minWidth: !item?.icon ? 18 : 36 }}>
+      <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>
         {itemIcon}
       </ListItemIcon>
       <ListItemText
         primary={
           <Typography
-            variant={selectedNav === item.id ? "h5" : "body1"}
+            variant={selectedNav === item.id ? 'h5' : 'body1'}
             color="inherit"
           >
             {item.title}

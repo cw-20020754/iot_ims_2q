@@ -1,6 +1,6 @@
-import axios from "axios";
-import { API } from "../common/constants";
-import { makeurlQeuryString } from "../common/utils";
+import axios from 'axios';
+import { API } from '../common/constants';
+import { makeurlQeuryString } from '../common/utils';
 
 // 펌웨어 목록
 export const getFirmwareList = (param) => {
@@ -9,7 +9,7 @@ export const getFirmwareList = (param) => {
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, param),
       {
         headers: API.HEADERS,
-      }
+      },
     )
     .then((response) => {
       // console.log("response >> ", JSON.stringify(response.data));
@@ -70,11 +70,11 @@ export const getFotaPolicyList = (param) => {
     .get(
       makeurlQeuryString(
         `${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`,
-        param
+        param,
       ),
       {
         headers: API.HEADERS,
-      }
+      },
     )
     .then((response) => {
       return response;
@@ -134,11 +134,11 @@ export const getCertPolicyList = (param) => {
     .get(
       makeurlQeuryString(
         `${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`,
-        param
+        param,
       ),
       {
         headers: API.HEADERS,
-      }
+      },
     )
     .then((response) => {
       // console.log("response >> ", JSON.stringify(response.data));
@@ -200,7 +200,7 @@ export const getStatusList = (param) => {
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/shadow`, param),
       {
         headers: API.HEADERS,
-      }
+      },
     )
     .then((response) => {
       // console.log("response >> ", JSON.stringify(response.data));
@@ -234,7 +234,7 @@ export const getHistoryList = (param) => {
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/shadow/history/shadow`, param),
       {
         headers: API.HEADERS,
-      }
+      },
     )
     .then((response) => {
       return response;

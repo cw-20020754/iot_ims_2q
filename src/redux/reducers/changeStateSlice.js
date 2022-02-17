@@ -1,11 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
-const name = "changeState";
+const name = 'changeState';
 
 const initialState = {
   sidebarShow: true,
   isLoading: false,
-  selectedNav: "",
+  selectedNav: '',
   collapsedOpen: false,
 };
 

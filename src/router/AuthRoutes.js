@@ -1,19 +1,19 @@
-import React, { lazy } from "react";
-const Login = lazy(() => import("../pages/Auth/Login"));
-const AuthLayout = lazy(() => import("../layout/AuthLayout"));
+import React, { lazy } from 'react';
+const Login = lazy(() => import('../pages/Auth/Login'));
+const AuthLayout = lazy(() => import('../layout/AuthLayout'));
 
 // ==============================|| DEVICE SEARCH ROUTING ||============================== //
 
 const AuthRoutes = {
-  path: "/",
+  path: '/',
   element: <AuthLayout />,
   children: [
     {
-      path: "/",
+      path: '/',
       element: <Login />,
     },
     {
-      path: "/login",
+      path: '/login',
       element: <Login />,
     },
   ],

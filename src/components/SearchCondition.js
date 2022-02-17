@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -18,34 +18,34 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AppStyles from "./AppStyle";
-import { getCodeCategoryItems, isNull } from "../common/utils";
-import { useSelector } from "react-redux";
-import dayjs from "dayjs";
-import { useTranslation } from "react-i18next";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AppStyles from './AppStyle';
+import { getCodeCategoryItems, isNull } from '../common/utils';
+import { useSelector } from 'react-redux';
+import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 const SearchCondition = (props) => {
   const { conditionList } = props;
   const classes = AppStyles();
   const codes = useSelector((state) => state.sharedInfo.codes);
   const { t } = useTranslation();
   const [searchOption, setSearchOption] = useState({
-    frmwrName: "",
-    frmwrType: "",
-    devModelCode: "",
-    frmwrVer: "",
+    frmwrName: '',
+    frmwrType: '',
+    devModelCode: '',
+    frmwrVer: '',
     startDate: dayjs(new Date())
-      .add(-7, "days")
+      .add(-7, 'days')
       .hour(0)
       .minute(0)
       .second(0)
-      .format("YYYY-MM-DDTHH:mm"),
+      .format('YYYY-MM-DDTHH:mm'),
     endDate: dayjs(new Date())
       .hour(23)
       .minute(59)
       .second(59)
-      .format("YYYY-MM-DDTHH:mm"),
+      .format('YYYY-MM-DDTHH:mm'),
   });
 
   const onChangeFormData = (e) => {
@@ -68,7 +68,7 @@ const SearchCondition = (props) => {
         id="panel1a-header"
         className={classes.accordionHeader}
       >
-        <Typography>{t("word.search")}</Typography>
+        <Typography>{t('word.search')}</Typography>
       </AccordionSummary>
       <Divider />
       <AccordionDetails>
@@ -82,22 +82,22 @@ const SearchCondition = (props) => {
                 md={item.size.md}
                 key={item.id}
               >
-                {item.type === "dateRange" && (
+                {item.type === 'dateRange' && (
                   <TextField
                     id="datetime-local"
                     type="datetime-local"
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    label={"기간"}
+                    label={'기간'}
                     value={searchOption.startDate}
                     fullWidth
                     name="startDate"
-                    variant={"standard"}
+                    variant={'standard'}
                     onChange={onChangeFormData}
                   />
                 )}
-                {item.type === "textBox" && (
+                {item.type === 'textBox' && (
                   <TextField
                     // required
                     name={item.id}
@@ -108,8 +108,8 @@ const SearchCondition = (props) => {
                     onChange={onChangeFormData}
                   />
                 )}
-                {item.type === "selectBox" && (
-                  <FormControl fullWidth size="small" variant={"standard"}>
+                {item.type === 'selectBox' && (
+                  <FormControl fullWidth size="small" variant={'standard'}>
                     <InputLabel id="demo-simple-select-standard-label">
                       {item.label}
                     </InputLabel>
@@ -129,16 +129,16 @@ const SearchCondition = (props) => {
                           <MenuItem key={name.text} value={name.value}>
                             {name.text}
                           </MenuItem>
-                        )
+                        ),
                       )}
                     </Select>
                   </FormControl>
                 )}
-                {item.type === "autoSelectBox" && (
+                {item.type === 'autoSelectBox' && (
                   <Autocomplete
                     name={item.id}
                     options={getCodeCategoryItems(codes, item.category).map(
-                      (option) => option.text
+                      (option) => option.text,
                     )}
                     onChange={onChangeFormData}
                     onInputChange={(event, newInputValue) => {
@@ -159,12 +159,12 @@ const SearchCondition = (props) => {
           })}
         </Grid>
         <Button
-          variant={"outlined"}
+          variant={'outlined'}
           onClick={() => {
-            props.onFetchData("", searchOption);
+            props.onFetchData('', searchOption);
           }}
         >
-          {t("word.search")}
+          {t('word.search')}
         </Button>
       </AccordionDetails>
     </Accordion>

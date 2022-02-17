@@ -1,8 +1,8 @@
-import { createTheme } from "@mui/material";
-import colors from "../scss/_themes-vars.module.scss";
-import themeTypography from "./typography";
-import themePalette from "./palette";
-import componentStyleOverrides from "./compStyleOverride";
+import { createTheme } from '@mui/material';
+import colors from '../scss/_themes-vars.module.scss';
+import themeTypography from './typography';
+import themePalette from './palette';
+import componentStyleOverrides from './compStyleOverride';
 
 /**
  * MUI 공통 theme 정의

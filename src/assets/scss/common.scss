@@ -1,37 +1,37 @@
 @charset "UTF-8";
 
 @font-face {
-  font-family: "Spoqa Han Sans Neo";
+  font-family: 'Spoqa Han Sans Neo';
   font-weight: 400;
   font-style: normal;
-  src: local("Spoqa Han Sans Neo"),
-    url("../font/SpoqaHanSansNeo-Regular.ttf") format("true type"),
-    url("../font/SpoqaHanSansNeo-Regular.woff") format("woff"),
-    url("../font/SpoqaHanSansNeo-Regular.woff2") format("woff2");
+  src: local('Spoqa Han Sans Neo'),
+    url('../font/SpoqaHanSansNeo-Regular.ttf') format('true type'),
+    url('../font/SpoqaHanSansNeo-Regular.woff') format('woff'),
+    url('../font/SpoqaHanSansNeo-Regular.woff2') format('woff2');
 }
 @font-face {
-  font-family: "Spoqa Han Sans Neo";
+  font-family: 'Spoqa Han Sans Neo';
   font-weight: 500;
   font-style: normal;
-  src: local("Spoqa Han Sans Neo"),
-    url("../font/SpoqaHanSansNeo-Medium.ttf") format("true type"),
-    url("../font/SpoqaHanSansNeo-Medium.woff") format("woff"),
-    url("../font/SpoqaHanSansNeo-Medium.woff2") format("woff2");
+  src: local('Spoqa Han Sans Neo'),
+    url('../font/SpoqaHanSansNeo-Medium.ttf') format('true type'),
+    url('../font/SpoqaHanSansNeo-Medium.woff') format('woff'),
+    url('../font/SpoqaHanSansNeo-Medium.woff2') format('woff2');
 }
 @font-face {
-  font-family: "Spoqa Han Sans Neo";
+  font-family: 'Spoqa Han Sans Neo';
   font-weight: bold;
   font-style: normal;
-  src: local("Spoqa Han Sans Neo"),
-    url("../font/SpoqaHanSansNeo-Bold.ttf") format("true type"),
-    url("../font/SpoqaHanSansNeo-Bold.woff") format("woff"),
-    url("../font/SpoqaHanSansNeo-Bold.woff2") format("woff2");
+  src: local('Spoqa Han Sans Neo'),
+    url('../font/SpoqaHanSansNeo-Bold.ttf') format('true type'),
+    url('../font/SpoqaHanSansNeo-Bold.woff') format('woff'),
+    url('../font/SpoqaHanSansNeo-Bold.woff2') format('woff2');
 }
 
-$font-family: "Spoqa Han Sans Neo";
+$font-family: 'Spoqa Han Sans Neo';
 
 body {
-  [class*="text-"] {
+  [class*='text-'] {
     color: black;
     font-family: $font-family;
   }

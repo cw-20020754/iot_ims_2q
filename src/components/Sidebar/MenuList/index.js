@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 // material-ui
 
 // project imports
-import menuItem from "../../../nav";
-import NavGroup from "./NavGroup";
+import menuItem from '../../../nav';
+import NavGroup from './NavGroup';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 

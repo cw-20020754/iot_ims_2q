@@ -1,5 +1,5 @@
-import dayjs from "dayjs";
-import qs from "qs";
+import dayjs from 'dayjs';
+import qs from 'qs';
 
 const getText = (list, msgId) => {
   return list.find((el) => el.msgId === msgId).msg;
@@ -10,9 +10,9 @@ const isNull = (data) => {
   if (
     data === null ||
     data === undefined ||
-    data === "" ||
-    data === "undefined" ||
-    data === "null"
+    data === '' ||
+    data === 'undefined' ||
+    data === 'null'
   ) {
     result = true;
   }
@@ -25,10 +25,10 @@ const getCodeCategoryItems = (list, category) => {
 
 const getCodeToText = (category, data, codes) => {
   if (isNull(data)) {
-    return "";
+    return '';
   }
   const result = getCodeCategoryItems(codes, category).find(
-    (el) => el.value === data
+    (el) => el.value === data,
   );
   return !isNull(result) ? result.text : data;
 };
@@ -36,31 +36,31 @@ const getCodeToText = (category, data, codes) => {
 // Date Formatting
 const dateFormatConvert = (date) => {
   if (isNull(date)) {
-    return "";
+    return '';
   }
-  return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+  return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
 };
 
 // Date to Timestamp
 const dateToTimestampConvert = (date) => {
   if (isNull(date)) {
-    return "";
+    return '';
   }
   return dayjs(date).valueOf();
 };
 
 const fileSize = (size) => {
-  if (size === 0) return "0 Bytes";
+  if (size === 0) return '0 Bytes';
   const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(size) / Math.log(k));
-  return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  return parseFloat((size / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
 const makeurlQeuryString = (url, param) => {
   if (param) {
     return (
-      url + (typeof param === "string" ? param : "?" + qs.stringify(param))
+      url + (typeof param === 'string' ? param : '?' + qs.stringify(param))
     );
   } else {
     return url;
@@ -68,9 +68,9 @@ const makeurlQeuryString = (url, param) => {
 };
 
 const makeQuery = (param, condition) => {
-  let result = "";
+  let result = '';
 
-  result = "?" + new URLSearchParams(param).toString() + "&";
+  result = '?' + new URLSearchParams(param).toString() + '&';
   if (!isNull(condition)) {
     let option = {};
     option = {
@@ -91,39 +91,39 @@ const makeRowsFormat = (list, codes) => {
       rows.push({
         ...item,
         id: index,
-        frmwrType: reformatData("text", item.frmwrType, "frmwrType", codes),
-        fileSizeTxt: reformatData("fileSize", item.fileSize),
-        useYn: reformatData("yn", item.useYn),
-        regDate: reformatData("date", item.regDate),
-        updDate: reformatData("date", item.updDate),
-        targetType: reformatData("text", item.targetType, "targetType", codes),
+        frmwrType: reformatData('text', item.frmwrType, 'frmwrType', codes),
+        fileSizeTxt: reformatData('fileSize', item.fileSize),
+        useYn: reformatData('yn', item.useYn),
+        regDate: reformatData('date', item.regDate),
+        updDate: reformatData('date', item.updDate),
+        targetType: reformatData('text', item.targetType, 'targetType', codes),
         policyStatusName: reformatData(
-          "text",
+          'text',
           item.policyStatus,
-          "policyStatus",
-          codes
+          'policyStatus',
+          codes,
         ),
-        originDt: reformatData("date", item.originDt),
-        wifiFotaStatus: reformatData("text", item.originDt, "originDt", codes),
+        originDt: reformatData('date', item.originDt),
+        wifiFotaStatus: reformatData('text', item.originDt, 'originDt', codes),
         mcuFotaStatus: reformatData(
-          "text",
+          'text',
           item.mcuFotaStatus,
-          "mcuFotaStatus",
-          codes
+          'mcuFotaStatus',
+          codes,
         ),
         fotaShadowStatus: reformatData(
-          "text",
+          'text',
           item.fotaShadowStatus,
-          "fotaShadowStatus",
-          codes
+          'fotaShadowStatus',
+          codes,
         ),
         certShadowStatus: reformatData(
-          "text",
+          'text',
           item.certShadowStatus,
-          "certShadowStatus",
-          codes
+          'certShadowStatus',
+          codes,
         ),
-        isCertExpired: reformatData("yn", item.isCertExpired),
+        isCertExpired: reformatData('yn', item.isCertExpired),
       });
     });
   }
@@ -142,14 +142,14 @@ const reformatData = (type, value, catetory, codes) => {
   // console.log(type, value, catetory, codes);
   if (!isNull(value)) {
     switch (type) {
-      case "text":
+      case 'text':
         return getCodeToText(catetory, value, codes);
-      case "date":
+      case 'date':
         return dateFormatConvert(value);
-      case "fileSize":
+      case 'fileSize':
         return fileSize(value);
-      case "yn":
-        return value ? "Y" : "N";
+      case 'yn':
+        return value ? 'Y' : 'N';
       default:
         break;
     }
@@ -163,10 +163,10 @@ const responseCheck = (res) => {
 
   if (isNull(res) || isNull(res.payload)) {
     result = false;
-  } else if (res.payload.hasOwnProperty("data") && isNull(res.payload.data)) {
+  } else if (res.payload.hasOwnProperty('data') && isNull(res.payload.data)) {
     result = false;
   } else if (
-    res.payload.hasOwnProperty("payload") &&
+    res.payload.hasOwnProperty('payload') &&
     isNull(res.payload.payload)
   ) {
     result = false;
