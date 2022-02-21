@@ -2,9 +2,9 @@ import React from 'react';
 import { Breadcrumbs, Link, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useLocation } from 'react-router-dom';
-import routes from '../nav';
 import { useTheme } from '@mui/material/styles';
-const Breadcrumb = () => {
+import routes from '../../nav';
+const CBreadcrumb = () => {
   const theme = useTheme();
   const location = useLocation();
   const currentLocation = location.pathname;
@@ -70,4 +70,4 @@ const Breadcrumb = () => {
   );
 };
 
-export default Breadcrumb;
+export default CBreadcrumb;

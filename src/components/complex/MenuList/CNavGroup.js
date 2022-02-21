@@ -3,29 +3,29 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { Box } from '@mui/material';
+import CNavItem from './CNavItem';
+import CNavCollapse from './CNavCollapse';
 
 // project imports
-import NavItem from '../NavItem';
-import NavCollapse from '../NavCollapse';
 
 // ==============================|| SIDEBAR MENU LIST GROUP ||============================== //
 
-const NavGroup = ({ item }) => {
+const CNavGroup = ({ item }) => {
   return (
     <>
       <Box sx={{ mt: 1.25, mb: 1.25 }}>
         {item.type === 'item' ? (
-          <NavItem key={item.id} item={item} level={1} />
+          <CNavItem key={item.id} item={item} level={1} />
         ) : (
-          <NavCollapse key={item.id} menu={item} level={1} />
+          <CNavCollapse key={item.id} menu={item} level={1} />
         )}
       </Box>
     </>
   );
 };
 
-NavGroup.propTypes = {
+CNavGroup.propTypes = {
   item: PropTypes.object,
 };
 
-export default NavGroup;
+export default CNavGroup;

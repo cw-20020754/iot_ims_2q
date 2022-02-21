@@ -4,12 +4,12 @@ import FotaPolicy from '../pages/Fota/FotaPolicy';
 import CertPolicy from '../pages/Fota/CertPolicy';
 import FotaStatus from '../pages/Fota/FotaStatus';
 import FotaHistory from '../pages/Fota/FotaHistory';
-import DefaultLayout from '../layout/DefaultLayout';
 import FirmwareManageDetail from '../pages/Fota/FirmwareManageDetail';
+import DefaultLayout from '../components/layout/DefaultLayout';
 
 // ==============================|| FOTA ROUTING ||============================== //
 
-const FotaRoutes = {
+const FotaRoute = {
   path: '/fota',
   element: <DefaultLayout />,
   children: [
@@ -40,4 +40,4 @@ const FotaRoutes = {
   ],
 };
 
-export default FotaRoutes;
+export default FotaRoute;

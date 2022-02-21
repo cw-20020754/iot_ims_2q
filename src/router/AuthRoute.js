@@ -1,10 +1,10 @@
 import React, { lazy } from 'react';
 const Login = lazy(() => import('../pages/Auth/Login'));
-const AuthLayout = lazy(() => import('../layout/AuthLayout'));
+const AuthLayout = lazy(() => import('../components/layout/AuthLayout'));
 
 // ==============================|| DEVICE SEARCH ROUTING ||============================== //
 
-const AuthRoutes = {
+const AuthRoute = {
   path: '/',
   element: <AuthLayout />,
   children: [
@@ -19,4 +19,4 @@ const AuthRoutes = {
   ],
 };
 
-export default AuthRoutes;
+export default AuthRoute;

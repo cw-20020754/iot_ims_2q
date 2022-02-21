@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
-import colors from '../assets/scss/_themes-vars.module.scss';
+import colors from '../../assets/scss/_themes-vars.module.scss';
 
 const color = colors;
 

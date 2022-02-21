@@ -3,16 +3,16 @@ import React from 'react';
 
 // project imports
 import menuItem from '../../../nav';
-import NavGroup from './NavGroup';
+import CNavGroup from './CNavGroup';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
-const MenuList = () => {
+const CMenuList = () => {
   const navItems = menuItem.items.map((item) => {
-    return <NavGroup key={item.id} item={item} />;
+    return <CNavGroup key={item.id} item={item} />;
   });
 
   return <>{navItems}</>;
 };
 
-export default MenuList;
+export default CMenuList;

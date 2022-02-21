@@ -1,19 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Accordion,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  Grid,
-  Typography,
-} from '@mui/material';
-import fotaStyles from './FotaStyle';
-import MainCard from '../../components/UiComponent/MainCard';
-import SearchCondition from '../../components/SearchCondition';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import DataGridTables from '../../components/Table/DataGridTables';
+import { Box, Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFirmwareList } from '../../redux/reducers/fotaInfoSlice';
@@ -24,6 +10,11 @@ import {
   responseCheck,
 } from '../../common/utils';
 import dayjs from 'dayjs';
+import AddIcon from '@mui/icons-material/Add';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import CSearchCondition from '../../components/complex/CSearchCondition';
+import CDataGrid from '../../components/complex/Table/CDataGrid';
 
 const FirmwareManage = () => {
   const dispatch = useDispatch();
@@ -50,6 +41,23 @@ const FirmwareManage = () => {
     rowPerPage: [5, 10, 20],
   });
   const [searchOption, setSearchOption] = useState(null);
+  const toolbarItem = useSelector((state) => state.changeState.toolbarItem);
+
+  const toolbarBtnList = [
+    { text: t('word.reg'), startIcon: <AddIcon />, category: 'regist' },
+    {
+      text: t('word.refresh'),
+      startIcon: <RefreshIcon />,
+      type: 'success',
+      category: 'refresh',
+    },
+    {
+      text: t('word.download'),
+      startIcon: <SaveAltIcon />,
+      type: 'success',
+      category: 'download',
+    },
+  ];
 
   const columns = [
     {
@@ -298,6 +306,8 @@ const FirmwareManage = () => {
     window.scrollTo(0, 0);
   };
 
+  const onExcelDownload = () => {};
+
   useEffect(() => {
     if (initial) {
       onFetchData();
@@ -306,24 +316,28 @@ const FirmwareManage = () => {
 
   return (
     <Box>
-      <SearchCondition
+      <CSearchCondition
         onFetchData={onFetchData}
         conditionList={conditionList}
       />
       <Divider />
-      <DataGridTables
-        columns={columns}
-        rows={
-          !isNull(firmwareMng.list) && makeRowsFormat(firmwareMng.list, codes)
-        }
-        totalElement={firmwareMng.totalElements}
-        param={param}
-        isLoading={isLoading}
-        searchOption={searchOption}
-        category={'firmwareManage'}
-        onFetchData={onFetchData}
-        onRefresh={onRefresh}
-      />
+      <Box>
+        <CDataGrid
+          title={t('word.firmwareManage')}
+          columns={columns}
+          rows={
+            !isNull(firmwareMng.list) && makeRowsFormat(firmwareMng.list, codes)
+          }
+          toolbarBtnList={toolbarBtnList}
+          totalElement={firmwareMng.totalElements}
+          param={param}
+          isLoading={isLoading}
+          searchOption={searchOption}
+          category={'firmwareManage'}
+          onFetchData={onFetchData}
+          onRefresh={onRefresh}
+        />
+      </Box>
     </Box>
   );
 };

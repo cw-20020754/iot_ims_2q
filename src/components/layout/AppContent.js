@@ -1,9 +1,8 @@
 import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
-import { DRAWER_WIDTH } from '../common/constants';
-import Breadcrumb from './Breadcrumbs';
+import { DRAWER_WIDTH } from '../../common/constants';
+import CBreadcrumb from '../complex/CBreadcrumbs';
 
 const AppContent = () => {
   const theme = useTheme();
@@ -60,7 +59,7 @@ const AppContent = () => {
   return (
     <>
       <Main theme={theme} open={leftDrawerOpened}>
-        <Breadcrumb />
+        <CBreadcrumb />
         <Outlet />
       </Main>
     </>

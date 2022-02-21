@@ -7,6 +7,7 @@ const initialState = {
   isLoading: false,
   selectedNav: '',
   collapsedOpen: false,
+  toolbarItem: null,
 };
 
 const changeStateSlice = createSlice({
@@ -25,10 +26,18 @@ const changeStateSlice = createSlice({
     setCollapsedOpen(state, action) {
       state.collapsedOpen = action.payload;
     },
+    getDatagridToolbar(state, action) {
+      state.toolbarItem = action.payload;
+    },
   },
   extraReducers: {},
 });
 
-export const { setSidebarShow, setIsLoading, setCurrentNav, setCollapsedOpen } =
-  changeStateSlice.actions;
+export const {
+  setSidebarShow,
+  setIsLoading,
+  setCurrentNav,
+  setCollapsedOpen,
+  getDatagridToolbar,
+} = changeStateSlice.actions;
 export default changeStateSlice.reducer;

@@ -11,7 +11,6 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-  useMediaQuery,
 } from '@mui/material';
 
 // assets
@@ -19,11 +18,11 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import {
   setCollapsedOpen,
   setCurrentNav,
-} from '../../../../redux/reducers/changeStateSlice';
+} from '../../../redux/reducers/changeStateSlice';
 
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
-const NavItem = ({ item, level }) => {
+const CNavItem = ({ item, level }) => {
   // console.log('item, level > ', item, level);
 
   const theme = useTheme();
@@ -137,9 +136,9 @@ const NavItem = ({ item, level }) => {
   );
 };
 
-NavItem.propTypes = {
+CNavItem.propTypes = {
   item: PropTypes.object,
   level: PropTypes.number,
 };
 
-export default memo(NavItem);
+export default memo(CNavItem);

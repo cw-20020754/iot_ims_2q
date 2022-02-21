@@ -15,19 +15,19 @@ import {
 } from '@mui/material';
 
 // project imports
-import NavItem from '../NavItem';
 
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons';
+import CNavItem from './CNavItem';
 import {
   setCollapsedOpen,
   setCurrentNav,
-} from '../../../../redux/reducers/changeStateSlice';
+} from '../../../redux/reducers/changeStateSlice';
 
 // ==============================|| SIDEBAR MENU LIST COLLAPSE ITEMS ||============================== //
 
-const NavCollapse = ({ menu, level }) => {
+const CNavCollapse = ({ menu, level }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const selectedNav = useSelector((state) => state.changeState.selectedNav);
@@ -49,10 +49,10 @@ const NavCollapse = ({ menu, level }) => {
   const menus = menu.children?.map((item) => {
     switch (item.type) {
       case 'collapse':
-        return <NavCollapse key={item.id} menu={item} level={level + 1} />;
+        return <CNavCollapse key={item.id} menu={item} level={level + 1} />;
       case 'item':
         return (
-          item.show && <NavItem key={item.id} item={item} level={level + 1} />
+          item.show && <CNavItem key={item.id} item={item} level={level + 1} />
         );
       default:
         return (
@@ -155,9 +155,9 @@ const NavCollapse = ({ menu, level }) => {
   );
 };
 
-NavCollapse.propTypes = {
+CNavCollapse.propTypes = {
   menu: PropTypes.object,
   level: PropTypes.number,
 };
 
-export default memo(NavCollapse);
+export default memo(CNavCollapse);

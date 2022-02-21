@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, CssBaseline } from '@mui/material';
-import AppHeader from '../components/AppHeader';
-import AppSidebar from '../components/Sidebar/AppSidebar';
-import AppContent from '../components/AppContent';
-import AppFooter from '../components/AppFooter';
+import AppHeader from './AppHeader';
+import AppSidebar from './AppSidebar';
+import AppContent from './AppContent';
+import AppFooter from './AppFooter';
 
 const DefaultLayout = () => {
   return (

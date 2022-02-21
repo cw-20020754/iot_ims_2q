@@ -1,10 +1,10 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 // material-ui
 import { Box, ButtonBase, List, Typography } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -12,10 +12,9 @@ import { BrowserView, MobileView } from 'react-device-detect';
 
 // project imports
 import logo from '../../assets/images/logo.png';
-import { getText } from '../../common/utils';
 import { DRAWER_WIDTH } from '../../common/constants';
-import MenuList from './MenuList';
 import { useTranslation } from 'react-i18next';
+import CMenuList from '../complex/MenuList/CMenuList';
 
 const AppSidebar = () => {
   const { t } = useTranslation();
@@ -97,10 +96,15 @@ const AppSidebar = () => {
           >
             <List>
               {' '}
-              <MenuList />
+              <CMenuList />
             </List>
           </PerfectScrollbar>
         </BrowserView>
+        <MobileView>
+          <Box sx={{ px: 2 }}>
+            <CMenuList />
+          </Box>
+        </MobileView>
       </Drawer>
     </Box>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextField } from '@mui/material';
 
-const InputField = (props) => {
+const CInput = (props) => {
   const {
     id,
     name,
@@ -16,8 +16,6 @@ const InputField = (props) => {
 
   // console.log('props >> ', props);
 
-  const onChangeFormData = () => {};
-
   return (
     <TextField
       id={id}
@@ -27,7 +25,6 @@ const InputField = (props) => {
       defaultValue={value}
       sx={style}
       fullWidth
-      onChange={onChangeFormData}
       helperText={helperText}
       variant="standard"
       InputProps={inputProps}
@@ -37,4 +34,4 @@ const InputField = (props) => {
   );
 };
 
-export default InputField;
+export default CInput;

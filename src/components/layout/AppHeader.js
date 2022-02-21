@@ -4,7 +4,7 @@ import { IconButton, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSidebarShow } from '../redux/reducers/changeStateSlice';
+import { setSidebarShow } from '../../redux/reducers/changeStateSlice';
 
 const AppHeader = () => {
   const dispatch = useDispatch();

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Container, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import AppStyles from './AppStyle';
-import logo from '../assets/images/logo.png';
+import logo from '../../assets/images/logo.png';
 import { useTranslation } from 'react-i18next';
 
 const AppFooter = () => {

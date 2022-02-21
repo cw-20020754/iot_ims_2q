@@ -3,7 +3,7 @@ import { GridOverlay } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 
-const CustomNoRowsOverlay = () => {
+const CNoRowsOverlay = () => {
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: 'column',
     '& .ant-empty-img-1': {
@@ -70,4 +70,4 @@ const CustomNoRowsOverlay = () => {
   );
 };
 
-export default CustomNoRowsOverlay;
+export default CNoRowsOverlay;

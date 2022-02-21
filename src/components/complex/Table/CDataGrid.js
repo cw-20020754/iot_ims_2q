@@ -1,32 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import {
-  DataGrid,
-  GridToolbar,
-  GridToolbarContainer,
-  GridToolbarExport,
-} from '@mui/x-data-grid';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  Grid,
-  IconButton,
-  Paper,
-  Stack,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import CustomNoRowsOverlay from './CustomNoRowsOverlay';
-import CustomLoadingOverlay from './CustomLoadingOverlay';
-import CustomToolbar from './CustormToolbar';
-import { isNull } from '../../common/utils';
-import fotaStyles from '../../pages/Fota/FotaStyle';
+import React, { useCallback, useEffect, useState } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import { Card, CardContent, Typography } from '@mui/material';
+import CToolbar from './CToolbar';
+import CNoRowsOverlay from './CNoRowsOverlay';
+import CLoadingOverlay from './CLoadingOverlay';
 
-const DataGridTables = (props) => {
+const CDataGrid = (props) => {
   const {
+    title,
     columns,
     rows,
     totalElement,
@@ -34,14 +15,13 @@ const DataGridTables = (props) => {
     category,
     isLoading,
     param,
+    toolbarBtnList,
   } = props;
+
+  // console.log('rows >> ', rows);
 
   const [pages, setPages] = useState(param.page);
   const [pageSize, setPageSize] = useState(param.size);
-
-  useEffect(() => {
-    // console.log("option >>> ", option);
-  }, []);
 
   return (
     <Card
@@ -51,6 +31,9 @@ const DataGridTables = (props) => {
       }}
     >
       <CardContent sx={{ height: totalElement > 0 ? 'auto' : '400px' }}>
+        <Typography variant={'h4'} sx={{ padding: '10px' }}>
+          {title}
+        </Typography>
         <DataGrid
           rows={rows}
           columns={columns.map((item) => {
@@ -61,10 +44,11 @@ const DataGridTables = (props) => {
           })}
           autoHeight={totalElement > 0}
           components={{
-            Toolbar: CustomToolbar,
-            NoRowsOverlay: CustomNoRowsOverlay,
-            LoadingOverlay: CustomLoadingOverlay,
+            Toolbar: CToolbar,
+            NoRowsOverlay: CNoRowsOverlay,
+            LoadingOverlay: CLoadingOverlay,
           }}
+          componentsProps={{ toolbar: { toolbarBtnList: toolbarBtnList } }}
           onCellClick={(param) => {
             if (category === 'statusSearch' && param.field !== 'editDelete') {
               props.rowDetail(param.row);
@@ -101,4 +85,4 @@ const DataGridTables = (props) => {
   );
 };
 
-export default DataGridTables;
+export default CDataGrid;
