@@ -1,6 +1,6 @@
 import React from 'react';
 import Fota from './Fota';
-import Main from './MainRoute';
+import Main from './Main';
 import Auth from './Auth';
 import { useRoutes } from 'react-router-dom';
 
