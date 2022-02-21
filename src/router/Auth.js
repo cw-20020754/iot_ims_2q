@@ -4,7 +4,7 @@ const AuthLayout = lazy(() => import('../components/layout/AuthLayout'));
 
 // ==============================|| DEVICE SEARCH ROUTING ||============================== //
 
-const AuthRoute = {
+const Auth = {
   path: '/',
   element: <AuthLayout />,
   children: [
@@ -19,4 +19,4 @@ const AuthRoute = {
   ],
 };
 
-export default AuthRoute;
+export default Auth;

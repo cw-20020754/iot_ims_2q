@@ -9,7 +9,7 @@ import DefaultLayout from '../components/layout/DefaultLayout';
 
 // ==============================|| FOTA ROUTING ||============================== //
 
-const FotaRoute = {
+const Fota = {
   path: '/fota',
   element: <DefaultLayout />,
   children: [
@@ -40,4 +40,4 @@ const FotaRoute = {
   ],
 };
 
-export default FotaRoute;
+export default Fota;

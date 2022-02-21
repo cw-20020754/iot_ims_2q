@@ -6,7 +6,7 @@ const DefaultLayout = lazy(() => import('../components/layout/DefaultLayout'));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
-const MainRoute = {
+const Main = {
   path: '/',
   element: <DefaultLayout />,
   children: [
@@ -25,4 +25,4 @@ const MainRoute = {
   ],
 };
 
-export default MainRoute;
+export default Main;

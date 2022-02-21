@@ -1,11 +1,11 @@
 import React from 'react';
-import FotaRoute from './FotaRoute';
-import MainRoute from './MainRoute';
-import AuthRoute from './AuthRoute';
+import Fota from './Fota';
+import Main from './MainRoute';
+import Auth from './Auth';
 import { useRoutes } from 'react-router-dom';
 
 const Router = () => {
-  return useRoutes([AuthRoute, MainRoute, FotaRoute]);
+  return useRoutes([Auth, Main, Fota]);
 };
 
 export default Router;
