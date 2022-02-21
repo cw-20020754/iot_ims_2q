@@ -11,15 +11,15 @@ const Main = {
   element: <DefaultLayout />,
   children: [
     {
-      path: '/dashboard',
+      path: 'dashboard',
       element: <DashBoard />,
     },
     {
-      path: '/devIntegratedMonitor',
+      path: 'devIntegratedMonitor',
       element: <DevIntegratedMonitor />,
     },
     {
-      path: '/deviceSearch',
+      path: 'deviceSearch',
       element: <DeviceSearch />,
     },
   ],

@@ -9,11 +9,11 @@ const Auth = {
   element: <AuthLayout />,
   children: [
     {
-      path: '/',
+      path: '',
       element: <Login />,
     },
     {
-      path: '/login',
+      path: 'login',
       element: <Login />,
     },
   ],

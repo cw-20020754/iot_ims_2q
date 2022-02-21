@@ -14,27 +14,27 @@ const Fota = {
   element: <DefaultLayout />,
   children: [
     {
-      path: '/fota/firmwareManage',
+      path: 'firmwareManage',
       element: <FirmwareManage />,
     },
     {
-      path: '/fota/FirmwareManageDetail',
+      path: 'FirmwareManageDetail',
       element: <FirmwareManageDetail />,
     },
     {
-      path: '/fota/fotaPolicy',
+      path: 'fotaPolicy',
       element: <FotaPolicy />,
     },
     {
-      path: '/fota/certPolicy',
+      path: 'certPolicy',
       element: <CertPolicy />,
     },
     {
-      path: '/fota/statusCheck',
+      path: 'statusCheck',
       element: <FotaStatus />,
     },
     {
-      path: '/fota/historyCheck',
+      path: 'historyCheck',
       element: <FotaHistory />,
     },
   ],
