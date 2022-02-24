@@ -6,8 +6,6 @@ import { Box } from '@mui/material';
 import CNavItem from './CNavItem';
 import CNavCollapse from './CNavCollapse';
 
-// project imports
-
 // ==============================|| SIDEBAR MENU LIST GROUP ||============================== //
 
 const CNavGroup = ({ item }) => {
@@ -15,9 +13,9 @@ const CNavGroup = ({ item }) => {
     <>
       <Box sx={{ mt: 1.25, mb: 1.25 }}>
         {item.type === 'item' ? (
-          <CNavItem key={item.id} item={item} level={1} />
+          <CNavItem key={item.path} item={item} level={1} />
         ) : (
-          <CNavCollapse key={item.id} menu={item} level={1} />
+          <CNavCollapse key={item.path} menu={item} level={1} />
         )}
       </Box>
     </>

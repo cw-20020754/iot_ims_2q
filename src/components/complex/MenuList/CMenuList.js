@@ -1,15 +1,12 @@
 import React from 'react';
-// material-ui
-
-// project imports
-import menuItem from '../../../nav';
 import CNavGroup from './CNavGroup';
+import { nav } from '../../../router';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
 const CMenuList = () => {
-  const navItems = menuItem.items.map((item) => {
-    return <CNavGroup key={item.id} item={item} />;
+  const navItems = nav.map((item) => {
+    return item.show && <CNavGroup key={item.id} item={item} />;
   });
 
   return <>{navItems}</>;

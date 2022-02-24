@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { memo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -20,39 +19,34 @@ import {
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons';
 import CNavItem from './CNavItem';
-import {
-  setCollapsedOpen,
-  setCurrentNav,
-} from '../../../redux/reducers/changeStateSlice';
 
 // ==============================|| SIDEBAR MENU LIST COLLAPSE ITEMS ||============================== //
 
 const CNavCollapse = ({ menu, level }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const selectedNav = useSelector((state) => state.changeState.selectedNav);
-  const collapsedOpen = useSelector((state) => state.changeState.collapsedOpen);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
 
   const handleClick = () => {
-    // setOpen(!open);
-    // console.log('level >> ', level);
-    dispatch(setCurrentNav(menu.id));
-    dispatch(setCollapsedOpen(!collapsedOpen));
-    // setSelected(!selected ? menu.id : null);
-
-    // console.log('handleClick >> ', selectedNav, selectedNav.split('/').findIndex((id) => id === menu.id) > -1);
+    setOpen(!open);
+    setSelected(!selected ? menu.id : null);
   };
 
   // menu collapse & item
   const menus = menu.children?.map((item) => {
     switch (item.type) {
       case 'collapse':
-        return <CNavCollapse key={item.id} menu={item} level={level + 1} />;
+        return <CNavCollapse key={item.path} menu={item} level={level + 1} />;
       case 'item':
         return (
-          item.show && <CNavItem key={item.id} item={item} level={level + 1} />
+          item.show && (
+            <CNavItem
+              key={item.path}
+              item={item}
+              level={level + 1}
+              path={menu.path}
+            />
+          )
         );
       default:
         return (
@@ -80,6 +74,18 @@ const CNavCollapse = ({ menu, level }) => {
     />
   );
 
+  useEffect(() => {
+    const currentPath = document.location.pathname
+      .toString()
+      .split('/')
+      .findIndex((id) => id === menu.id);
+
+    if (currentPath > -1) {
+      setOpen(true);
+      setSelected(menu.id);
+    }
+  }, [menu.id]);
+
   return (
     <>
       <ListItemButton
@@ -91,7 +97,7 @@ const CNavCollapse = ({ menu, level }) => {
           py: level > 1 ? 1 : 1.25,
           pl: `${level * 24}px`,
         }}
-        selected={selectedNav.split('/').findIndex((id) => id === menu.id) > -1}
+        selected={selected === menu.id}
         onClick={handleClick}
       >
         <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
@@ -130,7 +136,7 @@ const CNavCollapse = ({ menu, level }) => {
           />
         )}
       </ListItemButton>
-      <Collapse in={collapsedOpen} timeout="auto">
+      <Collapse in={open} timeout="auto">
         <List
           component="div"
           disablePadding

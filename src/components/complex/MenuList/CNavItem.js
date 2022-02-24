@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { forwardRef, memo, useLayoutEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { forwardRef, memo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -15,27 +14,12 @@ import {
 
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import {
-  setCollapsedOpen,
-  setCurrentNav,
-} from '../../../redux/reducers/changeStateSlice';
 
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
-const CNavItem = ({ item, level }) => {
-  // console.log('item, level > ', item, level);
-
+const CNavItem = ({ item, level, path }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const selectedNav = useSelector((state) => state.changeState.selectedNav);
-  const config = {
-    // basename: only at build time to set, and Don't add '/' at end off BASENAME for breadcrumbs, also Don't put only '/' use blank('') instead,
-    // like '/berry-material-react/react/default'
-    basename: '',
-    defaultPath: '/',
-    fontFamily: `'Roboto', sans-serif`,
-    borderRadius: 12,
-  };
+  const { pathname } = useLocation();
 
   const Icon = item.icon;
   const itemIcon = item?.icon ? (
@@ -61,7 +45,7 @@ const CNavItem = ({ item, level }) => {
       <Link
         ref={ref}
         {...props}
-        to={`${config.basename}${item.path}`}
+        to={level > 1 ? `${path}/${item.path}` : `${item.id}`}
         target={itemTarget}
       />
     )),
@@ -70,27 +54,12 @@ const CNavItem = ({ item, level }) => {
     listItemProps = { component: 'a', href: item.path, target: itemTarget };
   }
 
-  const itemHandler = (id) => {
-    dispatch(setCurrentNav(id));
+  const itemHandler = (path) => {};
 
-    dispatch(setCollapsedOpen(level > 1));
-  };
-
-  useLayoutEffect(() => {
-    const currentIndex = document.location.pathname
-      .toString()
-      .split('/')
-      .findIndex((id) => id === item.id);
-
-    if (currentIndex > -1) {
-      dispatch(setCurrentNav(item.id));
-    }
-    // eslint-disable-next-line
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <ListItemButton
-      hidden
       {...listItemProps}
       disabled={item.disabled}
       sx={{
@@ -102,10 +71,12 @@ const CNavItem = ({ item, level }) => {
         pl: `${level * 24}px`,
       }}
       selected={
-        selectedNav === item.id ||
-        (document.location.pathname === '/' && item.id === 'dashboard')
+        pathname
+          .toString()
+          .split('/')
+          .findIndex((id) => id.toLowerCase() === item.path.toLowerCase()) > -1
       }
-      onClick={() => itemHandler(item.id)}
+      onClick={() => itemHandler(item.path)}
     >
       <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>
         {itemIcon}
@@ -113,7 +84,14 @@ const CNavItem = ({ item, level }) => {
       <ListItemText
         primary={
           <Typography
-            variant={selectedNav === item.id ? 'h5' : 'body1'}
+            variant={
+              pathname
+                .toString()
+                .split('/')
+                .findIndex((id) => id === item.path) > -1
+                ? 'h5'
+                : 'body1'
+            }
             color="inherit"
           >
             {item.title}

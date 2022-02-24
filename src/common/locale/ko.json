@@ -83,7 +83,17 @@
     "error": "에러",
     "control": "제어",
     "info": "정보",
-    "originDt": "발생일시"
+    "originDt": "발생일시",
+    "dashbord": "대시보드",
+    "adminManage" : "Admin 관리",
+    "authManage" : "권한 관리",
+    "commonCodeManage" : "공통 코드 관리",
+    "notice" : "공지사항",
+    "firmwareDetail" : "펌웨어 상세",
+    "IoTProtocol" : "IoT 프로토콜",
+    "protocolApi": "프로토콜 기준 - API",
+    "protocolFeatures": "프로토콜 기준 - 기능",
+    "productByProtocol": "제품별 프로토콜"
   },
   "desc": {
     "ipNotAllowAlert": "접근 가능한 IP가 아닙니다.",

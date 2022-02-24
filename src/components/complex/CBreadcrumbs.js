@@ -3,16 +3,20 @@ import { Breadcrumbs, Link, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useLocation } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import routes from '../../nav';
+import { nav } from '../../router';
+import { isNull } from '../../common/utils';
+
 const CBreadcrumb = () => {
   const theme = useTheme();
   const location = useLocation();
   const currentLocation = location.pathname;
 
   const getRouteName = (pathname) => {
-    const currentRoute = routes.items.find(
+    const currentRoute = nav.find(
       (route) =>
-        currentLocation.split('/').findIndex((id) => id === route.id) > -1,
+        currentLocation
+          .split('/')
+          .findIndex((id) => id.toLowerCase() === route.id.toLowerCase()) > -1,
     );
 
     if (currentRoute.children.length === 0) {
@@ -24,15 +28,19 @@ const CBreadcrumb = () => {
 
   const getBreadcrumbs = () => {
     const routeName = getRouteName(currentLocation);
-
     if (!Array.isArray(routeName)) {
       return [routeName];
     } else {
       const breadcrumb = routeName.find(
-        (route) => route.path === currentLocation,
+        (route) =>
+          currentLocation
+            .split('/')
+            .findIndex(
+              (path) => path.toLowerCase() === route.path.toLowerCase(),
+            ) > -1,
       );
 
-      return breadcrumb.meta.breadcrumb;
+      return isNull(breadcrumb) ? '' : breadcrumb.meta.breadcrumb;
     }
   };
 
@@ -46,26 +54,32 @@ const CBreadcrumb = () => {
       aria-label="breadcrumb"
       sx={{ padding: 2 }}
     >
-      {breadcrumbs.map((breadcrumb, index) => {
-        // console.log("breadcrumb >> ", breadcrumb);
-        return breadcrumb.active ? (
-          <Typography key="3" color={theme.palette.primary.main} variant={'h3'}>
-            {breadcrumb.title}
-          </Typography>
-        ) : (
-          <Link
-            underline="hover"
-            color={
-              breadcrumbs.length === 1 ? theme.palette.primary.main : 'inherit'
-            }
-            onClick={handleClick}
-            key={index}
-            variant={'h3'}
-          >
-            {breadcrumb.title}
-          </Link>
-        );
-      })}
+      {!isNull(breadcrumbs) &&
+        breadcrumbs.map((breadcrumb, index) => {
+          return index + 1 === breadcrumbs.length ? (
+            <Typography
+              key="3"
+              color={theme.palette.primary.main}
+              variant={'h3'}
+            >
+              {breadcrumb.title}
+            </Typography>
+          ) : (
+            <Link
+              underline="hover"
+              color={
+                breadcrumbs.length === 1
+                  ? theme.palette.primary.main
+                  : 'inherit'
+              }
+              onClick={handleClick}
+              key={index}
+              variant={'h3'}
+            >
+              {breadcrumb.title}
+            </Link>
+          );
+        })}
     </Breadcrumbs>
   );
 };
