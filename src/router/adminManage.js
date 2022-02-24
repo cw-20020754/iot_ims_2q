@@ -4,6 +4,7 @@ import DefaultLayout from '../components/layout/DefaultLayout';
 import AuthManage from '../pages/AdminManage/AuthManage';
 import CommonCodeManage from '../pages/AdminManage/CommonCodeManage';
 import Notice from '../pages/AdminManage/Notice';
+import LayoutSample from '../pages/AdminManage/LayoutSample';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 // ==============================|| ADMINMANAGE ROUTING ||============================== //
@@ -55,6 +56,20 @@ const adminManage = {
         breadcrumb: [
           { title: `${i18n.t('word.adminManage')}` },
           { title: `${i18n.t('word.notice')}` },
+        ],
+      },
+      show: true,
+    },
+    {
+      path: 'layoutSample',
+      element: <LayoutSample />,
+      type: 'item',
+      title: 'Layout Sample',
+      meta: {
+        public: false,
+        breadcrumb: [
+          { title: `${i18n.t('word.adminManage')}` },
+          { title: 'Layout Sample' },
         ],
       },
       show: true,

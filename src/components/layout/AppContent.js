@@ -1,5 +1,6 @@
 import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import { Container } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { DRAWER_WIDTH } from '../../common/constants';
 import CBreadcrumb from '../complex/CBreadcrumbs';
@@ -59,8 +60,10 @@ const AppContent = () => {
   return (
     <>
       <Main theme={theme} open={leftDrawerOpened}>
-        <CBreadcrumb />
-        <Outlet />
+        <Container maxWidth="xl" disableGutters={true}>
+          <CBreadcrumb />
+          <Outlet />
+        </Container>
       </Main>
     </>
   );
