@@ -7,7 +7,8 @@ import {
   CardActions,
 } from '@mui/material';
 import CButton from '../../components/basic/CButton';
-import CTabs from '../../components/basic/\bCTabs';
+import CTabs from '../../components/basic/CTabs';
+import CTree from '../../components/basic/CTree';
 import SampleDialog from './CustomDialogs/SampleDialog';
 
 const LayoutSample = () => {
