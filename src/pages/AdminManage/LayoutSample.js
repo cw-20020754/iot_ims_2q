@@ -10,6 +10,8 @@ import CButton from '../../components/basic/CButton';
 import CTabs from '../../components/basic/CTabs';
 import CTree from '../../components/basic/CTree';
 import SampleDialog from './CustomDialogs/SampleDialog';
+import GridViewIcon from '@mui/icons-material/GridView';
+import ArticleIcon from '@mui/icons-material/Article';
 
 const LayoutSample = () => {
   const [open, setOpen] = useState(false);
@@ -35,6 +37,29 @@ const LayoutSample = () => {
     { value: '0010', label: '제품 데이터 동기화' },
     { value: '0011', label: '부가정보요청' },
   ];
+
+  const treeDataList = [
+    {
+      id: '001',
+      labelText: '그룹1',
+      labelInfo: 2,
+      prependIcon: GridViewIcon,
+      children: [
+        { id: '001.1', labelText: 'item1', prependIcon: ArticleIcon },
+        { id: '001.2', labelText: 'item2', prependIcon: ArticleIcon },
+      ],
+    },
+    {
+      id: '002',
+      labelText: '그룹2',
+      labelInfo: 0,
+      prependIcon: GridViewIcon,
+    },
+  ];
+
+  const onNodeSelect = (event, nodeIds) => {
+    console.log(nodeIds);
+  };
 
   return (
     <Grid
@@ -93,6 +118,15 @@ const LayoutSample = () => {
           <Typography variant="h4">panel1</Typography>
           <Typography variant="h4">panel2</Typography>
         </CTabs>
+      </Grid>
+      <SampleDialog open={open} onClose={dialogClose}></SampleDialog>
+
+      <Grid item xs={4}>
+        <CTree
+          treeDataList={treeDataList}
+          onNodeSelect={onNodeSelect}
+          defaultExpanded={[treeDataList[0].id]}
+        ></CTree>
       </Grid>
       <SampleDialog open={open} onClose={dialogClose}></SampleDialog>
     </Grid>

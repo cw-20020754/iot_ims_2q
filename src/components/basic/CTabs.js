@@ -5,7 +5,9 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 const CTabs = (props) => {
   const { tabDataList, sx, orientation, children } = props;
 
-  const [value, setValue] = React.useState(tabDataList[0].value);
+  const [value, setValue] = React.useState(
+    tabDataList ? tabDataList[0].value : 0,
+  );
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -31,16 +33,18 @@ const CTabs = (props) => {
             scrollButtons
             allowScrollButtonsMobile
           >
-            {tabDataList.map((tab, index) => (
-              <Tab key={index} value={tab.value} label={tab.label} />
-            ))}
+            {tabDataList &&
+              tabDataList.map((tab, index) => (
+                <Tab key={index} value={tab.value} label={tab.label} />
+              ))}
           </TabList>
 
-          {tabDataList.map((tab, index) => (
-            <TabPanel key={index} value={tab.value}>
-              {children[index]}
-            </TabPanel>
-          ))}
+          {tabDataList &&
+            tabDataList.map((tab, index) => (
+              <TabPanel key={index} value={tab.value}>
+                {children[index]}
+              </TabPanel>
+            ))}
         </Box>
       </TabContext>
     </Card>

@@ -17,7 +17,7 @@ const CDialogTitle = (props) => {
         <Grid item xs>
           {title}
         </Grid>
-        {children.length > 1 ? (
+        {children && children.length > 1 ? (
           children.map((child, index) => (
             <Grid key={index} item xs="auto">
               {child}
