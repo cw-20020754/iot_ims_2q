@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TextField } from '@mui/material';
+import { checkValidtaion, isNull } from '../../common/utils';
 
-const CInput = (props) => {
+const CInput = React.forwardRef((props, ref) => {
   const {
     id,
     name,
@@ -9,29 +10,49 @@ const CInput = (props) => {
     value,
     style,
     required = false,
-    helperText,
-    error,
     inputProps,
+    variant,
+    rules,
+    ...rest
   } = props;
 
-  // console.log('props >> ', props);
+  const [helpText, setHelpText] = useState('');
+
+  const validateCheck = useCallback(() => {
+    if (!isNull(rules) && !isNull(rules.conditions)) {
+      const result = checkValidtaion(rules.conditions);
+
+      !isNull(result) ? setHelpText(result) : setHelpText('');
+    }
+  }, [rules]);
+
+  useEffect(() => {
+    if (!isNull(rules) && !isNull(rules.evtName) && !isNull(ref)) {
+      ref.current.value = value;
+      ref.current[rules.evtName] = validateCheck;
+    }
+  }, [ref, rules, validateCheck, value]);
 
   return (
     <TextField
+      ref={ref}
       id={id}
       name={name}
       type={id}
       label={label}
-      defaultValue={value}
+      value={value}
       sx={style}
-      fullWidth
-      helperText={helperText}
-      variant="standard"
+      variant={isNull(variant) ? 'standard' : variant}
       InputProps={inputProps}
-      required={required}
-      error={error}
+      size={'small'}
+      onBlur={() => validateCheck()}
+      error={!isNull(helpText)}
+      helperText={helpText}
+      {...rest}
     />
   );
-};
+});
+
+CInput.displayName = 'CInput';
 
 export default CInput;

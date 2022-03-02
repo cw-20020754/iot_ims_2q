@@ -1,5 +1,5 @@
 import React from 'react';
-import { GridOverlay } from '@mui/x-data-grid';
+import { GridOverlay } from '@mui/x-data-grid-pro';
 import { LinearProgress } from '@mui/material';
 
 const CLoadingOverlay = () => {

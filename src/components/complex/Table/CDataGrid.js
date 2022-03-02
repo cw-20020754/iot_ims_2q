@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import React from 'react';
+import { DataGridPro, useGridApiRef } from '@mui/x-data-grid-pro';
 import { Card, CardContent, Typography } from '@mui/material';
 import CToolbar from './CToolbar';
 import CNoRowsOverlay from './CNoRowsOverlay';
 import CLoadingOverlay from './CLoadingOverlay';
-
+import { useNavigate } from 'react-router-dom';
+import { getFirmwareList } from '../../../redux/reducers/fotaInfoSlice';
 const CDataGrid = (props) => {
   const {
     title,
@@ -16,12 +17,10 @@ const CDataGrid = (props) => {
     isLoading,
     param,
     toolbarBtnList,
+    ...rest
   } = props;
 
-  // console.log('rows >> ', rows);
-
-  const [pages, setPages] = useState(param.page);
-  const [pageSize, setPageSize] = useState(param.size);
+  const apiRef = useGridApiRef();
 
   return (
     <Card
@@ -34,51 +33,30 @@ const CDataGrid = (props) => {
         <Typography variant={'h4'} sx={{ padding: '10px' }}>
           {title}
         </Typography>
-        <DataGrid
+        <DataGridPro
+          apiRef={apiRef}
+          {...rest}
+          columns={columns}
           rows={rows}
-          columns={columns.map((item) => {
-            return {
-              ...item,
-              sortable: false,
-            };
-          })}
           autoHeight={totalElement > 0}
-          components={{
-            Toolbar: CToolbar,
-            NoRowsOverlay: CNoRowsOverlay,
-            LoadingOverlay: CLoadingOverlay,
-          }}
-          componentsProps={{ toolbar: { toolbarBtnList: toolbarBtnList } }}
-          onCellClick={(param) => {
-            if (category === 'statusSearch' && param.field !== 'editDelete') {
-              props.rowDetail(param.row);
-            }
-          }}
-          onPageSizeChange={(newPageSize) => {
-            props.onFetchData({
-              page: pages,
-              size: newPageSize,
-            });
-
-            setPageSize(newPageSize);
-          }}
-          onPageChange={(newPages) => {
-            props.onFetchData({
-              page: newPages,
-              size: pageSize,
-            });
-
-            setPages(newPages);
-          }}
-          pageSize={pageSize}
-          rowCount={totalElement}
-          paginationMode="server"
-          disableColumnMenu={true}
           loading={isLoading}
+          rowCount={totalElement}
           pagination
-          rowsPerPageOptions={param.rowPerPage}
           columnBuffer={2}
           columnThreshold={2}
+          paginationMode="server"
+          components={{
+            Toolbar: CToolbar,
+            LoadingOverlay: CLoadingOverlay,
+            NoRowsOverlay: CNoRowsOverlay,
+          }}
+          componentsProps={{
+            toolbar: {
+              toolbarBtnList: toolbarBtnList,
+            },
+          }}
+          pageSize={param.size}
+          rowsPerPageOptions={param.rowPerPage}
         />
       </CardContent>
     </Card>

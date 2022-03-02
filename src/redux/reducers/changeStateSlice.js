@@ -18,13 +18,13 @@ const changeStateSlice = createSlice({
     setIsLoading(state, action) {
       state.isLoading = action.payload;
     },
-    getDatagridToolbar(state, action) {
+    getDatagridInfo(state, action) {
       state.toolbarItem = action.payload;
     },
   },
   extraReducers: {},
 });
 
-export const { setSidebarShow, setIsLoading, getDatagridToolbar } =
+export const { setSidebarShow, setIsLoading, getDatagridInfo } =
   changeStateSlice.actions;
 export default changeStateSlice.reducer;

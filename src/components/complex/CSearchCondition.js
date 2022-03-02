@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -16,53 +22,54 @@ import { getCodeCategoryItems, isNull } from '../../common/utils';
 import CInput from '../basic/CInput';
 import CSelect from '../basic/CSelect';
 import CSlectAutocomplete from '../basic/CSlectAutocomplete';
-import CButton from '../basic/CButton';
+import rules from '../../common/rules';
 const CSearchCondition = (props) => {
+  const [initial, setInitial] = useState(true);
   const { conditionList } = props;
   const classes = AppStyles();
   const codes = useSelector((state) => state.sharedInfo.codes);
   const { t } = useTranslation();
-  const [searchOption, setSearchOption] = useState({
-    frmwrName: '',
-    frmwrType: '',
-    devModelCode: '',
-    frmwrVer: '',
-    startDate: dayjs(new Date())
-      .add(-7, 'days')
-      .hour(0)
-      .minute(0)
-      .second(0)
-      .format('YYYY-MM-DDTHH:mm'),
-    endDate: dayjs(new Date())
-      .hour(23)
-      .minute(59)
-      .second(59)
-      .format('YYYY-MM-DDTHH:mm'),
-  });
+  const [searchOption, setSearchOption] = useState({});
 
-  const onChangeFormData = (e, name, value) => {
+  const onChangeFormData = useCallback((e, name, newValue) => {
+    // console.log('e, name, newValue >> ', e.target, name, newValue);
+
     let sName, sValue;
-    // console.log('e, name, value  >> ', e, name, value);
-    if (isNull(name) && isNull(value)) {
+
+    if (isNull(newValue)) {
       sName = e.target.name;
       sValue = e.target.value;
     } else {
       sName = name;
-      sValue = value;
+      sValue = newValue;
     }
+
     setSearchOption((prevState) => ({
       ...prevState,
       [sName]: sValue,
     }));
-    // const { name } = e.target;
-    // console.log('e , value >> ', e, value);
-    // console.log('name >> ', name, value);
-  };
+    // console.log('searchOption >> ', searchOption);
+  }, []);
 
-  const onClickButton = () => {
-    // console.log('onclickbutton');
+  const dialogOpen = () => {
+    // console.log('dialogOpen');
     // props.onFetchData('', searchOption);
   };
+
+  useLayoutEffect(() => {
+    if (initial) {
+      setInitial(false);
+      conditionList.map((item) => {
+        if (item.id === 'datetime-local') {
+          setSearchOption((prevState) => ({
+            ...prevState,
+            [item.category]: item.value,
+          }));
+        }
+        return null;
+      });
+    }
+  }, [initial, conditionList]);
 
   return (
     <Accordion>
@@ -78,6 +85,7 @@ const CSearchCondition = (props) => {
       <AccordionDetails>
         <Grid container spacing={3}>
           {conditionList.map((item, index) => {
+            const ref = React.createRef();
             return (
               <Grid
                 item
@@ -91,39 +99,63 @@ const CSearchCondition = (props) => {
                     id={item.id}
                     name={item.category}
                     type={item.id}
-                    value={item.value}
+                    value={searchOption[item.category] || ''}
                     label={item.label}
+                    onChange={onChangeFormData}
+                    ref={ref}
+                    fullWidth
+                    rules={
+                      item.id === 'datetime-local' && {
+                        conditions: [
+                          rules.dateRangeAlert(
+                            searchOption.startDate,
+                            searchOption.endDate,
+                          ),
+                        ],
+                      }
+                    }
+                    // rules={{
+                    //   // evtName: 'onkeyup',
+                    //   conditions: [
+                    //     rules.dateRangeAlert(searchOption.startDate, searchOption.endDate)
+                    //     // rules.minLength(searchOption[item.category], 5),
+                    //     // rules.maxLength(searchOption[item.category], 10),
+                    //   ],
+                    // }}
                   />
                 )}
                 {item.type === 'selectBox' && (
                   <CSelect
+                    ref={ref}
                     label={item.label}
                     name={item.id}
+                    value={searchOption[item.category] || ''}
+                    onChange={onChangeFormData}
+                    validate={{
+                      evtName: '',
+                      rules: ['requireAlert', 'characterOnlyAlert'],
+                      option: searchOption,
+                    }}
                     optionArray={getCodeCategoryItems(codes, item.category)}
                   />
                 )}
                 {item.type === 'autoSelectBox' && (
                   <CSlectAutocomplete
+                    ref={ref}
+                    value={item.value || ''}
                     name={item.id}
                     label={item.label}
                     getOption={'text'}
+                    getValue={'value'}
                     optionArray={getCodeCategoryItems(codes, item.category)}
+                    onChange={(e, newValue) =>
+                      onChangeFormData(e, item.id, newValue.value)
+                    }
                   />
                 )}
               </Grid>
             );
           })}
-          <CButton
-            text={t('word.search')}
-            variant={'outlined'}
-            type={'success'}
-            style={{
-              width: '150px',
-              height: '35px',
-              marginTop: '30px',
-              marginLeft: '30px',
-            }}
-          />
         </Grid>
       </AccordionDetails>
     </Accordion>

@@ -36,16 +36,16 @@ const AppHeader = () => {
   return (
     <AppBar position="fixed" open={sidebarShow} enableColorOnDark elevation={0}>
       <Toolbar>
-        <IconButton
-          color="neutral"
-          aria-label="open drawer"
-          onClick={() => {
-            dispatch(setSidebarShow(!sidebarShow));
-          }}
-          edge="start"
-        >
-          <MenuIcon />
-        </IconButton>
+        {/*<IconButton*/}
+        {/*  color="neutral"*/}
+        {/*  aria-label="open drawer"*/}
+        {/*  onClick={() => {*/}
+        {/*    dispatch(setSidebarShow(!sidebarShow));*/}
+        {/*  }}*/}
+        {/*  edge="start"*/}
+        {/*>*/}
+        {/*  <MenuIcon />*/}
+        {/*</IconButton>*/}
       </Toolbar>
     </AppBar>
   );

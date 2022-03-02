@@ -33,8 +33,8 @@ const FotaPolicy = () => {
 
   const toolbarBtnList = [
     { text: t('word.reg'), startIcon: <AddIcon /> },
-    { text: t('word.refresh'), startIcon: <RefreshIcon />, type: 'success' },
-    { text: t('word.download'), startIcon: <SaveAltIcon />, type: 'success' },
+    { text: t('word.refresh'), startIcon: <RefreshIcon />, color: 'success' },
+    { text: t('word.download'), startIcon: <SaveAltIcon />, color: 'success' },
   ];
   const conditionList = [
     {

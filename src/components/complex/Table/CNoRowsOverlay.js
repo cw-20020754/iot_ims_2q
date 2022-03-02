@@ -1,7 +1,7 @@
 import React from 'react';
-import { GridOverlay } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
+import { GridOverlay } from '@mui/x-data-grid-pro';
 
 const CNoRowsOverlay = () => {
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
