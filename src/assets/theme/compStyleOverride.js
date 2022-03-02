@@ -216,7 +216,7 @@ export default function componentStyleOverrides(theme) {
             borderTop: `2px solid ${theme.colors?.grey700}`,
           },
           '& .MuiDataGrid-toolbarContainer': {
-            padding: '0px 4px 10px',
+            padding: '-2px 4px 10px',
           },
         },
       },

@@ -11,6 +11,15 @@ export default function themePalette(theme) {
     neutral: {
       main: theme.neutral,
     },
+    cancel: {
+      main: theme.colors?.grey500,
+    },
+    // success: {
+    //   light: theme.colors?.successLight,
+    //   200: theme.colors?.success200,
+    //   main: theme.colors?.successMain,
+    //   dark: theme.colors?.successDark,
+    // },
     // primary: {
     //     light: theme.colors?.primaryLight,
     //     main: theme.colors?.primaryMain,
@@ -40,12 +49,7 @@ export default function themePalette(theme) {
     //     main: theme.colors?.warningMain,
     //     dark: theme.colors?.warningDark
     // },
-    // success: {
-    //     light: theme.colors?.successLight,
-    //     200: theme.colors?.success200,
-    //     main: theme.colors?.successMain,
-    //     dark: theme.colors?.successDark
-    // },
+
     // grey: {
     //     50: theme.colors?.grey50,
     //     100: theme.colors?.grey100,

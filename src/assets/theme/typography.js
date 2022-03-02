@@ -12,7 +12,7 @@ export default function themeTypography(theme) {
       fontSize: '0.75rem',
     },
     h5: {
-      fontSize: '0.875rem',
+      fontSize: '0.895rem',
       color: theme.heading,
       fontWeight: 500,
     },

@@ -24,7 +24,7 @@ const initialState = {
       items: [
         {
           text: 'NONE',
-          value: '',
+          value: 0,
         },
         {
           text: 'WIFI',

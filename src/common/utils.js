@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import qs from 'qs';
+import xlsx from 'xlsx';
 
 const getText = (list, msgId) => {
   return list.find((el) => el.msgId === msgId).msg;
@@ -171,8 +172,50 @@ const responseCheck = (res) => {
   ) {
     result = false;
   }
+  // console.log('result >> ', result);
+  return result;
+};
+
+const onExcelDownload = (title, row, columns) => {
+  let result = [];
+  row.map((item) => {
+    let obj = {};
+    columns.map((data) => {
+      if (!isNull(data) && !isNull(item[data.field]) && !data.hide) {
+        obj[data.headerName] = item[data.field];
+      }
+      return obj;
+    });
+
+    result.push(obj);
+    return item;
+  });
+
+  const ws = xlsx.utils.json_to_sheet(result);
+  const wb = xlsx.utils.book_new();
+  xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+  xlsx.writeFile(
+    wb,
+    `${title}_${dayjs(new Date()).format('YYMMDDHHmmssSSS')}.xlsx`,
+  );
 
   return result;
+};
+
+const checkValidtaion = (ruleArray, value, option) => {
+  let errorText = '';
+  if (!isNull(ruleArray) && ruleArray.length > 0) {
+    ruleArray.every((item) => {
+      if (typeof item === 'string') {
+        errorText = item;
+        return false;
+      } else {
+        errorText = '';
+      }
+      return item;
+    });
+  }
+  return errorText;
 };
 
 export {
@@ -186,4 +229,6 @@ export {
   fileSize,
   getCodeCategoryItems,
   responseCheck,
+  onExcelDownload,
+  checkValidtaion,
 };

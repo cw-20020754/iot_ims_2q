@@ -1,11 +1,15 @@
 import React from 'react';
-import FotaRoutes from './FotaRoutes';
+import fota from './fota';
+import iotProtocol from './iotProtocol';
+import adminManage from './adminManage';
+import auth from './auth';
+import dashboard from './dashboard';
 import { useRoutes } from 'react-router-dom';
-import MainRoutes from './MainRoutes';
-import AuthRoutes from './AuthRoutes';
+
+export const nav = [dashboard, fota, iotProtocol, adminManage, auth];
 
 const Router = () => {
-  return useRoutes([AuthRoutes, MainRoutes, FotaRoutes]);
+  return useRoutes(nav);
 };
 
 export default Router;
