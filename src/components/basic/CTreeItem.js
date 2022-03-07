@@ -2,22 +2,23 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Typography, IconButton } from '@mui/material';
 import TreeItem from '@mui/lab/TreeItem';
-import Label from '@mui/icons-material/Label';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 const CTreeItem = (props) => {
   const {
+    id,
     bgColor,
     color,
     labelIcon: LabelIcon,
     labelInfo,
     labelText,
-    prependButtons,
+    appendIconButtons,
     ...other
   } = props;
 
   const CTreeItem = styled(TreeItem)(({ theme }) => ({
+    '& .MuiTreeItem-content': {
+      padding: 0,
+    },
     '& .MuiTreeItem-content .MuiTreeItem-iconContainer svg': {
       fontSize: 'xx-large',
     },
@@ -34,15 +35,27 @@ const CTreeItem = (props) => {
           >
             {labelText}
           </Typography>
-          <Typography variant="caption" color="inherit">
+          <Typography variant="caption" color="inherit" sx={{ mr: 1 }}>
             {labelInfo}
           </Typography>
-          <IconButton aria-label="edit">
-            <EditIcon />
-          </IconButton>
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
+          {appendIconButtons && appendIconButtons.length > 0
+            ? appendIconButtons.map((item) => (
+                <IconButton
+                  id="not"
+                  key={item.type}
+                  sx={{ px: 0 }}
+                  disabled={item.disabled}
+                  onClick={() => item.onNodeButtonClick(item.type, id)}
+                >
+                  <Box
+                    key={item.type}
+                    component={item.icon}
+                    sx={{ px: 0.5, fontSize: 'x-large' }}
+                    color="inherit"
+                  />
+                </IconButton>
+              ))
+            : null}
         </Box>
       }
       style={{
@@ -50,7 +63,7 @@ const CTreeItem = (props) => {
         '--tree-view-bg-color': bgColor,
       }}
       {...other}
-    />
+    ></CTreeItem>
   );
 };
 
