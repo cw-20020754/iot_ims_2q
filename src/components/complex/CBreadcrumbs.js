@@ -52,7 +52,7 @@ const CBreadcrumb = () => {
     <Breadcrumbs
       separator={<NavigateNextIcon fontSize="medium" />}
       aria-label="breadcrumb"
-      sx={{ padding: 2 }}
+      sx={{ px: 0, py: 2 }}
     >
       {!isNull(breadcrumbs) &&
         breadcrumbs.map((breadcrumb, index) => {
