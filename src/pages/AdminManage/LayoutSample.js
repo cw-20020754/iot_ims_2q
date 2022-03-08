@@ -5,6 +5,8 @@ import {
   Typography,
   Grid,
   CardActions,
+  IconButton,
+  Box,
 } from '@mui/material';
 import CButton from '../../components/basic/CButton';
 import CTabs from '../../components/basic/CTabs';
@@ -12,6 +14,8 @@ import CTree from '../../components/basic/CTree';
 import SampleDialog from './CustomDialogs/SampleDialog';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ArticleIcon from '@mui/icons-material/Article';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const LayoutSample = () => {
   const [open, setOpen] = useState(false);
@@ -38,15 +42,47 @@ const LayoutSample = () => {
     { value: '0011', label: '부가정보요청' },
   ];
 
+  const onNodeSelect = (event, nodeIds) => {
+    // console.log(nodeIds);
+  };
+
+  const onNodeButtonClick = (type, id) => {
+    // console.log('type = ', type);
+    // console.log('id = ', id);
+  };
+
   const treeDataList = [
     {
       id: '001',
       labelText: '그룹1',
       labelInfo: 2,
       prependIcon: GridViewIcon,
+      appendIconButtons: [
+        {
+          type: 'edit',
+          icon: EditIcon,
+          onNodeButtonClick: onNodeButtonClick,
+        },
+        {
+          type: 'delete',
+          icon: DeleteIcon,
+          onNodeButtonClick: onNodeButtonClick,
+          disabled: true,
+        },
+      ],
       children: [
-        { id: '001.1', labelText: 'item1', prependIcon: ArticleIcon },
-        { id: '001.2', labelText: 'item2', prependIcon: ArticleIcon },
+        {
+          id: '001.1',
+          labelText: 'item1',
+          labelInfo: 'ko',
+          prependIcon: ArticleIcon,
+        },
+        {
+          id: '001.2',
+          labelText: 'item2',
+          labelInfo: 'ko',
+          prependIcon: ArticleIcon,
+        },
       ],
     },
     {
@@ -54,12 +90,22 @@ const LayoutSample = () => {
       labelText: '그룹2',
       labelInfo: 0,
       prependIcon: GridViewIcon,
+      appendIconButtons: [
+        {
+          type: 'edit',
+          icon: EditIcon,
+          onNodeButtonClick: onNodeButtonClick,
+        },
+        {
+          type: 'delete',
+          icon: DeleteIcon,
+          onNodeButtonClick: onNodeButtonClick,
+        },
+      ],
     },
   ];
 
-  const onNodeSelect = (event, nodeIds) => {
-    console.log(nodeIds);
-  };
+  const env = process.env.NODE_ENV;
 
   return (
     <Grid
@@ -73,14 +119,12 @@ const LayoutSample = () => {
       <Grid item xs={8}>
         <Card>
           <CardContent>
-            <Typography variant="h4">LayoutSample</Typography>
+            <Typography variant="h4">{env}</Typography>
           </CardContent>
           <CardActions>
-            <CButton
-              variant="outlined"
-              onClick={dialogOpen}
-              text="Open dialog"
-            ></CButton>
+            <CButton variant="outlined" onClick={dialogOpen}>
+              Open dialog
+            </CButton>
           </CardActions>
         </Card>
       </Grid>
@@ -126,6 +170,14 @@ const LayoutSample = () => {
           treeDataList={treeDataList}
           onNodeSelect={onNodeSelect}
           defaultExpanded={[treeDataList[0].id]}
+          headerChildren={
+            <>
+              <IconButton>
+                <EditIcon />
+              </IconButton>
+              <CButton variant="outlined">그룹 추가</CButton>
+            </>
+          }
         ></CTree>
       </Grid>
       <SampleDialog open={open} onClose={dialogClose}></SampleDialog>
