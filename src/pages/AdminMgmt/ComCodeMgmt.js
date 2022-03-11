@@ -1,33 +1,76 @@
-import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  CardActions,
-  IconButton,
-  Box,
-} from '@mui/material';
-import CButton from '../../components/basic/CButton';
-import CTabs from '../../components/basic/CTabs';
-import CTree from '../../components/basic/CTree';
-import SampleDialog from './CustomDialogs/SampleDialog';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { IconButton, Box } from '@mui/material';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ArticleIcon from '@mui/icons-material/Article';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+
+import CButton from 'components/basic/CButton';
+import CTree from 'components/basic/CTree';
+import CDataGrid from 'components/complex/Table/CDataGrid';
+import ComCodeDialog from './CustomDialogs/ComCodeDialog';
 
 const ComCodeMgmt = () => {
-  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
 
-  const dialogOpen = () => {
-    setOpen(true);
+  /**
+   * Dialog variables
+   */
+  const [openComCodeDialog, setOpenComCodeDialog] = useState(false);
+  const [comCodeDialogInfo, setComCodeDialogInfo] = useState({
+    type: '',
+    params: {},
+  });
+
+  const comCodeDialogOpen = (values) => {
+    setComCodeDialogInfo({ ...comCodeDialogInfo, ...values });
+    setOpenComCodeDialog(true);
   };
 
-  const dialogClose = () => {
-    setOpen(false);
+  const comCodeDialogClose = () => {
+    setOpenComCodeDialog(false);
   };
 
+  /**
+   * Grid variables
+   */
+  const [pageInfo, setPageInfo] = useState({
+    page: 0,
+    size: 25,
+    rowPerPage: [25, 50, 100],
+  });
+  const [dataGridTitle, setDataGridTitle] = useState(
+    t('word.com') + t('word.code'),
+  );
+
+  const dataGridColums = useSelector(
+    (state) => state.comCodeMgmt.dataGridColums,
+    shallowEqual,
+  );
+  const dataGridRows = useSelector(
+    (state) => state.comCodeMgmt.dataGridRows,
+    shallowEqual,
+  );
+
+  const onTitleButtonClick = () => {
+    comCodeDialogOpen({ type: 'addCode' });
+  };
+
+  const dataGridTitleButtons = [
+    {
+      id: 'codeAddButton',
+      text: t('word.code') + ' ' + t('word.add'),
+      onTitleButtonClick: onTitleButtonClick,
+    },
+  ];
+
+  /**
+   * Tree Variables
+   */
   const onNodeSelect = (event, nodeIds) => {
     // console.log(nodeIds);
   };
@@ -92,39 +135,56 @@ const ComCodeMgmt = () => {
   ];
 
   return (
-    <Grid
-      container
-      direction="row"
-      columnSpacing={1}
-      justifyContent="center"
-      alignItems="stretch"
-      maxHeight="inherit"
-    >
-      <Grid item xs={4}>
+    <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={1}>
+      <Box gridColumn="span 3">
         <CTree
-          sx={{ height: '100%' }}
           treeDataList={treeDataList}
           onNodeSelect={onNodeSelect}
-          defaultExpanded={[treeDataList[0].id]}
+          // defaultExpanded={[treeDataList[0].id]}
           headerChildren={
             <>
               <IconButton>
-                <EditIcon />
+                <AutorenewIcon />
               </IconButton>
-              <CButton variant="outlined">그룹 추가</CButton>
+              <CButton onClick={() => comCodeDialogOpen({ type: 'addGroup' })}>
+                {t('word.group') + ' ' + t('word.add')}
+              </CButton>
             </>
           }
         ></CTree>
-      </Grid>
-      <Grid item xs={8}>
-        <Card>
-          <CardContent>
-            <Typography variant="h4">LayoutSample3</Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-      <SampleDialog open={open} onClose={dialogClose}></SampleDialog>
-    </Grid>
+      </Box>
+      <Box gridColumn="span 9">
+        <CDataGrid
+          title={dataGridTitle}
+          titleButtons={dataGridTitleButtons}
+          columns={dataGridColums}
+          rows={dataGridRows}
+          // totalElement={firmwareMng.totalElements}
+          pageSize={pageInfo.size}
+          rowsPerPage={pageInfo.rowPerPage}
+          // onRefresh={onRefresh}
+          // isLoading={isLoading}
+          // onPageSizeChange={(newPageSize) => {
+          //   onFetchData({
+          //     page: param.page,
+          //     size: newPageSize,
+          //   });
+          // }}
+          // onPageChange={(newPages) => {
+          //   onFetchData({
+          //     page: newPages,
+          //     size: param.size,
+          //   });
+          // }}
+          // toolbarBtnList={toolbarBtnList}
+        />
+      </Box>
+      <ComCodeDialog
+        open={openComCodeDialog}
+        info={comCodeDialogInfo}
+        onClose={comCodeDialogClose}
+      ></ComCodeDialog>
+    </Box>
   );
 };
 

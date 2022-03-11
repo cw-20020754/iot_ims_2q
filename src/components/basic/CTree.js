@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import { Card, CardHeader, CardActions, Collapse } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { Card, CardActions, Divider } from '@mui/material';
 import { TreeView } from '@mui/lab';
+import { TransitionGroup } from 'react-transition-group';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CTreeItem from './CTreeItem';
-import { TransitionGroup } from 'react-transition-group';
 
 const CTree = (props) => {
   const {
@@ -23,6 +23,8 @@ const CTree = (props) => {
     headerChildren,
     ...other
   } = props;
+
+  const theme = useTheme();
 
   const CTree = styled(TreeView)(({ theme }) => ({
     flexGrow: 1,
@@ -57,12 +59,16 @@ const CTree = (props) => {
     ));
 
   return (
-    <Card>
+    <Card sx={{ height: 1 }}>
       <CardActions
-        sx={{ justifyContent: 'space-between', display: 'flex', py: 1 }}
+        sx={{ justifyContent: 'space-between', display: 'flex', py: 1, px: 2 }}
       >
         {headerChildren}
       </CardActions>
+      <Divider
+        variant="middle"
+        sx={{ borderBottomWidth: 2, borderColor: theme.palette.primary.black }}
+      />
       <CardActions sx={{ pt: 0 }}>
         <CTree
           sx={sx}
@@ -81,7 +87,7 @@ const CTree = (props) => {
           {/* 닫힐때 transition 에러 원인 파악 필요. */}
           <TransitionGroup>
             {treeDataList &&
-              treeDataList.length > 0 &&
+              treeDataList.length > 1 &&
               renderTree(treeDataList)}
           </TransitionGroup>
         </CTree>
