@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import { DialogTitle, Grid } from '@mui/material';
+import { DialogTitle, Grid, Box } from '@mui/material';
 
 const CDialogTitle = (props) => {
-  const { sx, title, children } = props;
+  const { sx, prependIcon: LabelIcon, title, children } = props;
 
   const CDialogTitle = styled(DialogTitle)(({ theme }) => ({
     fontWeight: 500,
@@ -14,7 +14,12 @@ const CDialogTitle = (props) => {
   return (
     <CDialogTitle sx={sx}>
       <Grid container spacing={1} justifyContent="space-between">
-        <Grid item xs>
+        <Grid item xs sx={{ alignItems: 'center' }}>
+          <Box
+            component={LabelIcon}
+            color="inherit"
+            sx={{ mr: 1, pt: 1, fontSize: 'x-large' }}
+          />
           {title}
         </Grid>
         {children && children.length > 1 ? (

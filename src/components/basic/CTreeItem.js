@@ -30,12 +30,12 @@ const CTreeItem = (props) => {
         <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5, pr: 0 }}>
           <Box component={LabelIcon} color="inherit" sx={{ mr: 1 }} />
           <Typography
-            variant="body2"
+            variant="body1"
             sx={{ fontWeight: 'inherit', flexGrow: 1 }}
           >
             {labelText}
           </Typography>
-          <Typography variant="caption" color="inherit" sx={{ mr: 1 }}>
+          <Typography variant="body1" color="inherit" sx={{ mr: 1 }}>
             {labelInfo}
           </Typography>
           {appendIconButtons && appendIconButtons.length > 0
