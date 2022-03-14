@@ -1,6 +1,6 @@
-import { API } from '../common/constants';
-import { makeurlQeuryString } from '../common/utils/utils';
-import axios from './commonAPI';
+import { API } from 'common/constants';
+import axios from './interceptor';
+import { makeurlQeuryString } from 'common/utils';
 
 // 펌웨어 목록
 export const getFirmwareList = (param) => {

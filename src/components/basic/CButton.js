@@ -1,7 +1,7 @@
 import React from 'react';
 import MuiButton from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import { isNull } from '../../common/utils/utils';
+import { isNull } from 'common/utils';
 import { useTheme } from '@mui/styles';
 
 const CButton = (props) => {

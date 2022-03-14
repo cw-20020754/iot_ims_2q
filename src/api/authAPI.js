@@ -1,4 +1,4 @@
-import axios from '../api/commonAPI';
+import axios from './interceptor';
 import { API } from '../common/constants';
 export const postToken = async (body) => {
   try {

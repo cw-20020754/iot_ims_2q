@@ -2,9 +2,9 @@ import React from 'react';
 import { Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { getDatagridInfo } from '../../../redux/reducers/changeStateSlice';
+import { getDatagridInfo } from 'redux/reducers/changeStateSlice';
 import CButton from '../../basic/CButton';
-import { isNull } from '../../../common/utils/utils';
+import { isNull } from 'common/utils';
 import { GridToolbarContainer, useGridApiContext } from '@mui/x-data-grid-pro';
 
 const CToolbar = (props) => {

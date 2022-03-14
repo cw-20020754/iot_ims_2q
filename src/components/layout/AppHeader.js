@@ -4,7 +4,7 @@ import { Toolbar, Typography } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import CButton from '../basic/CButton';
-import { setLogoutInfo } from '../../redux/reducers/authSlice';
+import { setLogoutInfo } from 'redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/styles';
 import { useTranslation } from 'react-i18next';

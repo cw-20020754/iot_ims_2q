@@ -13,31 +13,27 @@ import {
   InputAdornment,
   Paper,
 } from '@mui/material';
-import CInput from '../../components/basic/CInput';
-import logo_iocare from '../../assets/images/logo_iocare.png';
-import CButton from '../../components/basic/CButton';
+import CInput from 'components/basic/CInput';
+import logo_iocare from 'assets/images/logo_iocare.png';
+import CButton from 'components/basic/CButton';
 import { useTheme } from '@mui/styles';
 import AuthStyle from './AuthStyle';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import PersonIcon from '@mui/icons-material/Person';
 import { useState } from 'react';
-import AppFooter from '../../components/layout/AppFooter';
+import AppFooter from 'components/layout/AppFooter';
 import { useTranslation } from 'react-i18next';
-import rules from '../../common/rules';
-import { isNull, responseCheck } from '../../common/utils/utils';
+import rules from 'common/rules';
+import { isNull, responseCheck } from 'common/utils';
 import {
   executeLogin,
   setAuthencication,
   setLoginInfo,
   setUserInfo,
-} from '../../redux/reducers/authSlice';
+} from 'redux/reducers/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  isAuthenticated,
-  removeCookie,
-  setCookie,
-} from '../../common/utils/auth';
-import CNotification from '../../components/basic/CNotification';
+import { isAuthenticated, removeCookie } from 'common/auth';
+import CNotification from 'components/basic/CNotification';
 
 const Login = () => {
   const classes = AuthStyle();
@@ -86,8 +82,8 @@ const Login = () => {
           formData: formData,
         }),
       );
-      // console.log('result >> ', JSON.stringify(result));
-      if (responseCheck()) {
+      console.log('result >> ', JSON.stringify(result));
+      if (responseCheck(result)) {
         await dispatch(setLoginInfo(result));
         if (isNull(authError) && isAuthenticated()) {
           dispatch(setUserInfo(values.userId));

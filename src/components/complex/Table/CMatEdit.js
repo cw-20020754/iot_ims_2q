@@ -1,8 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { IconButton, Stack } from '@mui/material';
-import { isNull } from '../../../common/utils/utils';
-import { getDatagridInfo } from '../../../redux/reducers/changeStateSlice';
+import { isNull } from 'common/utils';
+import { getDatagridInfo } from 'redux/reducers/changeStateSlice';
 
 const CMatEdit = (props) => {
   const dispatch = useDispatch();

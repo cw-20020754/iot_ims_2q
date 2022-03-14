@@ -1,8 +1,8 @@
 import React from 'react';
 import Container from '@mui/material/Container';
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/styles';
-import CButton from '../../components/basic/CButton';
+import CButton from 'components/basic/CButton';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 

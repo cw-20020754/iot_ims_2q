@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TextField } from '@mui/material';
-import { checkValidtaion, isNull } from '../../common/utils/utils';
+import { checkValidtaion, isNull } from 'common/utils';
 
 const CInput = React.forwardRef((props, ref) => {
   const {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, Snackbar } from '@mui/material';
-import { isNull } from '../../common/utils/utils';
+import { isNull } from 'common/utils';
 
 const CNotification = (props) => {
   const {

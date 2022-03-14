@@ -2,7 +2,7 @@ import React from 'react';
 import Container from '@mui/material/Container';
 import { Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/styles';
-import CButton from '../../components/basic/CButton';
+import CButton from 'components/basic/CButton';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -30,7 +30,7 @@ const InternalError = () => {
         >
           500
         </Typography>
-        <Typography variant={'h2'}>Internal Server Error.</Typography>
+        <Typography variant={'h2'}>{t('desc.internalError')}</Typography>
         <CButton
           variant={'contained'}
           sx={{ color: theme.palette.common.white, width: '50%', marginTop: 2 }}

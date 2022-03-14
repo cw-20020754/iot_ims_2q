@@ -6,7 +6,7 @@ import {
   MenuItem,
   Select,
 } from '@mui/material';
-import { checkValidtaion, isNull } from '../../common/utils/utils';
+import { checkValidtaion, isNull } from 'common/utils';
 
 const CSelect = React.forwardRef((props, ref) => {
   const {

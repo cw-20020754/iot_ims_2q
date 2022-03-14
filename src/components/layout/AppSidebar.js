@@ -11,8 +11,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { BrowserView, MobileView } from 'react-device-detect';
 
 // project imports
-import logo from '../../assets/images/logo.png';
-import { DRAWER_WIDTH } from '../../common/constants';
+import logo from 'assets/images/logo.png';
+import { DRAWER_WIDTH } from 'common/constants';
 import { useTranslation } from 'react-i18next';
 import CMenuList from '../complex/MenuList/CMenuList';
 

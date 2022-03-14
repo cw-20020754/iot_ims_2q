@@ -5,7 +5,7 @@ import {
   FormHelperText,
   TextField,
 } from '@mui/material';
-import { checkValidtaion, isNull } from '../../common/utils/utils';
+import { checkValidtaion, isNull } from 'common/utils';
 
 const CSlectAutocomplete = React.forwardRef((props, ref) => {
   const {

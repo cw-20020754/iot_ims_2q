@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Card, CardHeader, Paper, Typography } from '@mui/material';
 import AppStyles from './AppStyle';
-import logo from '../../assets/images/logo_coway.svg';
+import logo from 'assets/images/logo_coway.svg';
 import { useTranslation } from 'react-i18next';
 
 const AppFooter = () => {

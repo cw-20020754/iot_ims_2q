@@ -1,12 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { authAPI } from '../../api';
-import { isNull } from '../../common/utils/utils';
-import { HTTP_STATUS } from '../../common/constants';
-import {
-  isAuthenticated,
-  removeCookie,
-  setCookie,
-} from '../../common/utils/auth';
+import { authAPI } from 'api';
+import { isNull } from 'common/utils';
+import { HTTP_STATUS } from 'common/constants';
+import { isAuthenticated, removeCookie, setCookie } from 'common/auth';
 
 const name = 'auth';
 

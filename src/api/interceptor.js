@@ -1,16 +1,16 @@
 import axios from 'axios';
-import { isNull } from '../common/utils/utils';
-import { getCookie } from '../common/utils/auth';
-import { history } from '../App';
-import { HTTP_STATUS } from '../common/constants';
+import { isNull } from 'common/utils/';
+import { history } from 'App';
+import { HTTP_STATUS } from 'common/constants';
+import { getCookie } from 'common/auth';
 
-const instance = axios.create({
+const interceptor = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? '' : '/',
   headers: {
     'Content-Type': 'application/json',
   },
 });
-instance.interceptors.request.use(
+interceptor.interceptors.request.use(
   (config) => {
     // console.log('config > ', config);
     try {
@@ -31,7 +31,7 @@ instance.interceptors.request.use(
   },
 );
 
-instance.interceptors.response.use(
+interceptor.interceptors.response.use(
   (res) => {
     // console.log('res >> ', res, history);
     return res;
@@ -55,4 +55,4 @@ instance.interceptors.response.use(
   },
 );
 
-export default instance;
+export default interceptor;
