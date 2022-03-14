@@ -15,11 +15,13 @@ const CDialogTitle = (props) => {
     <CDialogTitle sx={sx}>
       <Grid container spacing={1} justifyContent="space-between">
         <Grid item xs sx={{ alignItems: 'center' }}>
-          <Box
-            component={LabelIcon}
-            color="inherit"
-            sx={{ mr: 1, pt: 1, fontSize: 'x-large' }}
-          />
+          {LabelIcon && (
+            <Box
+              component={LabelIcon}
+              color="inherit"
+              sx={{ mr: 1, pt: 1, fontSize: 'x-large' }}
+            />
+          )}
           {title}
         </Grid>
         {children && children.length > 1 ? (

@@ -1,22 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { isNull } from 'common/utils';
 import i18n from 'common/locale/i18n';
-import CGridActionsCellItem from 'components/complex/Table/CGridActionsCellItem';
+import { comCodeAPI } from 'api';
+import GridViewIcon from '@mui/icons-material/GridView';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const name = 'comCode';
 
 const initialState = {
+  comCodeGroupList: [],
+  onNodeButtonClickFunc: () => {},
   treeDataList: [],
   dataGridColums: [
-    {
-      field: 'actions',
-      type: 'actions',
-      align: 'center',
-      getActions: (params) => [
-        CGridActionsCellItem('edit', params.id),
-        CGridActionsCellItem('delete', params.id),
-      ],
-    },
     {
       field: 'groupId',
       headerName: i18n.t('word.group') + ' ' + i18n.t('word.id'),
@@ -58,11 +54,61 @@ const initialState = {
   error: false,
 };
 
+/**
+ * 공통코드 그룹 조회
+ */
+export const getComCodeGroup = createAsyncThunk(
+  `${name}/getComCodeGroup`,
+  async (thunkAPI) => {
+    const response = await comCodeAPI.getComCodeGroup();
+    return response.data;
+  },
+);
+
 const comCodeMgmt = createSlice({
   name,
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers: (builder) => {
+    /**
+     * 공통코드 그룹 조회
+     */
+    builder.addCase(getComCodeGroup.fulfilled, (state, action) => {
+      state.comCodeGroupList = [];
+      if (action && Array.isArray(action)) {
+        action.forEach((node) => {
+          state.comCodeGroupList.push({
+            id: node.groupId,
+            labelText: node.groupNm,
+            labelInfo: node.cnt,
+            prependIcon: GridViewIcon,
+            appendIconButtons: [
+              {
+                type: 'edit',
+                icon: EditIcon,
+                onNodeButtonClick: state.onNodeButtonClickFunc,
+              },
+              {
+                type: 'delete',
+                icon: DeleteIcon,
+                onNodeButtonClick: state.onNodeButtonClickFunc,
+                disabled: node.cnt === 0 ? false : true,
+              },
+            ],
+            children: [],
+          });
+        });
+      }
+
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(getComCodeGroup.rejected, (state, action) => {
+      console.log(action);
+      state.loading = false;
+      state.error = true;
+    });
+  },
 });
 
 export default comCodeMgmt.reducer;

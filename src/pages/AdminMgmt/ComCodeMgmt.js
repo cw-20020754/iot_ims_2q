@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { IconButton, Box } from '@mui/material';
@@ -7,11 +7,13 @@ import ArticleIcon from '@mui/icons-material/Article';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import CGridActionsCellItem from 'components/complex/Table/CGridActionsCellItem';
 
 import CButton from 'components/basic/CButton';
 import CTree from 'components/basic/CTree';
 import CDataGrid from 'components/complex/Table/CDataGrid';
 import ComCodeDialog from './CustomDialogs/ComCodeDialog';
+import { getComCodeGroup } from 'redux/reducers/adminMgmt/comCodeMgmt';
 
 const ComCodeMgmt = () => {
   const dispatch = useDispatch();
@@ -47,9 +49,30 @@ const ComCodeMgmt = () => {
     t('word.com') + t('word.code'),
   );
 
-  const dataGridColums = useSelector(
-    (state) => state.comCodeMgmt.dataGridColums,
-    shallowEqual,
+  const onGridButtonClick = (type, id) => {
+    comCodeDialogOpen({ type: type === 'edit' ? 'mdfCode' : 'delCode' });
+  };
+
+  const dataGridColums = [
+    {
+      field: 'actions',
+      type: 'actions',
+      align: 'center',
+      getActions: (params) => [
+        CGridActionsCellItem({
+          type: 'edit',
+          id: params.id,
+          onClick: onGridButtonClick,
+        }),
+        CGridActionsCellItem({
+          type: 'delete',
+          id: params.id,
+          onClick: onGridButtonClick,
+        }),
+      ],
+    },
+  ].concat(
+    useSelector((state) => state.comCodeMgmt.dataGridColums, shallowEqual),
   );
   const dataGridRows = useSelector(
     (state) => state.comCodeMgmt.dataGridRows,
@@ -71,14 +94,27 @@ const ComCodeMgmt = () => {
   /**
    * Tree Variables
    */
+  const comCodeGroupList = useSelector(
+    (state) => state.comCodeMgmt.comCodeGroupList,
+    shallowEqual,
+  );
+
   const onNodeSelect = (event, nodeIds) => {
-    // console.log(nodeIds);
+    console.log('onNodeSelect nodeIds', nodeIds);
   };
 
   const onNodeButtonClick = (type, id) => {
-    // console.log('type = ', type);
-    // console.log('id = ', id);
+    console.log('onNodeButtonClick id', id);
+
+    comCodeDialogOpen({
+      type: type === 'edit' ? 'mdfGroup' : 'delGroup',
+      params: { id: id },
+    });
   };
+
+  const [onNodeButtonClickFunc, setOnNodeButtonClickFunc] = useState(
+    () => onNodeButtonClick,
+  );
 
   const treeDataList = [
     {
@@ -90,7 +126,7 @@ const ComCodeMgmt = () => {
         {
           type: 'edit',
           icon: EditIcon,
-          onNodeButtonClick: onNodeButtonClick,
+          onNodeButtonClick: onNodeButtonClickFunc,
         },
         {
           type: 'delete',
@@ -131,8 +167,20 @@ const ComCodeMgmt = () => {
           onNodeButtonClick: onNodeButtonClick,
         },
       ],
+      children: [],
     },
   ];
+
+  /**
+   * Data fetch
+   */
+  const onFetchData = useCallback(async () => {
+    dispatch(getComCodeGroup());
+  }, [dispatch]);
+
+  useEffect(() => {
+    onFetchData();
+  }, [onFetchData]);
 
   return (
     <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={1}>
