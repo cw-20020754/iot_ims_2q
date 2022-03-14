@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { isNull } from 'common/utils';
+import { createSlice } from '@reduxjs/toolkit';
 import i18n from 'common/locale/i18n';
 import CGridActionsCellItem from 'components/complex/Table/CGridActionsCellItem';
 

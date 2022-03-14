@@ -6,6 +6,7 @@ import ComCodeMgmt from '../pages/AdminMgmt/ComCodeMgmt';
 import Notice from '../pages/AdminMgmt/Notice';
 import LayoutSample from '../pages/AdminMgmt/LayoutSample';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PrivateRoute from './PrivateRoute';
 
 // ==============================|| Admin 관리 (adminMgmt) ROUTING ||============================== //
 
@@ -20,7 +21,11 @@ const subMenuNmList = [
 
 const adminMgmt = {
   path: '/adminMgmt',
-  element: <DefaultLayout />,
+  element: (
+    <PrivateRoute>
+      <DefaultLayout />
+    </PrivateRoute>
+  ),
   type: 'collapse',
   title: mainMenuNm,
   icon: AdminPanelSettingsIcon,

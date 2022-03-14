@@ -15,6 +15,11 @@ export default function themePalette(theme) {
     cancel: {
       main: theme.colors?.grey500,
     },
+    error: {
+      light: theme.colors?.errorLight,
+      main: theme.colors?.errorMain,
+      dark: theme.colors?.errorDark,
+    },
     // success: {
     //   light: theme.colors?.successLight,
     //   200: theme.colors?.success200,
@@ -35,11 +40,7 @@ export default function themePalette(theme) {
     //     200: theme.colors?.secondary200,
     //     800: theme.colors?.secondary800
     // },
-    // error: {
-    //     light: theme.colors?.errorLight,
-    //     main: theme.colors?.errorMain,
-    //     dark: theme.colors?.errorDark
-    // },
+
     // orange: {
     //     light: theme.colors?.orangeLight,
     //     main: theme.colors?.orangeMain,

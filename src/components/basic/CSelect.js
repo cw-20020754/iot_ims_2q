@@ -6,7 +6,7 @@ import {
   MenuItem,
   Select,
 } from '@mui/material';
-import { checkValidtaion, isNull } from '../../common/utils';
+import { checkValidtaion, isNull } from 'common/utils';
 
 const CSelect = React.forwardRef((props, ref) => {
   const {
@@ -36,7 +36,7 @@ const CSelect = React.forwardRef((props, ref) => {
       fullWidth
       size={!isNull(size) ? size : 'small'}
       variant={!isNull(variant) ? variant : 'standard'}
-      sx={style}
+      sx={{ ...style, width: 1 }}
       error={!isNull(helpText)}
       {...rest}
     >
@@ -48,11 +48,12 @@ const CSelect = React.forwardRef((props, ref) => {
         onBlur={validateCheck}
         {...rest}
       >
-        {optionArray.map((option) => (
-          <MenuItem key={option.text} value={option.value || ''}>
-            {option.text}
-          </MenuItem>
-        ))}
+        {optionArray &&
+          optionArray.map((option) => (
+            <MenuItem key={option.text} value={option.value || ''}>
+              {option.text}
+            </MenuItem>
+          ))}
       </Select>
       {!isNull(helpText) && <FormHelperText>{helpText}</FormHelperText>}
     </FormControl>

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import qs from 'qs';
 import xlsx from 'xlsx';
+import { HTTP_STATUS } from './constants';
 
 const getText = (list, msgId) => {
   return list.find((el) => el.msgId === msgId).msg;
@@ -162,7 +163,12 @@ const reformatData = (type, value, catetory, codes) => {
 const responseCheck = (res) => {
   let result = true;
 
-  if (isNull(res) || isNull(res.payload)) {
+  if (
+    isNull(res) ||
+    isNull(res.payload) ||
+    (res.payload.hasOwnProperty('status') &&
+      res.payload.status !== HTTP_STATUS.SUCCESS)
+  ) {
     result = false;
   } else if (res.payload.hasOwnProperty('data') && isNull(res.payload.data)) {
     result = false;
@@ -172,7 +178,8 @@ const responseCheck = (res) => {
   ) {
     result = false;
   }
-  // console.log('result >> ', result);
+
+  // console.log('@@ result >> ', result);
   return result;
 };
 

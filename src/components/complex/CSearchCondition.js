@@ -15,14 +15,13 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useSelector } from 'react-redux';
-import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import AppStyles from '../layout/AppStyle';
-import { getCodeCategoryItems, isNull } from '../../common/utils';
+import { getCodeCategoryItems, isNull } from 'common/utils';
+import rules from 'common/rules';
 import CInput from '../basic/CInput';
 import CSelect from '../basic/CSelect';
 import CSlectAutocomplete from '../basic/CSlectAutocomplete';
-import rules from '../../common/rules';
 const CSearchCondition = (props) => {
   const [initial, setInitial] = useState(true);
   const { conditionList } = props;

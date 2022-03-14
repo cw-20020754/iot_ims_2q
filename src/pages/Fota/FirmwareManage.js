@@ -2,26 +2,26 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { getFirmwareList } from '../../redux/reducers/fotaInfoSlice';
+import { getFirmwareList } from 'redux/reducers/fotaInfoSlice';
 import {
   isNull,
   makeQuery,
   makeRowsFormat,
   onExcelDownload,
   responseCheck,
-} from '../../common/utils';
+} from 'common/utils';
 import dayjs from 'dayjs';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CSearchCondition from '../../components/complex/CSearchCondition';
-import CDataGrid from '../../components/complex/Table/CDataGrid';
+import CSearchCondition from 'components/complex/CSearchCondition';
+import CDataGrid from 'components/complex/Table/CDataGrid';
 import { useNavigate } from 'react-router-dom';
-import { getDatagridInfo } from '../../redux/reducers/changeStateSlice';
-import { fotaAPI } from '../../api';
-import CMatEdit from '../../components/complex/Table/CMatEdit';
+import { getDatagridInfo } from 'redux/reducers/changeStateSlice';
+import { fotaAPI } from 'api';
+import CMatEdit from 'components/complex/Table/CMatEdit';
 
 const FirmwareManage = () => {
   const dispatch = useDispatch();
@@ -102,7 +102,7 @@ const FirmwareManage = () => {
       },
       {
         field: 'frmwrName',
-        headerName: t('word.firmware') + ' ' + t('word.name'),
+        headerName: t('word.firmware') + ' ' + t('word.nm'),
         width: 250,
         editable: false,
         headerAlign: 'center',
@@ -118,7 +118,7 @@ const FirmwareManage = () => {
       },
       {
         field: 'fileName',
-        headerName: t('word.file') + ' ' + t('word.name'),
+        headerName: t('word.file') + ' ' + t('word.nm'),
         width: 300,
         editable: false,
         headerAlign: 'center',
@@ -251,7 +251,7 @@ const FirmwareManage = () => {
     {
       id: 'frmwrName',
       category: 'frmwrName',
-      label: t('word.firmware') + ' ' + t('word.name'),
+      label: t('word.firmware') + ' ' + t('word.nm'),
       type: 'textBox',
       value: '',
       size: {
@@ -302,7 +302,7 @@ const FirmwareManage = () => {
           param: makeQuery(params, option),
         }),
       );
-      // console.log("result >> ", result);
+      console.log('result >> ', result);
       if (responseCheck(result)) {
         setIsLoading(false);
       }

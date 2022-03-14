@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@mui/styles';
-import colors from '../../assets/scss/_themes-vars.module.scss';
+import colors from 'assets/scss/_themes-vars.module.scss';
 
 const color = colors;
 
@@ -23,6 +23,14 @@ const AppStyles = makeStyles({
     fontStyle: 'italic',
     padding: '20px',
     color: color.grey700,
+  },
+  footerHeaderRoot: {
+    padding: 0,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  footerHeaderContent: {
+    flex: '0 0 auto',
   },
   accordionHeader: {
     borderLeftStyle: 'solid',

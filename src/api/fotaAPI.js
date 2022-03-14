@@ -1,18 +1,15 @@
-import axios from 'axios';
-import { API } from '../common/constants';
-import { makeurlQeuryString } from '../common/utils';
+import { API } from 'common/constants';
+import axios from './interceptor';
+import { makeurlQeuryString } from 'common/utils';
 
 // 펌웨어 목록
 export const getFirmwareList = (param) => {
   return axios
     .get(
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, param),
-      {
-        headers: API.HEADERS,
-      },
     )
     .then((response) => {
-      // console.log("response >> ", JSON.stringify(response.data));
+      // console.log('response 222 >> ', JSON.stringify(response));
       return response;
     })
     .catch((err) => {
@@ -37,9 +34,7 @@ export const postFirmware = async (body) => {
 // fota 펌웨어 수정
 export const putFirmware = (body) => {
   return axios
-    .put(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, body, {
-      headers: API.HEADERS,
-    })
+    .put(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, body)
     .then((res) => {
       return res;
     })
@@ -51,9 +46,7 @@ export const putFirmware = (body) => {
 // fota 펌웨어 삭제
 export const deleteFirmware = (policyId) => {
   return axios
-    .delete(`${API.FOTA_URL}/iot/v1/fota/manager/firmware/${policyId}`, {
-      headers: API.HEADERS,
-    })
+    .delete(`${API.FOTA_URL}/iot/v1/fota/manager/firmware/${policyId}`)
     .then((response) => {
       return response;
     })
@@ -72,9 +65,6 @@ export const getFotaPolicyList = (param) => {
         `${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`,
         param,
       ),
-      {
-        headers: API.HEADERS,
-      },
     )
     .then((response) => {
       return response;
@@ -86,9 +76,7 @@ export const getFotaPolicyList = (param) => {
 // FOTA 정책 등록
 export const postFotaPolicy = (body) => {
   return axios
-    .post(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`, body, {
-      headers: API.HEADERS,
-    })
+    .post(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`, body)
     .then((res) => {
       return res;
     })
@@ -100,9 +88,7 @@ export const postFotaPolicy = (body) => {
 // FOTA 정책 수정
 export const putFotaPolicy = (body) => {
   return axios
-    .put(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`, body, {
-      headers: API.HEADERS,
-    })
+    .put(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`, body)
     .then((res) => {
       return res;
     })
@@ -114,9 +100,7 @@ export const putFotaPolicy = (body) => {
 // FOTA 정책 삭제
 export const deleteFotaPolicy = (frmwrId) => {
   return axios
-    .delete(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota/${frmwrId}`, {
-      headers: API.HEADERS,
-    })
+    .delete(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota/${frmwrId}`)
     .then((response) => {
       return response;
       // console.log("response >> ", JSON.stringify(response));
@@ -136,9 +120,6 @@ export const getCertPolicyList = (param) => {
         `${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`,
         param,
       ),
-      {
-        headers: API.HEADERS,
-      },
     )
     .then((response) => {
       // console.log("response >> ", JSON.stringify(response.data));
@@ -152,9 +133,7 @@ export const getCertPolicyList = (param) => {
 // 인증서 정책 등록
 export const postCertPolicy = (body) => {
   return axios
-    .post(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`, body, {
-      headers: API.HEADERS,
-    })
+    .post(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`, body)
     .then((res) => {
       return res;
     })
@@ -166,9 +145,7 @@ export const postCertPolicy = (body) => {
 // 인증서 정책 수정
 export const putCertPolicy = (body) => {
   return axios
-    .put(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`, body, {
-      headers: API.HEADERS,
-    })
+    .put(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`, body)
     .then((res) => {
       return res;
     })
@@ -180,9 +157,7 @@ export const putCertPolicy = (body) => {
 // 인증서 정책 삭제
 export const deleteCertPolicy = (policyId) => {
   return axios
-    .delete(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert/${policyId}`, {
-      headers: API.HEADERS,
-    })
+    .delete(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert/${policyId}`)
     .then((res) => {
       return res;
     })
@@ -198,9 +173,6 @@ export const getStatusList = (param) => {
   return axios
     .get(
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/shadow`, param),
-      {
-        headers: API.HEADERS,
-      },
     )
     .then((response) => {
       // console.log("response >> ", JSON.stringify(response.data));
@@ -214,9 +186,7 @@ export const getStatusList = (param) => {
 // 상태 초기화
 export const deleteStatus = (serial) => {
   return axios
-    .delete(`${API.FOTA_URL}/iot/v1/test/shadow/reset/${serial}`, {
-      headers: API.HEADERS,
-    })
+    .delete(`${API.FOTA_URL}/iot/v1/test/shadow/reset/${serial}`)
     .then((res) => {
       return res;
     })
@@ -232,9 +202,6 @@ export const getHistoryList = (param) => {
   return axios
     .get(
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/shadow/history/shadow`, param),
-      {
-        headers: API.HEADERS,
-      },
     )
     .then((response) => {
       return response;

@@ -114,6 +114,12 @@ export default function componentStyleOverrides(theme) {
             color: theme.darkTextSecondary,
             fontSize: '0.875rem',
           },
+          '&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
+            color: theme.colors?.primaryMain,
+          },
+          '&.Mui-error .MuiInputAdornment-root .MuiSvgIcon-root': {
+            color: theme.colors?.errorMain,
+          },
         },
       },
     },
@@ -130,6 +136,12 @@ export default function componentStyleOverrides(theme) {
           },
           '&.MuiInputBase-multiline': {
             padding: 1,
+          },
+          '&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
+            color: theme.colors?.primaryMain,
+          },
+          '&.Mui-error .MuiInputAdornment-root .MuiSvgIcon-root': {
+            color: theme.colors?.errorMain,
           },
         },
         input: {
@@ -198,6 +210,13 @@ export default function componentStyleOverrides(theme) {
         tooltip: {
           color: theme.paper,
           background: theme.colors?.grey700,
+        },
+      },
+    },
+    MuiTextField: {
+      root: {
+        '&::placeholder': {
+          color: 'red',
         },
       },
     },
