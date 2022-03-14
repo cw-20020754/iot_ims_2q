@@ -8,12 +8,17 @@ import FirmwareManageDetail from '../pages/Fota/FirmwareManageDetail';
 import DefaultLayout from '../components/layout/DefaultLayout';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import i18n from '../common/locale/i18n';
+import PrivateRoute from './PrivateRoute';
 
 // ==============================|| FOTA ROUTING ||============================== //
 
 const fota = {
   path: '/fota',
-  element: <DefaultLayout />,
+  element: (
+    <PrivateRoute>
+      <DefaultLayout />
+    </PrivateRoute>
+  ),
   type: 'collapse',
   title: `${i18n.t('word.fota')}`,
   icon: FileDownloadIcon,

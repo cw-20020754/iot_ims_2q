@@ -1,21 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Divider, Typography } from '@mui/material';
-import fotaStyles from './FotaStyle';
+import { Box, Divider } from '@mui/material';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import {
-  isNull,
-  makeQuery,
-  makeRowsFormat,
-  responseCheck,
-} from '../../common/utils';
-import { getFotaPolicyList } from '../../redux/reducers/fotaInfoSlice';
+import { isNull, makeQuery, makeRowsFormat, responseCheck } from 'common/utils';
+import { getFotaPolicyList } from 'redux/reducers/fotaInfoSlice';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import CSearchCondition from '../../components/complex/CSearchCondition';
-import CDataGrid from '../../components/complex/Table/CDataGrid';
+import CSearchCondition from 'components/complex/CSearchCondition';
+import CDataGrid from 'components/complex/Table/CDataGrid';
 
 const FotaPolicy = () => {
   const dispatch = useDispatch();
@@ -95,7 +89,7 @@ const FotaPolicy = () => {
     {
       id: 'policyName',
       category: 'policyName',
-      label: t('word.policy') + ' ' + t('word.name'),
+      label: t('word.policy') + ' ' + t('word.nm'),
       type: 'textBox',
       value: '',
       size: {
@@ -151,7 +145,7 @@ const FotaPolicy = () => {
     },
     {
       field: 'policyName',
-      headerName: t('word.policy') + ' ' + t('word.name'),
+      headerName: t('word.policy') + ' ' + t('word.nm'),
       width: 300,
       editable: false,
       headerAlign: 'center',
@@ -185,7 +179,7 @@ const FotaPolicy = () => {
     {
       field: 'wifiFrmwrName',
       headerName:
-        t('word.wifi') + ' ' + t('word.firmware') + ' ' + t('word.name'),
+        t('word.wifi') + ' ' + t('word.firmware') + ' ' + t('word.nm'),
       width: 200,
       editable: false,
       headerAlign: 'center',
@@ -202,8 +196,7 @@ const FotaPolicy = () => {
     },
     {
       field: 'mcuFrmwrName',
-      headerName:
-        t('word.mcu') + ' ' + t('word.firmware') + ' ' + t('word.name'),
+      headerName: t('word.mcu') + ' ' + t('word.firmware') + ' ' + t('word.nm'),
       width: 200,
       editable: false,
       headerAlign: 'center',

@@ -1,14 +1,21 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { IconButton, Toolbar } from '@mui/material';
+import { Toolbar, Typography } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSidebarShow } from '../../redux/reducers/changeStateSlice';
+import CButton from '../basic/CButton';
+import { setLogoutInfo } from 'redux/reducers/authSlice';
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/styles';
+import { useTranslation } from 'react-i18next';
 
 const AppHeader = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const { t } = useTranslation();
   const sidebarShow = useSelector((state) => state.changeState.sidebarShow);
+  const { username } = useSelector((state) => state.auth);
   // styles ----------------------------------------------------------------------
 
   const drawerWidth = 240;
@@ -33,9 +40,15 @@ const AppHeader = () => {
     boxShadow: theme.shadows[2],
   }));
 
+  const executeLogout = async () => {
+    dispatch(setLogoutInfo());
+
+    navigate('/login');
+  };
+
   return (
     <AppBar position="fixed" open={sidebarShow} enableColorOnDark elevation={0}>
-      <Toolbar>
+      <Toolbar sx={{ justifyContent: 'flex-end' }}>
         {/*<IconButton*/}
         {/*  color="neutral"*/}
         {/*  aria-label="open drawer"*/}
@@ -46,6 +59,22 @@ const AppHeader = () => {
         {/*>*/}
         {/*  <MenuIcon />*/}
         {/*</IconButton>*/}
+        {/*<CButton variant="text">IOt</CButton>*/}
+        <Typography
+          variant="h5"
+          noWrap
+          component="div"
+          color={theme.palette.primary.main}
+        >
+          {`${username}  ${t('word.sir')}`}
+        </Typography>
+        <CButton
+          variant="text"
+          onClick={executeLogout}
+          style={{ fontSize: '0.925rem' }}
+        >
+          {t('word.logout')}
+        </CButton>
       </Toolbar>
     </AppBar>
   );

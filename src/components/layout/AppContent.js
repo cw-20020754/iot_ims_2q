@@ -2,7 +2,7 @@ import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { Container } from '@mui/material';
 import { Outlet } from 'react-router-dom';
-import { DRAWER_WIDTH } from '../../common/constants';
+import { DRAWER_WIDTH } from 'common/constants';
 import CBreadcrumb from '../complex/CBreadcrumbs';
 
 const AppContent = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import CNavGroup from './CNavGroup';
-import { nav } from '../../../router';
+import { nav } from 'router';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 

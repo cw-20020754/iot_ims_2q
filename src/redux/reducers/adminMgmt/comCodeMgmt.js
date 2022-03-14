@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { isNull } from 'common/utils';
+import { createSlice } from '@reduxjs/toolkit';
 import i18n from 'common/locale/i18n';
 import { comCodeAPI } from 'api';
 import GridViewIcon from '@mui/icons-material/GridView';

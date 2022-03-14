@@ -1,14 +1,11 @@
 import React, { useEffect, useRef, useState, uesCallback } from 'react';
 import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material';
 import fotaStyles from './FotaStyle';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { useTranslation } from 'react-i18next';
-import CButton from '../../components/basic/CButton';
-import CSlectAutocomplete from '../../components/basic/CSlectAutocomplete';
-import CInput from '../../components/basic/CInput';
-import CSelect from '../../components/basic/CSelect';
-import rules from '../../common/rules';
-import { isNull } from '../../common/utils';
+import CSlectAutocomplete from 'components/basic/CSlectAutocomplete';
+import CSelect from 'components/basic/CSelect';
+import rules from 'common/rules';
+import { isNull } from 'common/utils';
 
 const FirmwareManageDetail = () => {
   const classes = fotaStyles();

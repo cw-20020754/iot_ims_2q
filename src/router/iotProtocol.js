@@ -7,12 +7,17 @@ import {
   ProtocolFeatures,
 } from '../pages/iotProtocol';
 import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
+import PrivateRoute from './PrivateRoute';
 
 // ==============================|| IOT PROTOCOL ROUTING ||============================== //
 
 const iotProtocol = {
   path: '/iotProtocol',
-  element: <DefaultLayout />,
+  element: (
+    <PrivateRoute>
+      <DefaultLayout />
+    </PrivateRoute>
+  ),
   type: 'collapse',
   title: `${i18n.t('word.IoTProtocol')}`,
   icon: FeaturedPlayListIcon,
