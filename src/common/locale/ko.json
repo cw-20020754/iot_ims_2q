@@ -5,6 +5,7 @@
     "appTitle": "통합관제",
     "dashboard": "Dashboard",
     "stats": "통계",
+    "name" : "이름",
     "fota": "FOTA",
     "policy": "정책",
     "device": "Device",
@@ -102,7 +103,10 @@
     "required": "필수",
     "max": "최대",
     "min": "최소",
-    "char": "자"
+    "char": "자",
+    "iot": "IoT",
+    "ims": "IMS",
+    "sir": "님"
   },
   "desc": {
     "ipNotAllowAlert": "접근 가능한 IP가 아닙니다.",
@@ -111,6 +115,11 @@
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",
     "tempError": "일시적인 문제가 발생했습니다. 잠시후에 다시 시도해주세요.",
     "delWaring": "삭제하시겠습니까?",
+    "accessDeny": "Sorry, access denied.",
+    "internalError": "Internal Server Error.",
+    "networkError": "Network error.",
+    "pageNotFound": "Sorry, Page not found.",
+    "goHome": "Go Home",
     "validation": {
       "frmwrName": "펌웨어 이름을 입력해주세요. (128자 이내).",
       "frmwrDesc": "펌웨어 설명을 입력해주세요. (2048자 이내).",

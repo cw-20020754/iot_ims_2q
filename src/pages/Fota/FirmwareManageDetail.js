@@ -8,7 +8,7 @@ import CSlectAutocomplete from '../../components/basic/CSlectAutocomplete';
 import CInput from '../../components/basic/CInput';
 import CSelect from '../../components/basic/CSelect';
 import rules from '../../common/rules';
-import { isNull } from '../../common/utils';
+import { isNull } from '../../common/utils/utils';
 
 const FirmwareManageDetail = () => {
   const classes = fotaStyles();

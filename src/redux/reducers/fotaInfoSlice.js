@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fotaAPI } from '../../api';
-import { isNull } from '../../common/utils';
+import { isNull } from '../../common/utils/utils';
 
 const name = 'fotaInfo';
 

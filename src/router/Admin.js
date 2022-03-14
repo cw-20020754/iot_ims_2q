@@ -1,5 +1,4 @@
 import React from 'react';
-import { FirmwareManage } from '../pages/Fota';
 import LayoutSample from '../pages/AdminManage/LayoutSample';
 import DefaultLayout from '../components/layout/DefaultLayout';
 

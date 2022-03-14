@@ -5,7 +5,7 @@ import {
   FormHelperText,
   TextField,
 } from '@mui/material';
-import { checkValidtaion, isNull } from '../../common/utils';
+import { checkValidtaion, isNull } from '../../common/utils/utils';
 
 const CSlectAutocomplete = React.forwardRef((props, ref) => {
   const {
@@ -38,7 +38,7 @@ const CSlectAutocomplete = React.forwardRef((props, ref) => {
         name={name}
         options={optionArray}
         getOptionLabel={(option) => option[getOption]}
-        sx={style}
+        sx={{ ...style, width: 1 }}
         onBlur={validateCheck}
         {...rest}
         renderInput={(params) => {

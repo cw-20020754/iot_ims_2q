@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TextField } from '@mui/material';
-import { checkValidtaion, isNull } from '../../common/utils';
+import { checkValidtaion, isNull } from '../../common/utils/utils';
 
 const CInput = React.forwardRef((props, ref) => {
   const {
     id,
+    type,
     name,
     label,
     value,
@@ -32,20 +33,22 @@ const CInput = React.forwardRef((props, ref) => {
       ref.current[rules.evtName] = validateCheck;
     }
   }, [ref, rules, validateCheck, value]);
-
   return (
     <TextField
       ref={ref}
       id={id}
       name={name}
-      type={id}
+      type={type}
       label={label}
       value={value}
-      sx={style}
+      sx={{ ...style, width: 1 }}
       variant={isNull(variant) ? 'standard' : variant}
       InputProps={inputProps}
       size={'small'}
       onBlur={() => validateCheck()}
+      onFocus={() => {
+        setHelpText('');
+      }}
       error={!isNull(helpText)}
       helperText={helpText}
       {...rest}

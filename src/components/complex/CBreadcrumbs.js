@@ -4,7 +4,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useLocation } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { nav } from '../../router';
-import { isNull } from '../../common/utils';
+import { isNull } from '../../common/utils/utils';
 
 const CBreadcrumb = () => {
   const theme = useTheme();

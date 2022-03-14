@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Divider, Typography } from '@mui/material';
-import fotaStyles from './FotaStyle';
+import { Box, Divider } from '@mui/material';
 import dayjs from 'dayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +8,7 @@ import {
   makeQuery,
   makeRowsFormat,
   responseCheck,
-} from '../../common/utils';
+} from '../../common/utils/utils';
 import { getFotaPolicyList } from '../../redux/reducers/fotaInfoSlice';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';

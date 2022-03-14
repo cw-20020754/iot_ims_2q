@@ -24,6 +24,14 @@ const AppStyles = makeStyles({
     padding: '20px',
     color: color.grey700,
   },
+  footerHeaderRoot: {
+    padding: 0,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  footerHeaderContent: {
+    flex: '0 0 auto',
+  },
   accordionHeader: {
     borderLeftStyle: 'solid',
     borderLeftWidth: '8px',

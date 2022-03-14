@@ -1,5 +1,6 @@
 import React, { lazy } from 'react';
 import i18n from '../common/locale/i18n';
+import PublicRoute from './PublicRoute';
 const Login = lazy(() => import('../pages/Auth/Login'));
 const AuthLayout = lazy(() => import('../components/layout/AuthLayout'));
 
@@ -7,7 +8,11 @@ const AuthLayout = lazy(() => import('../components/layout/AuthLayout'));
 
 const auth = {
   path: '/',
-  element: <AuthLayout />,
+  element: (
+    <PublicRoute>
+      <AuthLayout />
+    </PublicRoute>
+  ),
   type: 'collapse',
   show: false,
   id: 'auth',

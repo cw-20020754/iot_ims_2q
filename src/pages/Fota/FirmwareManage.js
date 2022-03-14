@@ -9,7 +9,7 @@ import {
   makeRowsFormat,
   onExcelDownload,
   responseCheck,
-} from '../../common/utils';
+} from '../../common/utils/utils';
 import dayjs from 'dayjs';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
