@@ -7,13 +7,20 @@ import './assets/scss/common.scss';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import './common/locale/i18n';
-
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import { injectStore } from './common/utils';
 require('dotenv').config();
 
+export const persistor = persistStore(store);
+
+injectStore(store);
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
     </BrowserRouter>
   </Provider>,
   document.getElementById('root'),

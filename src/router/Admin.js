@@ -1,5 +1,5 @@
 import React from 'react';
-import LayoutSample from '../pages/AdminManage/LayoutSample';
+import LayoutSample from '../pages/AdminMgmt/LayoutSample';
 import DefaultLayout from '../components/layout/DefaultLayout';
 
 // ==============================|| FOTA ROUTING ||============================== //

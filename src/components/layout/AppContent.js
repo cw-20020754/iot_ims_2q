@@ -59,7 +59,7 @@ const AppContent = () => {
 
   return (
     <Main theme={theme} open={leftDrawerOpened}>
-      <Container maxWidth="xl" disableGutters root sx={{ height: 1 }}>
+      <Container maxWidth="xl" disableGutters sx={{ height: 1 }}>
         <CBreadcrumb />
         <Outlet />
       </Container>

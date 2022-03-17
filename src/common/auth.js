@@ -1,5 +1,6 @@
 import { Cookies } from 'react-cookie';
 import { isNull } from './utils';
+import CryptoJS from 'crypto-js';
 
 const cookies = new Cookies();
 const setCookie = (name, value, options) => {
@@ -23,4 +24,25 @@ const getLocaleId = () => {
   // return store.getters['auth/localeId'];
 };
 
-export { isAuthenticated, getLocaleId, setCookie, getCookie, removeCookie };
+const encryptData = (data) => {
+  return CryptoJS.AES.encrypt(
+    data,
+    process.env.REACT_APP_SECRET_KEY,
+  ).toString();
+};
+
+const decryptData = (data) => {
+  const bytes = CryptoJS.AES.decrypt(data, process.env.REACT_APP_SECRET_KEY);
+
+  return bytes.toString(CryptoJS.enc.Utf8);
+};
+
+export {
+  isAuthenticated,
+  getLocaleId,
+  setCookie,
+  getCookie,
+  removeCookie,
+  encryptData,
+  decryptData,
+};

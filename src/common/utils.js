@@ -2,6 +2,16 @@ import dayjs from 'dayjs';
 import qs from 'qs';
 import xlsx from 'xlsx';
 import { HTTP_STATUS } from './constants';
+import i18n from 'common/locale/i18n';
+import { setSnackbar } from '../redux/reducers/changeStateSlice';
+import { removeCookie } from './auth';
+import { persistor } from '../index';
+import { history } from 'App';
+
+let store;
+const injectStore = (_store) => {
+  store = _store;
+};
 
 const getText = (list, msgId) => {
   return list.find((el) => el.msgId === msgId).msg;
@@ -162,24 +172,10 @@ const reformatData = (type, value, catetory, codes) => {
 
 const responseCheck = (res) => {
   let result = true;
-
-  if (
-    isNull(res) ||
-    isNull(res.payload) ||
-    (res.payload.hasOwnProperty('status') &&
-      res.payload.status !== HTTP_STATUS.SUCCESS)
-  ) {
-    result = false;
-  } else if (res.payload.hasOwnProperty('data') && isNull(res.payload.data)) {
-    result = false;
-  } else if (
-    res.payload.hasOwnProperty('payload') &&
-    isNull(res.payload.payload)
-  ) {
+  console.log('1111 ?? ', res);
+  if (isNull(res) || isNull(res.payload) || !res.payload.success) {
     result = false;
   }
-
-  // console.log('@@ result >> ', result);
   return result;
 };
 
@@ -225,7 +221,32 @@ const checkValidtaion = (ruleArray, value, option) => {
   return errorText;
 };
 
+const checkErrorStatus = async (status, msg) => {
+  let message = '';
+
+  if (status === HTTP_STATUS.SESSION_EXPIRED) {
+    removeCookie('accessToken');
+    await persistor.purge();
+    history.push('/login', { accessExpired: true });
+    history.go();
+  } else if (status !== HTTP_STATUS.SUCCESS) {
+    message = msg;
+  } else {
+    message = `${i18n.t('desc.networkError')}`;
+  }
+  if (!isNull(message)) {
+    store.dispatch(
+      setSnackbar({
+        snackbarOpen: true,
+        snackbarMessage: message,
+        autoHideDuration: 3000,
+      }),
+    );
+  }
+};
+
 export {
+  injectStore,
   getText,
   isNull,
   makeQuery,
@@ -238,4 +259,5 @@ export {
   responseCheck,
   onExcelDownload,
   checkValidtaion,
+  checkErrorStatus,
 };
