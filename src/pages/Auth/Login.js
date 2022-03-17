@@ -53,8 +53,7 @@ const Login = () => {
   });
 
   useEffect(() => {
-    // console.log(state, state.accessExpired);
-    if (initial && !isNull(state) && state.accessExpired) {
+    if (initial && !isNull(state) && state.sessionExpired) {
       setInitial(false);
       dispatch(
         setSnackbar({
@@ -103,7 +102,7 @@ const Login = () => {
           formData: formData,
         }),
       );
-      // console.log('result >> ', JSON.stringify(result));
+
       if (responseCheck(result)) {
         await dispatch(setLoginInfo(result));
         if (isNull(authError) && isAuthenticated()) {

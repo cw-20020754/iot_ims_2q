@@ -49,11 +49,17 @@ const CNotification = (props) => {
         elevation={elevation}
         severity={severity}
         variant={!isNull(variant) ? variant : 'filled'}
-        sx={{ width: '100%', fontSize: '0.9rem', ...aStyle }}
+        sx={{
+          width: '100%',
+          fontSize: '0.9rem',
+          alignItems: 'center',
+          padding: '0 16px',
+          ...aStyle,
+        }}
         onClose={handleClose}
         {...rest}
       >
-        {snackbarMessage}
+        <pre>{snackbarMessage}</pre>
       </Alert>
     </Snackbar>
   );

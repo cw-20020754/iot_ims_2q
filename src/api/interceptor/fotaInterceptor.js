@@ -27,20 +27,12 @@ fotaInterceptor.interceptors.request.use(
 
 fotaInterceptor.interceptors.response.use(
   (res) => {
-    let success = true;
-
-    if (isNull(res) || isNull(res.data) || res.status !== HTTP_STATUS.SUCCESS) {
-      success = false;
-    }
-    return {
-      ...res,
-      success: success,
-    };
+    return res;
   },
   async (error) => {
     if (!isNull(error) && error.response) {
       const { status, data } = error.response;
-      checkErrorStatus(status, data.message);
+      checkErrorStatus(status, data);
     }
     return Promise.reject(error);
   },

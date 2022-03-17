@@ -172,8 +172,8 @@ const reformatData = (type, value, catetory, codes) => {
 
 const responseCheck = (res) => {
   let result = true;
-  console.log('1111 ?? ', res);
-  if (isNull(res) || isNull(res.payload) || !res.payload.success) {
+
+  if (!isNull(res) && res.type.includes('rejected')) {
     result = false;
   }
   return result;
@@ -221,24 +221,24 @@ const checkValidtaion = (ruleArray, value, option) => {
   return errorText;
 };
 
-const checkErrorStatus = async (status, msg) => {
-  let message = '';
-
-  if (status === HTTP_STATUS.SESSION_EXPIRED) {
+const checkErrorStatus = async (status, error) => {
+  let msg = '';
+  const { message, code } = error;
+  if (status === HTTP_STATUS.UNAUTHORIZED) {
     removeCookie('accessToken');
     await persistor.purge();
-    history.push('/login', { accessExpired: true });
+    history.push('/login', { sessionExpired: true });
     history.go();
   } else if (status !== HTTP_STATUS.SUCCESS) {
-    message = msg;
+    msg = isNull(code) ? message : `${code}\n${message}`;
   } else {
-    message = `${i18n.t('desc.networkError')}`;
+    msg = `${i18n.t('desc.networkError')}`;
   }
   if (!isNull(message)) {
     store.dispatch(
       setSnackbar({
         snackbarOpen: true,
-        snackbarMessage: message,
+        snackbarMessage: msg,
         autoHideDuration: 3000,
       }),
     );

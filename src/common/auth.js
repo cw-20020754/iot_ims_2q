@@ -20,10 +20,6 @@ const isAuthenticated = () => {
   return !isNull(accessToken);
 };
 
-const getLocaleId = () => {
-  // return store.getters['auth/localeId'];
-};
-
 const encryptData = (data) => {
   return CryptoJS.AES.encrypt(
     data,
@@ -39,7 +35,6 @@ const decryptData = (data) => {
 
 export {
   isAuthenticated,
-  getLocaleId,
   setCookie,
   getCookie,
   removeCookie,

@@ -3,7 +3,6 @@ import store from 'redux/store';
 import { isNull } from 'common/utils';
 import { decryptData, getCookie } from 'common/auth';
 import { checkErrorStatus } from '../../common/utils';
-import { HTTP_STATUS } from '../../common/constants';
 
 const imsInterceptor = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? '' : '/',
@@ -36,20 +35,12 @@ imsInterceptor.interceptors.request.use(
 
 imsInterceptor.interceptors.response.use(
   (res) => {
-    let success = true;
-
-    if (isNull(res) || isNull(res.data) || res.status !== HTTP_STATUS.SUCCESS) {
-      success = false;
-    }
-    return {
-      ...res,
-      success: success,
-    };
+    return res;
   },
   async (error) => {
     const { status, data } = error.response;
     if (!isNull(error) && error.response) {
-      checkErrorStatus(status, data.error.message);
+      checkErrorStatus(status, data.error);
     }
     return Promise.reject(error);
   },

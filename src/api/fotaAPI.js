@@ -6,13 +6,13 @@ import { makeurlQeuryString } from 'common/utils';
 export const getFirmwareList = (param) => {
   return axios
     .get(
-      makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, param),
+      makeurlQeuryString(
+        `${API.FOTA_URL}/iot/v1/fota/manager/firmwaresss`,
+        param,
+      ),
     )
     .then((response) => {
       return response;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 

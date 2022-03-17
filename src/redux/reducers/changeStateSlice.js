@@ -27,7 +27,7 @@ const changeStateSlice = createSlice({
     setSidebarShow(state, action) {
       state.sidebarShow = action.payload;
     },
-    setIsLoading(state, action) {
+    setGLoading(state, action) {
       state.isLoading = action.payload;
     },
     getDatagridInfo(state, action) {
@@ -43,6 +43,6 @@ const changeStateSlice = createSlice({
   extraReducers: {},
 });
 
-export const { setSidebarShow, setIsLoading, getDatagridInfo, setSnackbar } =
+export const { setSidebarShow, setGLoading, getDatagridInfo, setSnackbar } =
   changeStateSlice.actions;
 export default changeStateSlice.reducer;
