@@ -60,7 +60,7 @@ const Login = () => {
           snackbarOpen: true,
           snackbarMessage: t('desc.sessonExpired'),
           autoHideDuration: 3000,
-          sStyle: { marginTop: 30 },
+          snackBarStyle: { marginTop: 30 },
         }),
       );
     }

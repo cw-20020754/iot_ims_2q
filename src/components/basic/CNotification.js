@@ -12,8 +12,8 @@ const CNotification = (props) => {
     snackbarOpen,
     snackbarMessage,
     autoHideDuration,
-    sStyle,
-    aStyle,
+    snackBarStyle,
+    alertStyle,
     variant,
     elevation,
     vertical,
@@ -40,7 +40,7 @@ const CNotification = (props) => {
     <Snackbar
       open={snackbarOpen}
       autoHideDuration={autoHideDuration}
-      sx={{ width: '30%', ...sStyle }}
+      sx={{ width: '30%', ...snackBarStyle }}
       anchorOrigin={{ vertical: vertical, horizontal: horizontal }}
       onClose={handleClose}
       {...rest}
@@ -54,7 +54,7 @@ const CNotification = (props) => {
           fontSize: '0.9rem',
           alignItems: 'center',
           padding: '0 16px',
-          ...aStyle,
+          ...alertStyle,
         }}
         onClose={handleClose}
         {...rest}

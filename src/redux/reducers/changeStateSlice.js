@@ -10,8 +10,8 @@ const initialState = {
     snackbarOpen: false,
     snackbarMessage: '',
     autoHideDuration: 0,
-    sStyle: {},
-    aStyle: {},
+    snackBarStyle: {},
+    alertStyle: {},
     vertical: 'top',
     horizontal: 'center',
     elevation: 6,
@@ -27,7 +27,7 @@ const changeStateSlice = createSlice({
     setSidebarShow(state, action) {
       state.sidebarShow = action.payload;
     },
-    setGLoading(state, action) {
+    GlobalLoading(state, action) {
       state.isLoading = action.payload;
     },
     getDatagridInfo(state, action) {
@@ -43,6 +43,6 @@ const changeStateSlice = createSlice({
   extraReducers: {},
 });
 
-export const { setSidebarShow, setGLoading, getDatagridInfo, setSnackbar } =
+export const { setSidebarShow, GlobalLoading, getDatagridInfo, setSnackbar } =
   changeStateSlice.actions;
 export default changeStateSlice.reducer;
