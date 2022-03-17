@@ -4,7 +4,7 @@ import { makeurlQeuryString } from '../common/utils';
 
 export const getProtocol = async (param) => {
   return axios
-    .get(makeurlQeuryString(`${API.API_URL}/v1/protocol/api/test`, param))
+    .get(makeurlQeuryString(`${API.API_URL}/v1/protocol/api`, param))
     .then((response) => {
       return response;
     });

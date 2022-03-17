@@ -230,7 +230,7 @@ const checkErrorStatus = async (status, error) => {
     history.push('/login', { sessionExpired: true });
     history.go();
   } else if (status !== HTTP_STATUS.SUCCESS) {
-    msg = isNull(code) ? message : `${code}\n${message}`;
+    msg = isNull(code) ? message : `[${code}]\n${message}`;
   } else {
     msg = `${i18n.t('desc.networkError')}`;
   }
