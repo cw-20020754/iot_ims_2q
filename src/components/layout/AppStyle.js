@@ -37,7 +37,16 @@ const AppStyles = makeStyles({
     borderLeftWidth: '8px',
     borderLeftColor: color.primaryMain,
     borderRadius: '4px',
+    maxHeight: '48px',
     boxShadow: 3,
+    '&.Mui-expanded': {
+      minHeight: 0,
+      maxHeight: '48px',
+    },
+  },
+  accordionContent: {
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
   },
 });
 

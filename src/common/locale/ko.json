@@ -103,6 +103,8 @@
     "max": "최대",
     "min": "최소",
     "char": "자",
+    "prod": "제품",
+    "protocol": "프로토콜",
     "iot": "IoT",
     "ims": "IMS",
     "sir": "님"
@@ -119,6 +121,7 @@
     "networkError": "Network error.",
     "pageNotFound": "Sorry, Page not found.",
     "goHome": "Go Home",
+    "sessonExpired": "세션이 만료되어 재로그인이 필요합니다.",
     "validation": {
       "frmwrName": "펌웨어 이름을 입력해주세요. (128자 이내).",
       "frmwrDesc": "펌웨어 설명을 입력해주세요. (2048자 이내).",

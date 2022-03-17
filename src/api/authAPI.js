@@ -1,12 +1,13 @@
-import axios from './interceptor';
 import { API } from '../common/constants';
+import axios from './interceptor/fotaInterceptor';
+import { makeurlQeuryString } from '../common/utils';
+
 export const postToken = async (body) => {
-  try {
-    return await axios.post(`${API.AUTH_URL}`, body, {
+  return axios
+    .post(`${API.AUTH_URL}`, body, {
       headers: API.AUTH_HEADERS,
+    })
+    .then((response) => {
+      return response;
     });
-  } catch (error) {
-    // console.log('error >> ', error);
-    return error.response;
-  }
 };

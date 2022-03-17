@@ -3,7 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Card,
   CardActions,
@@ -16,11 +16,10 @@ import {
 import CInput from 'components/basic/CInput';
 import logo_iocare from 'assets/images/logo_iocare.png';
 import CButton from 'components/basic/CButton';
-import { useTheme } from '@mui/styles';
 import AuthStyle from './AuthStyle';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import PersonIcon from '@mui/icons-material/Person';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppFooter from 'components/layout/AppFooter';
 import { useTranslation } from 'react-i18next';
 import rules from 'common/rules';
@@ -32,21 +31,20 @@ import {
   setUserInfo,
 } from 'redux/reducers/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { isAuthenticated, removeCookie } from 'common/auth';
-import CNotification from 'components/basic/CNotification';
+import { encryptData, isAuthenticated, removeCookie } from 'common/auth';
+import { setSnackbar } from '../../redux/reducers/changeStateSlice';
 
 const Login = () => {
   const classes = AuthStyle();
   const { t } = useTranslation();
 
-  const theme = useTheme();
+  const location = useLocation();
+  const { state } = location;
+  const [initial, setInitial] = useState(true);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { authError } = useSelector((state) => state.auth);
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('');
-
-  // console.log('theme >> ', theme);
 
   const [values, setValues] = useState({
     userId: '',
@@ -54,15 +52,37 @@ const Login = () => {
     showPassword: false,
   });
 
-  const setAlertMessage = (errorDesc) => {
-    setOpen(true);
-    if (errorDesc === 'ipNotAllow') {
-      setMessage(t('desc.ipNotAllowAlert'));
-    } else if (errorDesc === 'sessionTimeExpired') {
-      setMessage(t('desc.sessionTimeExpiredAlert'));
-    } else {
-      setMessage(t('desc.loginFailAlert'));
+  useEffect(() => {
+    if (initial && !isNull(state) && state.sessionExpired) {
+      setInitial(false);
+      dispatch(
+        setSnackbar({
+          snackbarOpen: true,
+          snackbarMessage: t('desc.sessonExpired'),
+          autoHideDuration: 3000,
+          snackBarStyle: { marginTop: 30 },
+        }),
+      );
     }
+  }, [t, state, dispatch, initial]);
+
+  const setAlertMessage = (errorDesc) => {
+    let message = '';
+
+    if (errorDesc === 'ipNotAllow') {
+      message = t('desc.ipNotAllowAlert');
+    } else if (errorDesc === 'sessionTimeExpired') {
+      message = t('desc.sessionTimeExpiredAlert');
+    } else {
+      message = t('desc.loginFailAlert');
+    }
+    dispatch(
+      setSnackbar({
+        snackbarOpen: true,
+        snackbarMessage: message,
+        autoHideDuration: 5000,
+      }),
+    );
   };
 
   const handleSubmit = async (event) => {
@@ -82,16 +102,18 @@ const Login = () => {
           formData: formData,
         }),
       );
-      console.log('result >> ', JSON.stringify(result));
+
       if (responseCheck(result)) {
         await dispatch(setLoginInfo(result));
         if (isNull(authError) && isAuthenticated()) {
-          dispatch(setUserInfo(values.userId));
+          dispatch(setUserInfo(encryptData(values.userId)));
           dispatch(setAuthencication(true));
           navigate('/fota/firmwaremanage');
         } else {
           setAlertMessage(authError);
         }
+      } else {
+        setAlertMessage(authError);
       }
     }
   };
@@ -107,10 +129,6 @@ const Login = () => {
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const handleClickShowPassword = () => {
@@ -138,19 +156,6 @@ const Login = () => {
           opacity: 0.9,
         }}
       >
-        <CNotification
-          open={open}
-          autoHideDuration={5000}
-          onClose={handleClose}
-          elevation={6}
-          sStyle={{ marginTop: 30, width: '50%' }}
-          aStyle={{ width: '100%', fontSize: '0.9rem' }}
-          vertical={'top'}
-          horizontal={'center'}
-          severity={'error'}
-        >
-          {message}
-        </CNotification>
         <Card>
           <CardHeader
             avatar={

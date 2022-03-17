@@ -37,8 +37,7 @@ const initialState = {
 export const getFirmwareList = createAsyncThunk(
   `${name}/getFirmwareList`,
   async ({ param }, thunkAPI) => {
-    const response = await fotaAPI.getFirmwareList(param);
-    return response.data;
+    return await fotaAPI.getFirmwareList(param);
   },
 );
 
@@ -87,8 +86,8 @@ export const getFotaPolicyList = createAsyncThunk(
   `${name}/getFotaPolicyList`,
   async ({ param }, thunkAPI) => {
     // console.log("option >>> ", param);
-    const response = await fotaAPI.getFotaPolicyList(param);
-    return response.data;
+    return await fotaAPI.getFotaPolicyList(param);
+    // return response.data;
   },
 );
 // FOTA 정책 등록
@@ -124,8 +123,7 @@ export const deleteFotaPolicy = createAsyncThunk(
 export const getCertPolicyList = createAsyncThunk(
   `${name}/getCertPolicyList`,
   async ({ param }, thunkAPI) => {
-    const response = await fotaAPI.getCertPolicyList(param);
-    return response.data;
+    return await fotaAPI.getCertPolicyList(param);
   },
 );
 
@@ -161,8 +159,7 @@ export const deleteCertPolicy = createAsyncThunk(
 export const getStatusList = createAsyncThunk(
   `${name}/getStatusList`,
   async ({ param }, thunkAPI) => {
-    const response = await fotaAPI.getStatusList(param);
-    return response.data;
+    return await fotaAPI.getStatusList(param);
   },
 );
 
@@ -180,8 +177,7 @@ export const deleteStatus = createAsyncThunk(
 export const getHistoryList = createAsyncThunk(
   `${name}/getHistoryList`,
   async ({ param }, thunkAPI) => {
-    const response = await fotaAPI.getHistoryList(param);
-    return response.data;
+    return await fotaAPI.getHistoryList(param);
   },
 );
 
@@ -197,7 +193,7 @@ const fotaInfoSlice = createSlice({
     [getFirmwareList.fulfilled.type]: (state, action) => {
       state.loading = false;
       state.error = false;
-      const payload = action.payload.payload;
+      const payload = action.payload.data.payload;
 
       if (isNull(payload)) {
         state.firmwareMng = initialState.firmwareMng;
@@ -255,7 +251,7 @@ const fotaInfoSlice = createSlice({
     [getFotaPolicyList.fulfilled.type]: (state, action) => {
       state.loading = false;
       state.error = false;
-      const payload = action.payload.payload;
+      const payload = action.payload.data.payload;
 
       if (isNull(payload)) {
         state.fotaPolicy = initialState.fotaPolicy;
@@ -313,7 +309,7 @@ const fotaInfoSlice = createSlice({
     [getCertPolicyList.fulfilled.type]: (state, action) => {
       state.loading = false;
       state.error = false;
-      const payload = action.payload.payload;
+      const payload = action.payload.data.payload;
       if (isNull(payload)) {
         state.certPolicy = initialState.certPolicy;
       } else {
@@ -370,8 +366,7 @@ const fotaInfoSlice = createSlice({
     [getStatusList.fulfilled.type]: (state, action) => {
       state.loading = false;
       state.error = false;
-      const payload = action.payload.payload;
-
+      const payload = action.payload.data.payload;
       if (isNull(payload)) {
         state.fotaStatus = initialState.fotaStatus;
       } else {
@@ -404,7 +399,7 @@ const fotaInfoSlice = createSlice({
     [getHistoryList.fulfilled.type]: (state, action) => {
       state.loading = false;
       state.error = false;
-      const payload = action.payload.payload;
+      const payload = action.payload.data.payload;
 
       if (isNull(payload)) {
         state.fotaHistory = initialState.fotaHistory;
