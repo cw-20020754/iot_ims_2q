@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useLayoutEffect,
-} from 'react';
+import React, { useState, useCallback, useLayoutEffect } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -22,6 +16,8 @@ import rules from 'common/rules';
 import CInput from '../basic/CInput';
 import CSelect from '../basic/CSelect';
 import CSlectAutocomplete from '../basic/CSlectAutocomplete';
+import CButton from '../basic/CButton';
+
 const CSearchCondition = (props) => {
   const [initial, setInitial] = useState(true);
   const { conditionList } = props;
@@ -50,6 +46,11 @@ const CSearchCondition = (props) => {
     // console.log('searchOption >> ', searchOption);
   }, []);
 
+  const onClickSearch = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   const dialogOpen = () => {
     // console.log('dialogOpen');
     // props.onFetchData('', searchOption);
@@ -77,84 +78,93 @@ const CSearchCondition = (props) => {
         aria-controls="panel1a-content"
         id="panel1a-header"
         className={classes.accordionHeader}
+        classes={{ content: classes.accordionContent }}
       >
         <Typography>{t('word.search')}</Typography>
+        <CButton
+          color={'success'}
+          style={{ margin: '0 20px' }}
+          onClick={(e) => onClickSearch(e)}
+        >
+          {t('word.search')}
+        </CButton>
       </AccordionSummary>
       <Divider />
       <AccordionDetails>
         <Grid container spacing={3}>
-          {conditionList.map((item, index) => {
-            const ref = React.createRef();
-            return (
-              <Grid
-                item
-                xs={item.size.xs}
-                lg={item.size.lg}
-                md={item.size.md}
-                key={item.category}
-              >
-                {item.type === 'textBox' && (
-                  <CInput
-                    id={item.id}
-                    name={item.category}
-                    type={item.id}
-                    value={searchOption[item.category] || ''}
-                    label={item.label}
-                    onChange={onChangeFormData}
-                    ref={ref}
-                    fullWidth
-                    rules={
-                      item.id === 'datetime-local' && {
-                        conditions: [
-                          rules.dateRangeAlert(
-                            searchOption.startDate,
-                            searchOption.endDate,
-                          ),
-                        ],
+          {conditionList &&
+            conditionList.map((item, index) => {
+              const ref = React.createRef();
+              return (
+                <Grid
+                  item
+                  xs={item.size.xs}
+                  lg={item.size.lg}
+                  md={item.size.md}
+                  key={item.category}
+                >
+                  {item.type === 'textBox' && (
+                    <CInput
+                      id={item.id}
+                      name={item.category}
+                      type={item.id}
+                      value={searchOption[item.category] || ''}
+                      label={item.label}
+                      onChange={onChangeFormData}
+                      ref={ref}
+                      fullWidth
+                      rules={
+                        item.id === 'datetime-local' && {
+                          conditions: [
+                            rules.dateRangeAlert(
+                              searchOption.startDate,
+                              searchOption.endDate,
+                            ),
+                          ],
+                        }
                       }
-                    }
-                    // rules={{
-                    //   // evtName: 'onkeyup',
-                    //   conditions: [
-                    //     rules.dateRangeAlert(searchOption.startDate, searchOption.endDate)
-                    //     // rules.minLength(searchOption[item.category], 5),
-                    //     // rules.maxLength(searchOption[item.category], 10),
-                    //   ],
-                    // }}
-                  />
-                )}
-                {item.type === 'selectBox' && (
-                  <CSelect
-                    ref={ref}
-                    label={item.label}
-                    name={item.id}
-                    value={searchOption[item.category] || ''}
-                    onChange={onChangeFormData}
-                    validate={{
-                      evtName: '',
-                      rules: ['requireAlert', 'characterOnlyAlert'],
-                      option: searchOption,
-                    }}
-                    optionArray={getCodeCategoryItems(codes, item.category)}
-                  />
-                )}
-                {item.type === 'autoSelectBox' && (
-                  <CSlectAutocomplete
-                    ref={ref}
-                    value={item.value || ''}
-                    name={item.id}
-                    label={item.label}
-                    getOption={'text'}
-                    getValue={'value'}
-                    optionArray={getCodeCategoryItems(codes, item.category)}
-                    onChange={(e, newValue) =>
-                      onChangeFormData(e, item.id, newValue.value)
-                    }
-                  />
-                )}
-              </Grid>
-            );
-          })}
+                      // rules={{
+                      //   // evtName: 'onkeyup',
+                      //   conditions: [
+                      //     rules.dateRangeAlert(searchOption.startDate, searchOption.endDate)
+                      //     // rules.minLength(searchOption[item.category], 5),
+                      //     // rules.maxLength(searchOption[item.category], 10),
+                      //   ],
+                      // }}
+                    />
+                  )}
+                  {item.type === 'selectBox' && (
+                    <CSelect
+                      ref={ref}
+                      label={item.label}
+                      name={item.id}
+                      value={searchOption[item.category] || ''}
+                      onChange={onChangeFormData}
+                      validate={{
+                        evtName: '',
+                        rules: ['requireAlert', 'characterOnlyAlert'],
+                        option: searchOption,
+                      }}
+                      optionArray={getCodeCategoryItems(codes, item.category)}
+                    />
+                  )}
+                  {item.type === 'autoSelectBox' && (
+                    <CSlectAutocomplete
+                      ref={ref}
+                      value={item.value || ''}
+                      name={item.id}
+                      label={item.label}
+                      getOption={'text'}
+                      getValue={'value'}
+                      optionArray={getCodeCategoryItems(codes, item.category)}
+                      onChange={(e, newValue) =>
+                        onChangeFormData(e, item.id, newValue.value)
+                      }
+                    />
+                  )}
+                </Grid>
+              );
+            })}
         </Grid>
       </AccordionDetails>
     </Accordion>

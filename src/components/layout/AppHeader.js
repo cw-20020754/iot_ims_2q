@@ -8,7 +8,8 @@ import { setLogoutInfo } from 'redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/styles';
 import { useTranslation } from 'react-i18next';
-
+import { persistor } from 'index';
+import { decryptData } from '../../common/auth';
 const AppHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ const AppHeader = () => {
   const executeLogout = async () => {
     dispatch(setLogoutInfo());
 
+    await persistor.purge();
+
     navigate('/login');
   };
 
@@ -66,7 +69,7 @@ const AppHeader = () => {
           component="div"
           color={theme.palette.primary.main}
         >
-          {`${username}  ${t('word.sir')}`}
+          {`${username && decryptData(username)}  ${t('word.sir')}`}
         </Typography>
         <CButton
           variant="text"

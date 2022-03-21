@@ -1,5 +1,5 @@
 import { API } from 'common/constants';
-import axios from './interceptor';
+import axios from 'api/interceptor/fotaInterceptor';
 import { makeurlQeuryString } from 'common/utils';
 
 // 펌웨어 목록
@@ -9,11 +9,7 @@ export const getFirmwareList = (param) => {
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, param),
     )
     .then((response) => {
-      // console.log('response 222 >> ', JSON.stringify(response));
       return response;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 

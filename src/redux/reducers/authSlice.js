@@ -2,7 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { authAPI } from 'api';
 import { isNull } from 'common/utils';
 import { HTTP_STATUS } from 'common/constants';
-import { isAuthenticated, removeCookie, setCookie } from 'common/auth';
+import {
+  encryptData,
+  isAuthenticated,
+  removeCookie,
+  setCookie,
+} from 'common/auth';
 
 const name = 'auth';
 
@@ -39,27 +44,20 @@ const authSlice = createSlice({
   reducers: {
     setLoginInfo(state, action) {
       const res = action.payload.payload;
+      // console.log('res >> ', res);
+
       if (res.status !== HTTP_STATUS.SUCCESS) {
         state.authError = res.data.error_description;
         state.accessToken = initialState.accessToken;
-        // console.log('authError >> ', state.authError);
-        // remove cookie accessToken
         removeCookie('accessToken');
       } else {
         if (!isNull(res) && !isNull(res.data)) {
           state.authError = initialState.authError;
-          state.accessToken = res.data.access_token;
-          // set cookie accessToken
-          setCookie('accessToken', res.data.access_token, {
+          state.accessToken = encryptData(res.data.access_token);
+          setCookie('accessToken', encryptData(res.data.access_token), {
             path: '/',
             maxAge: 14400,
           });
-        }
-        if (!isNull(state.accessToken)) {
-          state.apiHeaders = {
-            ...state.apiHeaders,
-            Authorization: 'Bearer ' + state.accessToken,
-          };
         }
       }
     },

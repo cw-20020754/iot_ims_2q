@@ -3,14 +3,13 @@ import Container from '@mui/material/Container';
 import { Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/styles';
 import CButton from 'components/basic/CButton';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const NetworkError = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  // console.log('theme >> ', theme);
   return (
     <Container maxWidth="sm">
       <Grid
