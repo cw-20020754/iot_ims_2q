@@ -105,6 +105,8 @@
     "char": "자",
     "iot": "IoT",
     "ims": "IMS",
+    "display": "표시",
+    "item": "항목",
     "sir": "님"
   },
   "desc": {
@@ -113,7 +115,7 @@
     "loginFailAlert": "ID나 패스워드가 잘 못 되었습니다.",
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",
     "tempError": "일시적인 문제가 발생했습니다. 잠시후에 다시 시도해주세요.",
-    "delWaring": "삭제하시겠습니까?",
+    "delWarning": "삭제하시겠습니까?",
     "accessDeny": "Sorry, access denied.",
     "internalError": "Internal Server Error.",
     "networkError": "Network error.",

@@ -15,7 +15,7 @@ const themeOption = {
   heading: color.grey900,
   paper: color.paper,
   backgroundDefault: color.paper,
-  background: color.grey100,
+  background: color.grey200,
   darkTextPrimary: color.grey700,
   darkTextSecondary: color.grey500,
   textDark: color.grey800,

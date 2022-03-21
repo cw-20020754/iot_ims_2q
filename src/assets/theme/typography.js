@@ -88,9 +88,9 @@ export default function themeTypography(theme) {
     },
     mainContent: {
       backgroundColor: theme.background,
-      width: '100%',
-      height: '100%',
-      minHeight: 'calc(100vh - 116px)',
+      width: 1,
+      height: 1,
+      minHeight: 'calc(100vh - 9vH)',
       flexGrow: 1,
       paddingLeft: '16px',
       paddingRight: '16px',

@@ -10,6 +10,7 @@ const interceptor = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
 interceptor.interceptors.request.use(
   (config) => {
     // console.log('config > ', config);
@@ -18,6 +19,7 @@ interceptor.interceptors.request.use(
 
       if (!isNull(token)) {
         config.headers.Authorization = 'Bearer ' + token;
+        config.headers.userId = 'cowaydev1@coway.co.kr';
       }
 
       return config;

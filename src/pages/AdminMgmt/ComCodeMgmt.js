@@ -2,18 +2,18 @@ import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { IconButton, Box } from '@mui/material';
-import GridViewIcon from '@mui/icons-material/GridView';
-import ArticleIcon from '@mui/icons-material/Article';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CGridActionsCellItem from 'components/complex/Table/CGridActionsCellItem';
-
 import CButton from 'components/basic/CButton';
 import CTree from 'components/basic/CTree';
+import CSearchCondition from 'components/complex/CSearchCondition';
 import CDataGrid from 'components/complex/Table/CDataGrid';
 import ComCodeDialog from './CustomDialogs/ComCodeDialog';
-import { getComCodeGroup } from 'redux/reducers/adminMgmt/comCodeMgmt';
+import {
+  getComCodeGroup,
+  getComCode,
+  setComCodeParams,
+} from 'redux/reducers/adminMgmt/comCodeMgmt';
 
 const ComCodeMgmt = () => {
   const dispatch = useDispatch();
@@ -40,15 +40,6 @@ const ComCodeMgmt = () => {
   /**
    * Grid variables
    */
-  const [pageInfo, setPageInfo] = useState({
-    page: 0,
-    size: 25,
-    rowPerPage: [25, 50, 100],
-  });
-  const [dataGridTitle, setDataGridTitle] = useState(
-    t('word.com') + t('word.code'),
-  );
-
   const onGridButtonClick = (type, id) => {
     comCodeDialogOpen({ type: type === 'edit' ? 'mdfCode' : 'delCode' });
   };
@@ -74,9 +65,52 @@ const ComCodeMgmt = () => {
   ].concat(
     useSelector((state) => state.comCodeMgmt.dataGridColums, shallowEqual),
   );
-  const dataGridRows = useSelector(
-    (state) => state.comCodeMgmt.dataGridRows,
+  const comCodeParams = useSelector(
+    (state) => state.comCodeMgmt.comCodeParams,
     shallowEqual,
+  );
+  const comCodeTotalElements = useSelector(
+    (state) => state.comCodeMgmt.comCodeTotalElements,
+  );
+  const loading = useSelector((state) => state.comCodeMgmt.loading);
+  const dataGridTitle = useSelector((state) => state.comCodeMgmt.dataGridTitle);
+  const comCodeList = useSelector(
+    (state) => state.comCodeMgmt.comCodeList,
+    shallowEqual,
+  );
+
+  const [filterModel, setFilterModel] = useState({
+    items: [
+      {
+        id: 1,
+        columnField: 'code',
+        operatorValue: 'contains',
+        value: '',
+      },
+      {
+        id: 2,
+        columnField: 'codeNm',
+        operatorValue: 'contains',
+        value: '',
+      },
+    ],
+  });
+
+  const onFilterChange = useCallback(
+    (newFilterModel) => {
+      setFilterModel(newFilterModel);
+      dispatch(
+        setComCodeParams({
+          page: 0,
+          code: newFilterModel.items.find((item) => item.columnField === 'code')
+            .value,
+          codeNm: newFilterModel.items.find(
+            (item) => item.columnField === 'codeNm',
+          ).value,
+        }),
+      );
+    },
+    [dispatch],
   );
 
   const onTitleButtonClick = () => {
@@ -94,93 +128,40 @@ const ComCodeMgmt = () => {
   /**
    * Tree Variables
    */
-  const comCodeGroupList = useSelector(
-    (state) => state.comCodeMgmt.comCodeGroupList,
+  const treeDataList = useSelector(
+    (state) => state.comCodeMgmt.treeDataList,
     shallowEqual,
   );
 
   const onNodeSelect = (event, nodeIds) => {
-    console.log('onNodeSelect nodeIds', nodeIds);
+    dispatch(setComCodeParams({ page: 0, groupId: nodeIds }));
   };
 
   const onNodeButtonClick = (type, id) => {
-    console.log('onNodeButtonClick id', id);
-
     comCodeDialogOpen({
       type: type === 'edit' ? 'mdfGroup' : 'delGroup',
       params: { id: id },
     });
   };
 
-  const [onNodeButtonClickFunc, setOnNodeButtonClickFunc] = useState(
-    () => onNodeButtonClick,
-  );
-
-  const treeDataList = [
-    {
-      id: '001',
-      labelText: '그룹1',
-      labelInfo: 2,
-      prependIcon: GridViewIcon,
-      appendIconButtons: [
-        {
-          type: 'edit',
-          icon: EditIcon,
-          onNodeButtonClick: onNodeButtonClickFunc,
-        },
-        {
-          type: 'delete',
-          icon: DeleteIcon,
-          onNodeButtonClick: onNodeButtonClick,
-          disabled: true,
-        },
-      ],
-      children: [
-        {
-          id: '001.1',
-          labelText: 'item1',
-          labelInfo: 'ko',
-          prependIcon: ArticleIcon,
-        },
-        {
-          id: '001.2',
-          labelText: 'item2',
-          labelInfo: 'ko',
-          prependIcon: ArticleIcon,
-        },
-      ],
-    },
-    {
-      id: '002',
-      labelText: '그룹2',
-      labelInfo: 0,
-      prependIcon: GridViewIcon,
-      appendIconButtons: [
-        {
-          type: 'edit',
-          icon: EditIcon,
-          onNodeButtonClick: onNodeButtonClick,
-        },
-        {
-          type: 'delete',
-          icon: DeleteIcon,
-          onNodeButtonClick: onNodeButtonClick,
-        },
-      ],
-      children: [],
-    },
-  ];
-
   /**
    * Data fetch
    */
-  const onFetchData = useCallback(async () => {
+  const onFetchComCodeGroupData = useCallback(async () => {
     dispatch(getComCodeGroup());
   }, [dispatch]);
 
   useEffect(() => {
-    onFetchData();
-  }, [onFetchData]);
+    onFetchComCodeGroupData();
+  }, [onFetchComCodeGroupData]);
+
+  const onFetchComCodeData = useCallback(async () => {
+    dispatch(getComCode(comCodeParams));
+  }, [dispatch, comCodeParams]);
+
+  useEffect(() => {
+    onFetchComCodeData();
+  }, [onFetchComCodeData]);
 
   return (
     <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={1}>
@@ -188,10 +169,10 @@ const ComCodeMgmt = () => {
         <CTree
           treeDataList={treeDataList}
           onNodeSelect={onNodeSelect}
-          // defaultExpanded={[treeDataList[0].id]}
+          onNodeButtonClick={onNodeButtonClick}
           headerChildren={
             <>
-              <IconButton>
+              <IconButton onClick={() => onFetchComCodeGroupData()}>
                 <AutorenewIcon />
               </IconButton>
               <CButton onClick={() => comCodeDialogOpen({ type: 'addGroup' })}>
@@ -201,30 +182,34 @@ const ComCodeMgmt = () => {
           }
         ></CTree>
       </Box>
-      <Box gridColumn="span 9">
+      <Box gridColumn="span 9" sx={{ flexGrow: 1 }}>
+        {/* <CSearchCondition
+          onFetchData={onFetchComCodeData}
+          conditionList={conditionList}
+        /> */}
         <CDataGrid
+          height={505}
           title={dataGridTitle}
           titleButtons={dataGridTitleButtons}
           columns={dataGridColums}
-          rows={dataGridRows}
-          // totalElement={firmwareMng.totalElements}
-          pageSize={pageInfo.size}
-          rowsPerPage={pageInfo.rowPerPage}
-          // onRefresh={onRefresh}
-          // isLoading={isLoading}
-          // onPageSizeChange={(newPageSize) => {
-          //   onFetchData({
-          //     page: param.page,
-          //     size: newPageSize,
-          //   });
-          // }}
-          // onPageChange={(newPages) => {
-          //   onFetchData({
-          //     page: newPages,
-          //     size: param.size,
-          //   });
-          // }}
-          // toolbarBtnList={toolbarBtnList}
+          rows={comCodeList}
+          totalElement={comCodeTotalElements}
+          filterModel={filterModel}
+          onFilterChange={onFilterChange}
+          componentsProps={{
+            filterPanel: { linkOperators: ['and'], deleteFilter: undefined },
+          }}
+          isLoading={loading}
+          pagination
+          page={comCodeParams.page}
+          pageSize={comCodeParams.pageSize}
+          rowsPerPage={comCodeParams.rowPerPage}
+          onPageSizeChange={(newPageSize) =>
+            dispatch(setComCodeParams({ pageSize: newPageSize }))
+          }
+          onPageChange={(newPages) =>
+            dispatch(setComCodeParams({ page: newPages }))
+          }
         />
       </Box>
       <ComCodeDialog
@@ -236,4 +221,4 @@ const ComCodeMgmt = () => {
   );
 };
 
-export default ComCodeMgmt;
+export default React.memo(ComCodeMgmt);

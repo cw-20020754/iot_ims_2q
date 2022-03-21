@@ -12,6 +12,7 @@ const CTreeItem = (props) => {
     labelInfo,
     labelText,
     appendIconButtons,
+    onNodeButtonClick,
     ...other
   } = props;
 
@@ -45,7 +46,7 @@ const CTreeItem = (props) => {
                   key={item.type}
                   sx={{ px: 0 }}
                   disabled={item.disabled}
-                  onClick={() => item.onNodeButtonClick(item.type, id)}
+                  onClick={() => onNodeButtonClick(item.type, id)}
                 >
                   <Box
                     key={item.type}
