@@ -1,5 +1,5 @@
 import { API } from 'common/constants';
-import axios from 'api/interceptor';
+import axios from 'api/interceptor/imsInterceptor';
 import { makeurlQeuryString } from 'common/utils';
 
 const exportHeaders = {
