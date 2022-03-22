@@ -1,8 +1,7 @@
 import axios from 'axios';
-import store from 'redux/store';
-import { isNull } from 'common/utils';
+import { isNull, store } from 'common/utils';
 import { decryptData, getCookie } from 'common/auth';
-import { checkErrorStatus } from '../../common/utils';
+import { checkErrorStatus } from 'common/utils';
 
 const imsInterceptor = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? '' : '/',

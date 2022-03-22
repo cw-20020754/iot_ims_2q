@@ -246,6 +246,7 @@ const checkErrorStatus = async (status, error) => {
 };
 
 export {
+  store,
   injectStore,
   getText,
   isNull,

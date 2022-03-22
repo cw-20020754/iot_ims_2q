@@ -15,6 +15,7 @@ require('dotenv').config();
 export const persistor = persistStore(store);
 
 injectStore(store);
+
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
