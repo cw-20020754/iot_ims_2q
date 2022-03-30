@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation, useRoutes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setAuthencication } from '../redux/reducers/authSlice';
+import { setAuthencication } from 'redux/reducers/authSlice';
 import fota from './fota';
 import iotProtocol from './iotProtocol';
 import adminMgmt from './adminMgmt';

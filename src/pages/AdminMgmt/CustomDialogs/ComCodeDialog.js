@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { FormControl } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import WarningIcon from '@mui/icons-material/Warning';
 import CDialog from 'components/basic/CDialog';
@@ -8,10 +10,24 @@ import CDialogActions from 'components/basic/CDialogActions';
 import CButton from 'components/basic/CButton';
 import CInput from 'components/basic/CInput';
 import CSelect from 'components/basic/CSelect';
+import rules from 'common/rules';
+import {
+  postComCodeList,
+  postComCodeGroup,
+  putComCodeGroup,
+  deleteComCodeGroup,
+  getComCodeDuplicateCheck,
+  postComCode,
+  putComCode,
+  deleteComCode,
+} from 'redux/reducers/adminMgmt/comCodeMgmt';
+
+let hasError = false;
 
 const ComCodeDialog = (props) => {
   const { open, onClose, info } = props;
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const texts = {
     addGroup: t('word.group') + ' ' + t('word.add'),
@@ -30,16 +46,31 @@ const ComCodeDialog = (props) => {
     mdfCodeNm: t('word.mdf') + ' ' + t('word.code') + ' ' + t('word.nm'),
   };
 
-  const renderForm = (type) => {
-    switch (type) {
+  const langCodeList = useSelector(
+    (state) =>
+      state.comCodeMgmt.sharedComComList.filter(
+        (code) => code?.groupId === '012',
+      ),
+    shallowEqual,
+  )[0]?.codeList;
+
+  const renderForm = () => {
+    switch (info.type) {
       case 'addGroup':
         return (
           <>
             <CDialogContent grids={[12]}>
               <CInput
+                name="groupNm"
                 placeholder={texts.addGroupNm}
                 label={texts.groupNm}
                 sx={{ width: 1 }}
+                value={info.params.groupNm}
+                onChange={(e) => (info.params.groupNm = e.target.value)}
+                onValidation={(value) =>
+                  rules.requireAlert(value) || rules.maxLength(value, 50)
+                }
+                onValidationError={handleFormChildrenError}
               ></CInput>
             </CDialogContent>
           </>
@@ -49,29 +80,57 @@ const ComCodeDialog = (props) => {
           <>
             <CDialogContent grids={[12]}>
               <CInput
+                name="groupNm"
                 placeholder={texts.mdfGroupNm}
                 label={texts.groupNm}
                 sx={{ width: 1 }}
+                defaultValue={info.params.groupNm}
+                onChange={(e) => (info.params.groupNm = e.target.value)}
+                onValidation={(value) =>
+                  rules.requireAlert(value) || rules.maxLength(value, 50)
+                }
+                onValidationError={handleFormChildrenError}
               ></CInput>
             </CDialogContent>
           </>
         );
 
       case 'addCode':
+        info.params.langCode = 'ko';
         return (
           <>
             <CDialogContent grids={[12, 12, 12]}>
               <CInput
+                name="code"
                 placeholder={texts.addCode}
                 label={texts.code}
                 sx={{ width: 1 }}
+                value={info.params.code}
+                onChange={(e) => (info.params.code = e.target.value)}
+                onValidation={(value) =>
+                  rules.requireAlert(value) || rules.maxLength(value, 5)
+                }
+                onValidationError={handleFormChildrenError}
               ></CInput>
               <CInput
+                name="codeNm"
                 placeholder={texts.addCodeNm}
                 label={texts.codeNm}
                 sx={{ width: 1 }}
+                value={info.params.codeNm}
+                onChange={(e) => (info.params.codeNm = e.target.value)}
+                onValidation={(value) =>
+                  rules.requireAlert(value) || rules.maxLength(value, 50)
+                }
+                onValidationError={handleFormChildrenError}
               ></CInput>
-              <CSelect label={texts.langCode} sx={{ width: 1 }}></CSelect>
+              <CSelect
+                label={texts.langCode}
+                sx={{ width: 1 }}
+                value={info.params.langCode}
+                onChange={(e) => (info.params.langCode = e.target.value)}
+                optionArray={langCodeList}
+              ></CSelect>
             </CDialogContent>
           </>
         );
@@ -80,31 +139,123 @@ const ComCodeDialog = (props) => {
           <>
             <CDialogContent grids={[12]}>
               <CInput
+                name="codeNm"
                 placeholder={texts.addCodeNm}
                 label={texts.codeNm}
                 sx={{ width: 1 }}
+                defaultValue={info.params.codeNm}
+                onChange={(e) => (info.params.codeNm = e.target.value)}
+                onValidation={(value) =>
+                  rules.requireAlert(value) || rules.maxLength(value, 50)
+                }
+                onValidationError={handleFormChildrenError}
               ></CInput>
             </CDialogContent>
           </>
         );
       default:
-        return null;
     }
   };
 
+  const handleValidation = (e) => {
+    switch (info.type) {
+      case 'addGroup':
+      case 'mdfGroup':
+        e.target.form.groupNm.focus();
+        e.target.form.groupNm.blur();
+        break;
+      case 'addCode':
+        e.target.form.code.focus();
+        e.target.form.code.blur();
+        e.target.form.codeNm.focus();
+        e.target.form.codeNm.blur();
+        break;
+      case 'mdfCode':
+        e.target.form.codeNm.focus();
+        e.target.form.codeNm.blur();
+        break;
+      default:
+    }
+  };
+
+  const handleFormChildrenError = () => {
+    hasError = true;
+  };
+
+  const handleSubmit = async (e) => {
+    if (hasError) {
+      e.preventDefault();
+      hasError = false;
+      return;
+    }
+
+    e.preventDefault();
+
+    switch (info.type) {
+      case 'addGroup':
+        await dispatch(postComCodeGroup(info.params));
+        break;
+      case 'mdfGroup':
+        await dispatch(putComCodeGroup(info.params));
+        break;
+      case 'delGroup':
+        await dispatch(deleteComCodeGroup(info.params.groupId));
+        break;
+      case 'addCode':
+        // await dispatch(getComCodeDuplicateCheck(info.params));
+        await dispatch(postComCode(info.params));
+        break;
+      case 'mdfCode':
+        await dispatch(putComCode(info.params));
+        break;
+      case 'delCode':
+        await dispatch(deleteComCode(info.params));
+        break;
+      default:
+    }
+
+    const submitType = info.type.includes('Group') ? 'group' : 'code';
+    return handleClose(true, submitType);
+  };
+
+  const handleClose = (isSubmit, submitType) => {
+    hasError = false;
+    info.params = {};
+    return onClose(isSubmit, submitType);
+  };
+
+  const fetchComCodeList = useCallback(async () => {
+    await dispatch(postComCodeList({ groupIdList: ['012'] }));
+  }, [dispatch]);
+
+  useEffect(() => {
+    !langCodeList && fetchComCodeList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <CDialog open={open} onClose={() => onClose()}>
+    <CDialog
+      id="comCodeForm"
+      open={open}
+      onClose={handleClose}
+      component="form"
+      onSubmit={async (e) => await handleSubmit(e)}
+    >
       <CDialogTitle
         prependIcon={info.type.includes('del') && WarningIcon}
         title={texts[info.type]}
       ></CDialogTitle>
-
-      {renderForm(info.type)}
-
-      <CDialogActions>
-        <CButton onClick={() => onClose()}>{t('word.cancel')}</CButton>
-        <CButton onClick={() => onClose()}>{t('word.save')}</CButton>
-      </CDialogActions>
+      <FormControl component="fieldset">
+        {renderForm(info.type)}
+        <CDialogActions>
+          <CButton type="button" onClick={() => handleClose()}>
+            {t('word.cancel')}
+          </CButton>
+          <CButton type="submit" onClick={(e) => handleValidation(e)}>
+            {t('word.save')}
+          </CButton>
+        </CDialogActions>
+      </FormControl>
     </CDialog>
   );
 };

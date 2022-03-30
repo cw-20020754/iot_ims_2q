@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { TextField } from '@mui/material';
-import { checkValidtaion, isNull } from 'common/utils';
+import { isNull } from 'common/utils';
 
 const CInput = React.forwardRef((props, ref) => {
   const {
@@ -13,29 +13,26 @@ const CInput = React.forwardRef((props, ref) => {
     required = false,
     inputProps,
     variant,
-    rules,
+    onValidation,
+    onValidationError,
     ...rest
   } = props;
 
   const [helpText, setHelpText] = useState('');
 
-  const validateCheck = useCallback(() => {
-    if (!isNull(rules) && !isNull(rules.conditions)) {
-      const result = checkValidtaion(rules.conditions);
-
-      !isNull(result) ? setHelpText(result) : setHelpText('');
+  const handleValidation = (e) => {
+    const errorMessage = onValidation(e.target.value);
+    if (!isNull(errorMessage)) {
+      setHelpText(errorMessage);
+      if (onValidationError) {
+        return onValidationError();
+      }
     }
-  }, [rules]);
+  };
 
-  useEffect(() => {
-    if (!isNull(rules) && !isNull(rules.evtName) && !isNull(ref)) {
-      ref.current.value = value;
-      ref.current[rules.evtName] = validateCheck;
-    }
-  }, [ref, rules, validateCheck, value]);
   return (
     <TextField
-      ref={ref}
+      inputRef={ref}
       id={id}
       name={name}
       type={type}
@@ -45,7 +42,7 @@ const CInput = React.forwardRef((props, ref) => {
       variant={isNull(variant) ? 'standard' : variant}
       InputProps={inputProps}
       size={'small'}
-      onBlur={() => validateCheck()}
+      onBlur={(e) => onValidation && handleValidation(e)}
       onFocus={() => {
         setHelpText('');
       }}

@@ -23,6 +23,7 @@ imsInterceptor.interceptors.request.use(
       if (!isNull(userId)) {
         config.headers.userId = decryptData(userId);
       }
+
       return config;
     } catch (err) {}
     return config;

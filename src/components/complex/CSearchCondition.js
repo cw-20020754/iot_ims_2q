@@ -1,4 +1,9 @@
-import React, { useState, useCallback, useLayoutEffect } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useLayoutEffect,
+  shallowEqual,
+} from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -20,15 +25,13 @@ import CButton from '../basic/CButton';
 
 const CSearchCondition = (props) => {
   const [initial, setInitial] = useState(true);
-  const { conditionList } = props;
+  const { conditionList, onClickSearch } = props;
   const classes = AppStyles();
-  const codes = useSelector((state) => state.sharedInfo.codes);
+  const codes = useSelector((state) => state.sharedInfo.codes, shallowEqual);
   const { t } = useTranslation();
   const [searchOption, setSearchOption] = useState({});
 
   const onChangeFormData = useCallback((e, name, newValue) => {
-    // console.log('e, name, newValue >> ', e.target, name, newValue);
-
     let sName, sValue;
 
     if (isNull(newValue)) {
@@ -43,17 +46,13 @@ const CSearchCondition = (props) => {
       ...prevState,
       [sName]: sValue,
     }));
-    // console.log('searchOption >> ', searchOption);
   }, []);
 
-  const onClickSearch = (e) => {
+  const onClickSearchHandle = (e) => {
     e.preventDefault();
     e.stopPropagation();
-  };
-
-  const dialogOpen = () => {
-    // console.log('dialogOpen');
-    // props.onFetchData('', searchOption);
+    const condition = searchOption;
+    return onClickSearch(condition);
   };
 
   useLayoutEffect(() => {
@@ -84,13 +83,13 @@ const CSearchCondition = (props) => {
         <CButton
           color={'success'}
           style={{ margin: '0 20px' }}
-          onClick={(e) => onClickSearch(e)}
+          onClick={(e) => onClickSearchHandle(e)}
         >
           {t('word.search')}
         </CButton>
       </AccordionSummary>
       <Divider />
-      <AccordionDetails>
+      <AccordionDetails sx={{ p: 3 }}>
         <Grid container spacing={3}>
           {conditionList &&
             conditionList.map((item, index) => {
@@ -113,24 +112,7 @@ const CSearchCondition = (props) => {
                       onChange={onChangeFormData}
                       ref={ref}
                       fullWidth
-                      rules={
-                        item.id === 'datetime-local' && {
-                          conditions: [
-                            rules.dateRangeAlert(
-                              searchOption.startDate,
-                              searchOption.endDate,
-                            ),
-                          ],
-                        }
-                      }
-                      // rules={{
-                      //   // evtName: 'onkeyup',
-                      //   conditions: [
-                      //     rules.dateRangeAlert(searchOption.startDate, searchOption.endDate)
-                      //     // rules.minLength(searchOption[item.category], 5),
-                      //     // rules.maxLength(searchOption[item.category], 10),
-                      //   ],
-                      // }}
+                      onValidation={item.onValidation}
                     />
                   )}
                   {item.type === 'selectBox' && (
@@ -140,11 +122,6 @@ const CSearchCondition = (props) => {
                       name={item.id}
                       value={searchOption[item.category] || ''}
                       onChange={onChangeFormData}
-                      validate={{
-                        evtName: '',
-                        rules: ['requireAlert', 'characterOnlyAlert'],
-                        option: searchOption,
-                      }}
                       optionArray={getCodeCategoryItems(codes, item.category)}
                     />
                   )}

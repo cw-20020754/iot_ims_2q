@@ -7,6 +7,7 @@ import { setSnackbar } from '../redux/reducers/changeStateSlice';
 import { removeCookie } from './auth';
 import { persistor } from '../index';
 import { history } from 'App';
+import { saveAs } from 'file-saver';
 
 let store;
 const injectStore = (_store) => {
@@ -151,7 +152,6 @@ const makeRowsFormat = (list, codes) => {
  * @returns {string|*|string}
  */
 const reformatData = (type, value, catetory, codes) => {
-  // console.log(type, value, catetory, codes);
   if (!isNull(value)) {
     switch (type) {
       case 'text':
@@ -245,6 +245,12 @@ const checkErrorStatus = async (status, error) => {
   }
 };
 
+const fileDownload = (result) => {
+  const disposition = result.headers['content-disposition'];
+  const fileName = disposition.split('filename=')[1].replaceAll('"', '');
+  saveAs(result.data, decodeURIComponent(fileName));
+};
+
 export {
   store,
   injectStore,
@@ -261,4 +267,5 @@ export {
   onExcelDownload,
   checkValidtaion,
   checkErrorStatus,
+  fileDownload,
 };

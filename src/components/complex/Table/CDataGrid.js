@@ -49,6 +49,9 @@ const CDataGrid = (props) => {
     onColumnVisibilityModelChange,
     height,
     autoHeight,
+    columnsButton,
+    exportButton,
+    onExportButtonClick,
     ...rest
   } = props;
 
@@ -61,6 +64,15 @@ const CDataGrid = (props) => {
       fontWeight: 'bold',
     },
   }));
+
+  const toolBarRender = () => (
+    <CToolbar
+      columnsButton={columnsButton}
+      exportButton={exportButton}
+      exportText={t('word.export')}
+      onExportButtonClick={onExportButtonClick}
+    ></CToolbar>
+  );
 
   return (
     <Card sx={{ width: 1 }}>
@@ -106,26 +118,14 @@ const CDataGrid = (props) => {
             onFilterModelChange={onFilterChange}
             disableColumnMenu={true}
             components={{
-              Toolbar: CToolbar,
+              Toolbar: toolBarRender,
               LoadingOverlay: CLoadingOverlay,
               NoRowsOverlay: CNoRowsOverlay,
             }}
-            componentsProps={{
-              filterPanel: {
-                linkOperators: [GridLinkOperator.And],
-                filterFormProps: {
-                  deleteIconProps: {
-                    sx: { display: 'none' },
-                  },
-                },
-              },
-            }}
-            initialState={initialState}
             localeText={{
               toolbarColumns: t('word.display') + t('word.item'),
-              toolbarFilters: t('word.filter'),
-              toolbarExport: t('word.export'),
             }}
+            initialState={initialState}
             onColumnVisibilityModelChange={() =>
               onColumnVisibilityModelChange()
             }

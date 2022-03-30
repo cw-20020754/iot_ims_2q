@@ -1,24 +1,30 @@
 import React from 'react';
 import { Stack } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { getDatagridInfo } from 'redux/reducers/changeStateSlice';
 import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
-  GridToolbarFilterButton,
   GridToolbarExport,
 } from '@mui/x-data-grid-pro';
-import InfoIcon from '@mui/icons-material/Info';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import CButton from 'components/basic/CButton';
 
 const CToolbar = (props) => {
-  const { toolbarBtnList } = props;
-  const dispatch = useDispatch();
+  const { columnsButton, exportButton, exportText, onExportButtonClick } =
+    props;
 
   return (
     <GridToolbarContainer>
       <Stack direction="row" spacing={1}>
-        <GridToolbarColumnsButton />
-        <GridToolbarExport />
+        {columnsButton && <GridToolbarColumnsButton />}
+        {exportButton && (
+          <CButton
+            variant="text"
+            startIcon={<FileDownloadIcon />}
+            onClick={() => onExportButtonClick()}
+          >
+            {exportText}
+          </CButton>
+        )}
       </Stack>
     </GridToolbarContainer>
   );

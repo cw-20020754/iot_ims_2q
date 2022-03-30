@@ -64,7 +64,7 @@ export const putComCodeGroup = async (body) => {
  */
 export const deleteComCodeGroup = async (params) => {
   return axios
-    .delete(makeurlQeuryString(`${API.API_URL}/v1/admin/comCodeGroup`, params))
+    .delete(makeurlQeuryString(`${API.API_URL}/v1/admin/comCodeGroup/`, params))
     .then((response) => {
       return response;
     });
@@ -90,10 +90,10 @@ export const getComCode = async (params) => {
  */
 export const getComCodeExport = async (params) => {
   return axios
-    .get(
-      makeurlQeuryString(`${API.API_URL}/v1/admin/comCode/excel`, params),
-      exportHeaders,
-    )
+    .get(makeurlQeuryString(`${API.API_URL}/v1/admin/comCode/excel`, params), {
+      Headers: exportHeaders,
+      responseType: 'blob',
+    })
     .then((response) => {
       return response;
     });

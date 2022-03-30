@@ -32,7 +32,7 @@ import {
 } from 'redux/reducers/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { encryptData, isAuthenticated, removeCookie } from 'common/auth';
-import { setSnackbar } from '../../redux/reducers/changeStateSlice';
+import { setSnackbar } from 'redux/reducers/changeStateSlice';
 
 const Login = () => {
   const classes = AuthStyle();
@@ -191,9 +191,7 @@ const Login = () => {
                 fullWidth
                 autoFocus
                 onChange={handleChange('userId')}
-                rules={{
-                  conditions: [rules.emptyIdAlert(values.userId)],
-                }}
+                onValidation={(value) => rules.emptyIdAlert(value)}
                 InputLabelProps={{
                   classes: {
                     root: classes.labelResize,
@@ -221,9 +219,7 @@ const Login = () => {
                 margin={'normal'}
                 label={t('word.password')}
                 onChange={handleChange('password')}
-                rules={{
-                  conditions: [rules.emptyPasswordAlert(values.password)],
-                }}
+                onValidation={(value) => rules.emptyPasswordAlert(value)}
                 InputLabelProps={{
                   classes: {
                     root: classes.labelResize,

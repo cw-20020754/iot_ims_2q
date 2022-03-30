@@ -51,6 +51,7 @@ const CButton = (props) => {
       sx={style}
       startIcon={startIcon}
       endIcon={endIcon}
+      type={type}
       {...rest}
     >
       {children}

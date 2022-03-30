@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getGridStringOperators } from '@mui/x-data-grid-pro';
 import i18n from 'common/locale/i18n';
 import { comCodeAPI } from 'api';
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -15,7 +14,7 @@ const initialState = {
   // 공통코드 목록 조회 by getComCode
   comCodeList: [],
   comCodeParams: {
-    groupId: '',
+    groupId: '001',
     code: '',
     codeNm: '',
     page: 0,
@@ -30,58 +29,47 @@ const initialState = {
       field: 'groupId',
       headerName: i18n.t('word.group') + ' ' + i18n.t('word.id'),
       headerAlign: 'center',
-      filterable: false,
     },
     {
       field: 'groupNm',
       headerName: i18n.t('word.group') + ' ' + i18n.t('word.nm'),
       headerAlign: 'center',
-      filterable: false,
     },
     {
       field: 'code',
       headerName: i18n.t('word.code') + ' ' + i18n.t('word.id'),
       headerAlign: 'center',
-      filterOperators: getGridStringOperators().filter(
-        (operatoer) => operatoer.value === 'contains',
-      ),
     },
     {
       field: 'codeNm',
       headerName: i18n.t('word.code') + ' ' + i18n.t('word.nm'),
       headerAlign: 'center',
-      filterOperators: getGridStringOperators().filter(
-        (operatoer) => operatoer.value === 'contains',
-      ),
     },
     {
       field: 'langCode',
       headerName: i18n.t('word.lang') + ' ' + i18n.t('word.code'),
       headerAlign: 'center',
-      filterable: false,
     },
     {
       field: 'mdfId',
       headerName: i18n.t('word.mdf') + i18n.t('word.char'),
       headerAlign: 'center',
-      filterable: false,
     },
     {
       field: 'mdfDate',
       headerName: i18n.t('word.mdf') + i18n.t('word.datm'),
       headerAlign: 'center',
-      filterable: false,
     },
   ],
+  isComCodeDuplicated: false,
   loading: false,
   error: false,
 };
 
-const makeTreeNodeChildren = (child) => {
+const makeTreeNodeChildren = (groupId, child) => {
   return {
-    id: child.groupId + '.' + child.code,
+    id: groupId + '.' + child.code,
     labelText: child.codeNm,
-    labelInfo: child.langCode,
     prependIcon: ArticleIcon,
   };
 };
@@ -91,8 +79,18 @@ const makeTreeNodeChildren = (child) => {
  */
 export const postComCodeList = createAsyncThunk(
   `${name}/postComCodeList`,
-  async (groupIds, thunkAPI) => {
-    return await comCodeAPI.postComCodeList(groupIds);
+  async (body, thunkAPI) => {
+    return await comCodeAPI.postComCodeList(body);
+  },
+);
+
+/**
+ * 공통코드 조회 (그룹 목록 기준) - tree구성용
+ */
+export const postComCodeListForTree = createAsyncThunk(
+  `${name}/postComCodeListForTree`,
+  async (body, thunkAPI) => {
+    return await comCodeAPI.postComCodeList(body);
   },
 );
 
@@ -107,12 +105,82 @@ export const getComCodeGroup = createAsyncThunk(
 );
 
 /**
+ * 공통코드 그룹 등록
+ */
+export const postComCodeGroup = createAsyncThunk(
+  `${name}/postComCodeGroup`,
+  async (body, thunkAPI) => {
+    return await comCodeAPI.postComCodeGroup(body);
+  },
+);
+
+/**
+ * 공통코드 그룹 수정
+ */
+export const putComCodeGroup = createAsyncThunk(
+  `${name}/putComCodeGroup`,
+  async (body, thunkAPI) => {
+    return await comCodeAPI.putComCodeGroup(body);
+  },
+);
+
+/**
+ * 공통코드 그룹 삭제
+ */
+export const deleteComCodeGroup = createAsyncThunk(
+  `${name}/deleteComCodeGroup`,
+  async (params, thunkAPI) => {
+    return await comCodeAPI.deleteComCodeGroup(params);
+  },
+);
+
+/**
  * 공통코드 목록 조회
  */
 export const getComCode = createAsyncThunk(
   `${name}/getComCode`,
   async (params, thunkAPI) => {
     return await comCodeAPI.getComCode(params);
+  },
+);
+
+/**
+ * 공통코드 중복체크
+ */
+export const getComCodeDuplicateCheck = createAsyncThunk(
+  `${name}/getComCodeDuplicateCheck`,
+  async (params, thunkAPI) => {
+    return await comCodeAPI.getComCodeDuplicateCheck(params);
+  },
+);
+
+/**
+ * 공통코드 등록
+ */
+export const postComCode = createAsyncThunk(
+  `${name}/postComCode`,
+  async (body, thunkAPI) => {
+    return await comCodeAPI.postComCode(body);
+  },
+);
+
+/**
+ * 공통코드 수정
+ */
+export const putComCode = createAsyncThunk(
+  `${name}/putComCode`,
+  async (body, thunkAPI) => {
+    return await comCodeAPI.putComCode(body);
+  },
+);
+
+/**
+ * 공통코드 삭제
+ */
+export const deleteComCode = createAsyncThunk(
+  `${name}/deleteComCode`,
+  async (params, thunkAPI) => {
+    return await comCodeAPI.deleteComCode(params);
   },
 );
 
@@ -127,7 +195,7 @@ const comCodeMgmt = createSlice({
   },
   extraReducers: (builder) => {
     /**
-     * 공통코드 조회 (그룹 목록 기준)
+     * 공통코드 조회 (공용, 셀렉터 용)
      */
     builder.addCase(postComCodeList.pending, (state, action) => {
       state.loading = true;
@@ -136,8 +204,22 @@ const comCodeMgmt = createSlice({
       const response = action.payload.data.content;
       if (response && Array.isArray(response)) {
         response.forEach((node) => {
-          if (!state.sharedComComList.includes(node)) {
-            state.sharedComComList.push(node);
+          if (
+            !state.sharedComComList.some(
+              (item) => item.groupId === node.groupId,
+            )
+          ) {
+            const group = {
+              groupId: node.groupId,
+              codeList: [],
+            };
+            node.codeList?.forEach((code) => {
+              group.codeList.push({
+                value: code.code,
+                text: code.codeNm,
+              });
+            });
+            state.sharedComComList.push(group);
           }
         });
       }
@@ -146,6 +228,33 @@ const comCodeMgmt = createSlice({
       state.error = false;
     });
     builder.addCase(postComCodeList.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 조회 (그룹 목록 기준) - tree용
+     */
+    builder.addCase(postComCodeListForTree.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(postComCodeListForTree.fulfilled, (state, action) => {
+      const response = action.payload.data.content;
+      if (response && Array.isArray(response)) {
+        response.forEach((node) => {
+          state.treeDataList.forEach((treeItem) => {
+            if (treeItem.id === node.groupId && treeItem.children.length < 2) {
+              treeItem.children = node.codeList.map((row) =>
+                makeTreeNodeChildren(node.groupId, row),
+              );
+            }
+          });
+        });
+      }
+
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(postComCodeListForTree.rejected, (state, action) => {
       state.loading = false;
       state.error = true;
     });
@@ -162,6 +271,7 @@ const comCodeMgmt = createSlice({
         response.forEach((node) => {
           state.treeDataList.push({
             id: node.groupId,
+            nodeId: node.groupId,
             labelText: node.groupNm,
             labelInfo: node.cnt,
             prependIcon: GridViewIcon,
@@ -176,7 +286,7 @@ const comCodeMgmt = createSlice({
                 disabled: node.cnt === 0 ? false : true,
               },
             ],
-            children: [{}],
+            children: node.cnt > 0 ? [{}] : [],
           });
         });
       }
@@ -188,6 +298,48 @@ const comCodeMgmt = createSlice({
       state.error = false;
     });
     builder.addCase(getComCodeGroup.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 그룹 등록
+     */
+    builder.addCase(postComCodeGroup.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(postComCodeGroup.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(postComCodeGroup.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 그룹 수정
+     */
+    builder.addCase(putComCodeGroup.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(putComCodeGroup.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(putComCodeGroup.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 그룹 삭제
+     */
+    builder.addCase(deleteComCodeGroup.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteComCodeGroup.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(deleteComCodeGroup.rejected, (state, action) => {
       state.loading = false;
       state.error = true;
     });
@@ -206,18 +358,70 @@ const comCodeMgmt = createSlice({
         state.comCodeList.push({ ...row, id: index });
       });
 
-      // state.treeDataList.forEach((node) => {
-      //   node.children = response
-      //     .filter((row) => row.groupId === node.id)
-      //     .map((row) => makeTreeNodeChildren(row));
-      // });
-
       state.comCodeTotalElements = pageInfo.totalRecord;
 
       state.loading = false;
       state.error = false;
     });
     builder.addCase(getComCode.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 중복체크
+     */
+    builder.addCase(getComCodeDuplicateCheck.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getComCodeDuplicateCheck.fulfilled, (state, action) => {
+      const response = action.payload.data.content;
+      state.isComCodeDuplicated = response;
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(getComCodeDuplicateCheck.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 등록
+     */
+    builder.addCase(postComCode.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(postComCode.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(postComCode.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 수정
+     */
+    builder.addCase(putComCode.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(putComCode.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(putComCode.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 공통코드 삭제
+     */
+    builder.addCase(deleteComCode.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteComCode.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(deleteComCode.rejected, (state, action) => {
       state.loading = false;
       state.error = true;
     });

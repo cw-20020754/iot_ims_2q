@@ -302,7 +302,6 @@ const FirmwareManage = () => {
           param: makeQuery(params, option),
         }),
       );
-      console.log('result >> ', result);
       if (responseCheck(result)) {
         setIsLoading(false);
       }

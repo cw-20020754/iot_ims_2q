@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import {
   FormControl,
   FormHelperText,
@@ -6,9 +6,9 @@ import {
   MenuItem,
   Select,
 } from '@mui/material';
-import { checkValidtaion, isNull } from 'common/utils';
+import { isNull } from 'common/utils';
 
-const CSelect = React.forwardRef((props, ref) => {
+const CSelect = (props) => {
   const {
     label,
     name,
@@ -17,19 +17,20 @@ const CSelect = React.forwardRef((props, ref) => {
     value,
     optionArray,
     variant,
-    rules,
+    onValidation,
+    onValidationError,
     ...rest
   } = props;
 
   const [helpText, setHelpText] = useState('');
 
-  const validateCheck = useCallback(() => {
-    if (!isNull(rules) && !isNull(rules.conditions)) {
-      const result = checkValidtaion(rules.conditions);
-
-      !isNull(result) ? setHelpText(result) : setHelpText('');
+  const handleValidation = (e) => {
+    const errorMessage = onValidation(e.target.value);
+    if (!isNull(errorMessage)) {
+      setHelpText(errorMessage);
+      return onValidationError();
     }
-  }, [rules]);
+  };
 
   return (
     <FormControl
@@ -43,14 +44,13 @@ const CSelect = React.forwardRef((props, ref) => {
       <InputLabel>{label}</InputLabel>
       <Select
         name={name}
-        value={value || ''}
-        ref={ref}
-        onBlur={validateCheck}
+        value={value}
+        onBlur={(e) => onValidation && handleValidation(e)}
         {...rest}
       >
         {optionArray &&
           optionArray.map((option) => (
-            <MenuItem key={option.text} value={option.value || ''}>
+            <MenuItem key={option.text} value={option.value}>
               {option.text}
             </MenuItem>
           ))}
@@ -58,7 +58,7 @@ const CSelect = React.forwardRef((props, ref) => {
       {!isNull(helpText) && <FormHelperText>{helpText}</FormHelperText>}
     </FormControl>
   );
-});
+};
 
 CSelect.displayName = 'CSelect';
 

@@ -3,13 +3,13 @@ import { styled } from '@mui/material/styles';
 import { DialogContent, Grid } from '@mui/material';
 
 const CDialogContent = (props) => {
-  const { children, dividers, sx, grids } = props;
+  const { children, dividers, sx, grids, ...rest } = props;
 
   const CDialogContent = styled(DialogContent)(({ theme }) => ({}));
   const defaultGridCol = 12;
 
   return (
-    <CDialogContent dividers={dividers} sx={sx}>
+    <CDialogContent dividers={dividers} sx={sx} {...rest}>
       <Grid container spacing={1} justifyContent="space-between">
         {children.length > 1 ? (
           children.map((child, index) => (

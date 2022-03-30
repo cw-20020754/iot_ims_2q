@@ -8,7 +8,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const CDialog = (props) => {
-  const { onClose, fullWidth, maxWidth, open, sx, children } = props;
+  const { onClose, fullWidth, maxWidth, open, sx, children, ...rest } = props;
 
   const CDialog = styled(Dialog)(({ theme }) => ({}));
 
@@ -20,6 +20,7 @@ const CDialog = (props) => {
       onClose={() => onClose()}
       sx={sx}
       TransitionComponent={Transition}
+      {...rest}
     >
       {children}
     </CDialog>
