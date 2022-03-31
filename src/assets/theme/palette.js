@@ -8,6 +8,7 @@ export default function themePalette(theme) {
     primary: {
       main: theme.colors?.primaryMain,
       black: theme.colors?.grey900,
+      background: theme.colors?.grey200,
     },
     neutral: {
       main: theme.neutral,

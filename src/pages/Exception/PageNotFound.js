@@ -10,7 +10,6 @@ const PageNotFound = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  // console.log('theme >> ', theme);
   return (
     <Container maxWidth="sm">
       <Grid

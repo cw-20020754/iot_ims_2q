@@ -44,7 +44,6 @@ const authSlice = createSlice({
   reducers: {
     setLoginInfo(state, action) {
       const res = action.payload.payload;
-      // console.log('res >> ', res);
 
       if (res.status !== HTTP_STATUS.SUCCESS) {
         state.authError = res.data.error_description;

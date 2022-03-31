@@ -1,8 +1,7 @@
-import * as React from 'react';
+import React, { useCallback } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { Card, CardActions, Divider } from '@mui/material';
-import { TreeView } from '@mui/lab';
-import { TransitionGroup } from 'react-transition-group';
+import { Card, CardActions, Divider, Collapse } from '@mui/material';
+import TreeView from '@mui/lab/TreeView';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CTreeItem from './CTreeItem';
@@ -21,6 +20,8 @@ const CTree = (props) => {
     defaultExpanded,
     onNodeButtonClick,
     headerChildren,
+    height,
+    expanded,
     ...other
   } = props;
 
@@ -28,18 +29,14 @@ const CTree = (props) => {
 
   const CTree = styled(TreeView)(({ theme }) => ({
     flexGrow: 1,
-    overflowY: 'auto',
+    height: height ? height : 500,
+    overflow: 'auto',
   }));
 
-  const [expanded, setExpanded] = React.useState(
-    defaultExpanded ? defaultExpanded : [],
-  );
-
-  const handleChange = (event, nodeIds) => {
-    event.persist();
-    let iconClicked = event.target.closest('.MuiTreeItem-iconContainer');
+  const handleChange = (e, nodeIds) => {
+    let iconClicked = e.target.closest('.MuiTreeItem-iconContainer');
     if (iconClicked) {
-      setExpanded(nodeIds);
+      return onNodeToggle(nodeIds);
     }
   };
 
@@ -53,13 +50,14 @@ const CTree = (props) => {
         labelIcon={node.prependIcon}
         labelInfo={node.labelInfo}
         appendIconButtons={node.appendIconButtons}
+        onNodeButtonClick={onNodeButtonClick}
       >
         {Array.isArray(node.children) ? renderTree(node.children) : null}
       </CTreeItem>
     ));
 
   return (
-    <Card sx={{ height: 1 }}>
+    <Card sx={{ width: 1 }}>
       <CardActions
         sx={{ justifyContent: 'space-between', display: 'flex', py: 1, px: 2 }}
       >
@@ -69,6 +67,7 @@ const CTree = (props) => {
         variant="middle"
         sx={{ borderBottomWidth: 2, borderColor: theme.palette.primary.black }}
       />
+
       <CardActions sx={{ pt: 0 }}>
         <CTree
           sx={sx}
@@ -80,16 +79,13 @@ const CTree = (props) => {
           defaultExpandIcon={
             defaultExpandIcon ? defaultExpandIcon : <ArrowRightIcon />
           }
-          onNodeSelect={(event, nodeIds) => onNodeSelect(event, nodeIds)}
+          onNodeSelect={(e, nodeIds) => onNodeSelect(e, nodeIds)}
           expanded={expanded}
           onNodeToggle={handleChange}
+          {...other}
         >
-          {/* 닫힐때 transition 에러 원인 파악 필요. */}
-          <TransitionGroup>
-            {treeDataList &&
-              treeDataList.length > 1 &&
-              renderTree(treeDataList)}
-          </TransitionGroup>
+          {/* TODO... transition 방법 찾아 적용  */}
+          {treeDataList && treeDataList.length > 1 && renderTree(treeDataList)}
         </CTree>
       </CardActions>
     </Card>

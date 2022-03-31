@@ -14,7 +14,7 @@ const DefaultLayout = () => {
       <AppSidebar />
       {/* main */}
       <AppContent />
-      <AppFooter />
+      {/* <AppFooter /> */}
     </Box>
   );
 };

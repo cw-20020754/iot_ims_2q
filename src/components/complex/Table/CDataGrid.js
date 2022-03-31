@@ -1,11 +1,23 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { DataGridPro, useGridApiRef } from '@mui/x-data-grid-pro';
+import {
+  DataGridPro,
+  useGridApiRef,
+  GridLinkOperator,
+} from '@mui/x-data-grid-pro';
 import { Card, Box, CardContent, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import CButton from 'components/basic/CButton';
 import CToolbar from './CToolbar';
 import CNoRowsOverlay from './CNoRowsOverlay';
 import CLoadingOverlay from './CLoadingOverlay';
+
+/**
+ * Grid Filter Operator`s
+ * - getGridStringOperators
+ * - getGridDateOperators
+ * - getGridNumericOperators
+ */
 
 /*
  * <사용 가이드>
@@ -17,6 +29,8 @@ import CLoadingOverlay from './CLoadingOverlay';
  */
 
 const CDataGrid = (props) => {
+  const { t } = useTranslation();
+
   const {
     title,
     titleButtons,
@@ -24,10 +38,20 @@ const CDataGrid = (props) => {
     rows,
     totalElement,
     isLoading,
-    toolbarBtnList,
     pagination,
+    paginationMode,
+    page,
     pageSize,
     rowsPerPage,
+    initialState,
+    filterMode,
+    onFilterChange,
+    onColumnVisibilityModelChange,
+    height,
+    autoHeight,
+    columnsButton,
+    exportButton,
+    onExportButtonClick,
     ...rest
   } = props;
 
@@ -41,9 +65,18 @@ const CDataGrid = (props) => {
     },
   }));
 
+  const toolBarRender = () => (
+    <CToolbar
+      columnsButton={columnsButton}
+      exportButton={exportButton}
+      exportText={t('word.export')}
+      onExportButtonClick={onExportButtonClick}
+    ></CToolbar>
+  );
+
   return (
     <Card sx={{ width: 1 }}>
-      <CardContent sx={{ height: totalElement > 0 ? 'auto' : '400px', pt: 1 }}>
+      <CardContent sx={{ pt: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5 }}>
           {title && (
             <Typography variant={'h4'} sx={{ flexGrow: 1 }}>
@@ -62,31 +95,45 @@ const CDataGrid = (props) => {
               ))
             : null}
         </Box>
-        <CDataGrid
-          apiRef={apiRef}
-          {...rest}
-          columns={columns}
-          rows={rows}
-          autoHeight={totalElement > 0}
-          loading={isLoading}
-          rowCount={totalElement}
-          pagination={pagination}
-          columnBuffer={2}
-          columnThreshold={2}
-          paginationMode="server"
-          components={{
-            Toolbar: CToolbar,
-            LoadingOverlay: CLoadingOverlay,
-            NoRowsOverlay: CNoRowsOverlay,
+        <Box
+          style={{
+            display: 'flex',
+            height: height ? height : 500,
+            overflow: 'auto',
           }}
-          componentsProps={{
-            toolbar: {
-              toolbarBtnList: toolbarBtnList,
-            },
-          }}
-          pageSize={pageSize}
-          rowsPerPageOptions={rowsPerPage}
-        />
+        >
+          <CDataGrid
+            apiRef={apiRef}
+            {...rest}
+            columns={columns}
+            rows={rows}
+            autoHeight={autoHeight}
+            loading={isLoading}
+            rowCount={totalElement}
+            pagination={pagination}
+            columnBuffer={2}
+            columnThreshold={2}
+            filterMode={filterMode}
+            paginationMode={paginationMode}
+            onFilterModelChange={onFilterChange}
+            disableColumnMenu={true}
+            components={{
+              Toolbar: toolBarRender,
+              LoadingOverlay: CLoadingOverlay,
+              NoRowsOverlay: CNoRowsOverlay,
+            }}
+            localeText={{
+              toolbarColumns: t('word.display') + t('word.item'),
+            }}
+            initialState={initialState}
+            onColumnVisibilityModelChange={() =>
+              onColumnVisibilityModelChange()
+            }
+            page={page}
+            pageSize={pageSize}
+            rowsPerPageOptions={rowsPerPage}
+          />
+        </Box>
       </CardContent>
     </Card>
   );
