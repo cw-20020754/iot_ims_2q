@@ -24,8 +24,14 @@ const ComCodeMgmtTree = (props) => {
   );
 
   const handleNodeSelect = useCallback(
-    (event, nodeIds) => {
-      dispatch(setComCodeParams({ page: 0, groupId: nodeIds }));
+    (e, nodeIds) => {
+      dispatch(
+        setComCodeParams({
+          page: 0,
+          groupId: nodeIds,
+          groupNm: e.target.textContent,
+        }),
+      );
     },
     [dispatch],
   );

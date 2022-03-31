@@ -117,7 +117,11 @@ const ComCodeMgmtGrid = (props) => {
       onTitleButtonClick: () =>
         onComCodeDialogOpen({
           type: 'addCode',
-          params: { groupId: comCodeParams.groupId },
+          params: {
+            groupId: comCodeParams.groupId,
+            groupNm: comCodeParams.groupNm,
+            langCode: 'ko',
+          },
         }),
     },
   ];
