@@ -11,16 +11,17 @@ import CButton from 'components/basic/CButton';
 import CInput from 'components/basic/CInput';
 import CSelect from 'components/basic/CSelect';
 import rules from 'common/rules';
+import { comCodeAPI } from 'api';
 import {
   postComCodeList,
   postComCodeGroup,
   putComCodeGroup,
   deleteComCodeGroup,
-  getComCodeDuplicateCheck,
   postComCode,
   putComCode,
   deleteComCode,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
+import { setSnackbar } from 'redux/reducers/changeStateSlice';
 
 let hasError = false;
 
@@ -96,10 +97,18 @@ const ComCodeDialog = (props) => {
         );
 
       case 'addCode':
-        info.params.langCode = 'ko';
         return (
           <>
-            <CDialogContent grids={[12, 12, 12]}>
+            <CDialogContent grids={[12, 12, 12, 12]}>
+              <CInput
+                name="groupNm"
+                label={texts.groupNm}
+                sx={{ width: 1 }}
+                defaultValue={info.params.groupNm}
+                InputProps={{
+                  readOnly: true,
+                }}
+              ></CInput>
               <CInput
                 name="code"
                 placeholder={texts.addCode}
@@ -127,7 +136,7 @@ const ComCodeDialog = (props) => {
               <CSelect
                 label={texts.langCode}
                 sx={{ width: 1 }}
-                value={info.params.langCode}
+                value={info.params.langCode || 'ko'}
                 onChange={(e) => (info.params.langCode = e.target.value)}
                 optionArray={langCodeList}
               ></CSelect>
@@ -183,13 +192,13 @@ const ComCodeDialog = (props) => {
   };
 
   const handleSubmit = async (e) => {
+    let isComCodeDuplicated = false;
+    e.preventDefault();
+
     if (hasError) {
-      e.preventDefault();
       hasError = false;
       return;
     }
-
-    e.preventDefault();
 
     switch (info.type) {
       case 'addGroup':
@@ -202,8 +211,20 @@ const ComCodeDialog = (props) => {
         await dispatch(deleteComCodeGroup(info.params.groupId));
         break;
       case 'addCode':
-        // await dispatch(getComCodeDuplicateCheck(info.params));
-        await dispatch(postComCode(info.params));
+        isComCodeDuplicated = await (
+          await comCodeAPI.getComCodeDuplicateCheck(info.params)
+        )?.data?.content;
+        if (isComCodeDuplicated) {
+          dispatch(
+            setSnackbar({
+              snackbarOpen: true,
+              snackbarMessage: t('desc.alert.dataDuplicated'),
+              autoHideDuration: 5000,
+            }),
+          );
+        } else {
+          await dispatch(postComCode(info.params));
+        }
         break;
       case 'mdfCode':
         await dispatch(putComCode(info.params));
@@ -214,8 +235,10 @@ const ComCodeDialog = (props) => {
       default:
     }
 
-    const submitType = info.type.includes('Group') ? 'group' : 'code';
-    return handleClose(true, submitType);
+    if (!isComCodeDuplicated) {
+      const submitType = info.type.includes('Group') ? 'group' : 'code';
+      return handleClose(true, submitType);
+    }
   };
 
   const handleClose = (isSubmit, submitType) => {
@@ -236,7 +259,7 @@ const ComCodeDialog = (props) => {
   return (
     <CDialog
       id="comCodeForm"
-      open={open}
+      open={open || false}
       onClose={handleClose}
       component="form"
       onSubmit={async (e) => await handleSubmit(e)}

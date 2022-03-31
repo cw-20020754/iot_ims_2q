@@ -9,6 +9,9 @@ const CDialogTitle = (props) => {
     fontWeight: 500,
     fontSize: 20,
     paddingRight: 8,
+    borderLeftStyle: 'solid',
+    borderLeftWidth: '8px',
+    borderLeftColor: theme.palette.primary.main,
   }));
 
   return (

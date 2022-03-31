@@ -33,26 +33,28 @@ const ComCodeMgmt = () => {
   };
 
   return (
-    <Grid
-      container
-      direction="row"
-      rowSpacing={1}
-      columnSpacing={1}
-      justifyContent="flex-start"
-      alignItems="stretch"
-    >
-      <Grid item xs={4}>
-        <ComCodeMgmtTree onComCodeDialogOpen={handleComCodeDialogOpen} />
-      </Grid>
-      <Grid item xs={8}>
-        <ComCodeMgmtGrid onComCodeDialogOpen={handleComCodeDialogOpen} />
+    <>
+      <Grid
+        container
+        direction="row"
+        rowSpacing={1}
+        columnSpacing={1}
+        justifyContent="flex-start"
+        alignItems="stretch"
+      >
+        <Grid item xs={4}>
+          <ComCodeMgmtTree onComCodeDialogOpen={handleComCodeDialogOpen} />
+        </Grid>
+        <Grid item xs={8}>
+          <ComCodeMgmtGrid onComCodeDialogOpen={handleComCodeDialogOpen} />
+        </Grid>
       </Grid>
       <ComCodeDialog
         open={openComCodeDialog}
         info={comCodeDialogInfo}
         onClose={handleComCodeDialogClose}
       ></ComCodeDialog>
-    </Grid>
+    </>
   );
 };
 

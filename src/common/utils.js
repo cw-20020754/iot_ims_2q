@@ -239,7 +239,7 @@ const checkErrorStatus = async (status, error) => {
       setSnackbar({
         snackbarOpen: true,
         snackbarMessage: msg,
-        autoHideDuration: 3000,
+        autoHideDuration: 5000,
       }),
     );
   }

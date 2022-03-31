@@ -192,6 +192,9 @@ const comCodeMgmt = createSlice({
       const obj = action.payload;
       state.comCodeParams = { ...state.comCodeParams, ...obj };
     },
+    setIsComCodeDuplicated(state, action) {
+      state.isComCodeDuplicated = action.payload;
+    },
   },
   extraReducers: (builder) => {
     /**
@@ -291,8 +294,12 @@ const comCodeMgmt = createSlice({
         });
       }
 
-      state.comCodeParams.groupId =
-        state.treeDataList.length > 0 && state.treeDataList[0].id;
+      state.comCodeParams = {
+        ...state.comCodeParams,
+        groupId: state.treeDataList.length > 0 && state.treeDataList[0].id,
+        groupNm:
+          state.treeDataList.length > 0 && state.treeDataList[0].labelText,
+      };
 
       state.loading = false;
       state.error = false;
@@ -428,5 +435,5 @@ const comCodeMgmt = createSlice({
   },
 });
 
-export const { setComCodeParams } = comCodeMgmt.actions;
+export const { setComCodeParams, setIsComCodeDuplicated } = comCodeMgmt.actions;
 export default comCodeMgmt.reducer;

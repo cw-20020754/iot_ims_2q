@@ -112,10 +112,10 @@
     "sir": "님"
   },
   "desc": {
+    "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",
     "ipNotAllowAlert": "접근 가능한 IP가 아닙니다.",
     "sessionTimeExpiredAlert": "장시간 사용하지 않아 세션이 종료 되었습니다. 재로그인이 필요합니다.",
     "loginFailAlert": "ID나 패스워드가 잘 못 되었습니다.",
-    "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",
     "tempError": "일시적인 문제가 발생했습니다. 잠시후에 다시 시도해주세요.",
     "delWarning": "삭제하시겠습니까?",
     "accessDeny": "Sorry, access denied.",
@@ -124,6 +124,9 @@
     "pageNotFound": "Sorry, Page not found.",
     "goHome": "Go Home",
     "sessonExpired": "세션이 만료되어 재로그인이 필요합니다.",
+    "alert": {
+      "dataDuplicated": "이미 존재하는 값이 있습니다."
+    },
     "validation": {
       "frmwrName": "펌웨어 이름을 입력해주세요. (128자 이내).",
       "frmwrDesc": "펌웨어 설명을 입력해주세요. (2048자 이내).",

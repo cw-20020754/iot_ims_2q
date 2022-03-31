@@ -40,7 +40,7 @@ const CNotification = (props) => {
     <Snackbar
       open={snackbarOpen}
       autoHideDuration={autoHideDuration}
-      sx={{ width: '30%', ...snackBarStyle }}
+      sx={{ ...snackBarStyle }}
       anchorOrigin={{ vertical: vertical, horizontal: horizontal }}
       onClose={handleClose}
       {...rest}
@@ -59,7 +59,7 @@ const CNotification = (props) => {
         onClose={handleClose}
         {...rest}
       >
-        <pre>{snackbarMessage}</pre>
+        <strong>{snackbarMessage}</strong>
       </Alert>
     </Snackbar>
   );
