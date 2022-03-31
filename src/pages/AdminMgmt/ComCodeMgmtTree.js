@@ -25,7 +25,6 @@ const ComCodeMgmtTree = (props) => {
 
   const handleNodeSelect = useCallback(
     (e, nodeIds) => {
-      console.log(e);
       dispatch(
         setComCodeParams({
           page: 0,
