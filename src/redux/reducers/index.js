@@ -5,6 +5,7 @@ import changeStateSlice from './changeStateSlice';
 import sharedInfoSlice from './sharedInfoSlice';
 import fotaInfoSlice from './fotaInfoSlice';
 import { comCodeMgmt } from './adminMgmt';
+import { protocolApi } from './iotProtocol';
 import authSlice from './authSlice';
 
 const rootReducer = combineReducers({
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   fotaInfo: fotaInfoSlice,
   comCodeMgmt: comCodeMgmt,
   auth: authSlice,
+  protocolApi: protocolApi,
 });
 
 const persistConfig = {

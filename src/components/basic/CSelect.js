@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { isNull } from 'common/utils';
 
-const CSelect = (props) => {
+const CSelect = React.forwardRef((props, ref) => {
   const {
     label,
     name,
@@ -19,6 +19,8 @@ const CSelect = (props) => {
     variant,
     onValidation,
     onValidationError,
+    open,
+    inputProps,
     ...rest
   } = props;
 
@@ -43,9 +45,16 @@ const CSelect = (props) => {
     >
       <InputLabel>{label}</InputLabel>
       <Select
+        ref={ref}
+        open={open}
         name={name}
         value={value}
+        inputProps={inputProps}
         onBlur={(e) => onValidation && handleValidation(e)}
+        onClick={(e) => onValidation && handleValidation(e)}
+        onFocus={() => {
+          setHelpText('');
+        }}
         {...rest}
       >
         {optionArray &&
@@ -58,7 +67,7 @@ const CSelect = (props) => {
       {!isNull(helpText) && <FormHelperText>{helpText}</FormHelperText>}
     </FormControl>
   );
-};
+});
 
 CSelect.displayName = 'CSelect';
 

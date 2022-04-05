@@ -24,8 +24,8 @@ const ComCodeMgmtTree = (props) => {
   );
 
   const handleNodeSelect = useCallback(
-    (e, nodeIds) => {
-      dispatch(
+    async (e, nodeIds) => {
+      await dispatch(
         setComCodeParams({
           page: 0,
           groupId: nodeIds,

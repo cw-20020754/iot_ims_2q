@@ -1,9 +1,5 @@
-import React, {
-  useState,
-  useCallback,
-  useLayoutEffect,
-  shallowEqual,
-} from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
   Accordion,
   AccordionDetails,
@@ -13,65 +9,62 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import AppStyles from '../layout/AppStyle';
-import { getCodeCategoryItems, isNull } from 'common/utils';
-import rules from 'common/rules';
-import CInput from '../basic/CInput';
-import CSelect from '../basic/CSelect';
-import CSlectAutocomplete from '../basic/CSlectAutocomplete';
-import CButton from '../basic/CButton';
+import AppStyles from 'components/layout/AppStyle';
+import CInput from 'components/basic/CInput';
+import CSelect from 'components/basic/CSelect';
+import CSlectAutocomplete from 'components/basic/CSlectAutocomplete';
+import CButton from 'components/basic/CButton';
+import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
+import { isNull } from 'common/utils';
 
 const CSearchCondition = (props) => {
-  const [initial, setInitial] = useState(true);
-  const { conditionList, onClickSearch } = props;
+  const { conditionList, onClickSearch, expanded, defaultValues } = props;
   const classes = AppStyles();
-  const codes = useSelector((state) => state.sharedInfo.codes, shallowEqual);
   const { t } = useTranslation();
-  const [searchOption, setSearchOption] = useState({});
+  const dispatch = useDispatch();
 
-  const onChangeFormData = useCallback((e, name, newValue) => {
-    let sName, sValue;
+  const searchConditionParams = useSelector(
+    (state) => state.changeState.searchConditionParams,
+    shallowEqual,
+  );
 
-    if (isNull(newValue)) {
-      sName = e.target.name;
-      sValue = e.target.value;
-    } else {
-      sName = name;
-      sValue = newValue;
-    }
-
-    setSearchOption((prevState) => ({
-      ...prevState,
-      [sName]: sValue,
-    }));
-  }, []);
-
-  const onClickSearchHandle = (e) => {
+  const handleClickSearch = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const condition = searchOption;
-    return onClickSearch(condition);
+    return onClickSearch(searchConditionParams);
   };
 
-  useLayoutEffect(() => {
-    if (initial) {
-      setInitial(false);
-      conditionList.map((item) => {
-        if (item.id === 'datetime-local') {
-          setSearchOption((prevState) => ({
-            ...prevState,
-            [item.category]: item.value,
-          }));
-        }
-        return null;
-      });
+  const handleChangeFormData = useCallback(
+    async (name, value) => {
+      if (isNull(name)) {
+        return;
+      }
+
+      await dispatch(setSearchConditionParam({ name, value }));
+    },
+    [dispatch],
+  );
+
+  const fetchDefaultSearchConditionParam = useCallback(async () => {
+    for (const [name, value] of Object.entries(defaultValues)) {
+      await dispatch(setSearchConditionParam({ name, value }));
     }
-  }, [initial, conditionList]);
+  }, [dispatch, defaultValues]);
+
+  useEffect(() => {
+    if (!isNull(defaultValues)) {
+      fetchDefaultSearchConditionParam();
+    }
+
+    return async () => {
+      await dispatch(setSearchConditionParam());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <Accordion>
+    <Accordion expanded={expanded}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
@@ -83,7 +76,7 @@ const CSearchCondition = (props) => {
         <CButton
           color={'success'}
           style={{ margin: '0 20px' }}
-          onClick={(e) => onClickSearchHandle(e)}
+          onClick={(e) => handleClickSearch(e)}
         >
           {t('word.search')}
         </CButton>
@@ -107,9 +100,11 @@ const CSearchCondition = (props) => {
                       id={item.id}
                       name={item.category}
                       type={item.id}
-                      value={searchOption[item.category] || ''}
+                      value={searchConditionParams[item.category] || ''}
                       label={item.label}
-                      onChange={onChangeFormData}
+                      onChange={(e) =>
+                        handleChangeFormData(e.target.name, e.target.value)
+                      }
                       ref={ref}
                       fullWidth
                       onValidation={item.onValidation}
@@ -120,22 +115,25 @@ const CSearchCondition = (props) => {
                       ref={ref}
                       label={item.label}
                       name={item.id}
-                      value={searchOption[item.category] || ''}
-                      onChange={onChangeFormData}
-                      optionArray={getCodeCategoryItems(codes, item.category)}
+                      value={searchConditionParams[item.category] || ''}
+                      onChange={(e) => {
+                        handleChangeFormData(e.target.name, e.target.value);
+                      }}
+                      optionArray={item.optionArray}
                     />
                   )}
                   {item.type === 'autoSelectBox' && (
                     <CSlectAutocomplete
                       ref={ref}
+                      defaultValue={item.defaultValue}
                       value={item.value || ''}
                       name={item.id}
                       label={item.label}
                       getOption={'text'}
                       getValue={'value'}
-                      optionArray={getCodeCategoryItems(codes, item.category)}
+                      optionArray={item.optionArray}
                       onChange={(e, newValue) =>
-                        onChangeFormData(e, item.id, newValue.value)
+                        handleChangeFormData(item.id, newValue.value)
                       }
                     />
                   )}

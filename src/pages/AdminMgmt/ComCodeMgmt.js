@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Grid } from '@mui/material';
 import ComCodeDialog from './CustomDialogs/ComCodeDialog';
 import ComCodeMgmtTree from './ComCodeMgmtTree';
@@ -7,28 +7,28 @@ import ComCodeMgmtGrid from './ComCodeMgmtGrid';
 import {
   getComCodeGroup,
   setComCodeParams,
+  setComCodeDialogInfo,
+  setComCodeOpenDialog,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 
 const ComCodeMgmt = () => {
   const dispatch = useDispatch();
-  const [openComCodeDialog, setOpenComCodeDialog] = useState(false);
-  const [comCodeDialogInfo, setComCodeDialogInfo] = useState({
-    type: '',
-    params: {},
-  });
 
-  const handleComCodeDialogOpen = (values) => {
-    setComCodeDialogInfo({ ...comCodeDialogInfo, ...values });
-    setOpenComCodeDialog(true);
+  const dialogInfo = useSelector(
+    (state) => state.comCodeMgmt.dialogInfo,
+    shallowEqual,
+  );
+
+  const handleDialogOpen = async (values) => {
+    await dispatch(setComCodeDialogInfo({ ...dialogInfo, ...values }));
+    await dispatch(setComCodeOpenDialog(true));
   };
 
-  const handleComCodeDialogClose = async (isSubmit, submitType) => {
-    setOpenComCodeDialog(false);
-
+  const handleDialogClose = async (isSubmit, submitType) => {
     if (isSubmit) {
       submitType === 'group'
         ? await dispatch(getComCodeGroup())
-        : dispatch(setComCodeParams({ comCodeDialogInfo }));
+        : dispatch(setComCodeParams({ dialogInfo }));
     }
   };
 
@@ -43,17 +43,13 @@ const ComCodeMgmt = () => {
         alignItems="stretch"
       >
         <Grid item xs={4}>
-          <ComCodeMgmtTree onComCodeDialogOpen={handleComCodeDialogOpen} />
+          <ComCodeMgmtTree onComCodeDialogOpen={handleDialogOpen} />
         </Grid>
         <Grid item xs={8}>
-          <ComCodeMgmtGrid onComCodeDialogOpen={handleComCodeDialogOpen} />
+          <ComCodeMgmtGrid onComCodeDialogOpen={handleDialogOpen} />
         </Grid>
       </Grid>
-      <ComCodeDialog
-        open={openComCodeDialog}
-        info={comCodeDialogInfo}
-        onClose={handleComCodeDialogClose}
-      ></ComCodeDialog>
+      <ComCodeDialog onClose={handleDialogClose}></ComCodeDialog>
     </>
   );
 };

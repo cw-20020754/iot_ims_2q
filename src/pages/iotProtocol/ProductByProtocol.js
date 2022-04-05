@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import CSearchCondition from 'components/complex/CSearchCondition';
 import { useTranslation } from 'react-i18next';
-import { getProtocol } from '../../api/protocolAPI';
+// import { getProtocol } from 'api/iotProtocol/protocolAPI';
 
 const ProductByProtocol = () => {
   const { t } = useTranslation();
@@ -12,7 +12,7 @@ const ProductByProtocol = () => {
     if (initial) {
       setInitial(false);
       //test
-      getProtocol({ prodTypeCode: '01', typeCode: '0003' });
+      // getProtocol({ prodTypeCode: '01', typeCode: '0003' });
     }
   }, [initial]);
 

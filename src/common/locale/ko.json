@@ -109,7 +109,10 @@
     "ims": "IMS",
     "display": "표시",
     "item": "항목",
-    "sir": "님"
+    "sir": "님",
+    "api": "API",
+    "req": "요청",
+    "direction": "방향"
   },
   "desc": {
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",

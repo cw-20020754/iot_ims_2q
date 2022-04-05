@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Dialog } from '@mui/material';
 import Zoom from '@mui/material/Zoom';
@@ -8,12 +8,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const CDialog = (props) => {
-  const { onClose, fullWidth, maxWidth, open, sx, children, ...rest } = props;
-
-  const CDialog = styled(Dialog)(({ theme }) => ({}));
+  const { id, onClose, fullWidth, maxWidth, open, sx, children, ...rest } =
+    props;
 
   return (
-    <CDialog
+    <Dialog
+      id={id}
       fullWidth={fullWidth ? fullWidth : true}
       maxWidth={maxWidth ? maxWidth : 'xs'}
       open={open}
@@ -23,7 +23,7 @@ const CDialog = (props) => {
       {...rest}
     >
       {children}
-    </CDialog>
+    </Dialog>
   );
 };
 

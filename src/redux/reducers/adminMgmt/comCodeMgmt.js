@@ -10,11 +10,16 @@ const name = 'comCode';
 
 const initialState = {
   // 공통코드 조회 (그룹 목록 기준) by postComCodeList
-  sharedComComList: [],
+  sharedComCodeList: [],
+  openDialog: false,
+  dialogInfo: {
+    type: '',
+    params: {},
+  },
   // 공통코드 목록 조회 by getComCode
   comCodeList: [],
   comCodeParams: {
-    groupId: '001',
+    groupId: '',
     code: '',
     codeNm: '',
     page: 0,
@@ -195,6 +200,13 @@ const comCodeMgmt = createSlice({
     setIsComCodeDuplicated(state, action) {
       state.isComCodeDuplicated = action.payload;
     },
+    setComCodeOpenDialog(state, action) {
+      state.openDialog = action.payload;
+    },
+    setComCodeDialogInfo(state, action) {
+      const obj = action.payload;
+      state.dialogInfo = { ...state.dialogInfo, ...obj };
+    },
   },
   extraReducers: (builder) => {
     /**
@@ -208,22 +220,26 @@ const comCodeMgmt = createSlice({
       if (response && Array.isArray(response)) {
         response.forEach((node) => {
           if (
-            !state.sharedComComList.some(
+            state.sharedComCodeList.some(
               (item) => item.groupId === node.groupId,
             )
           ) {
-            const group = {
-              groupId: node.groupId,
-              codeList: [],
-            };
-            node.codeList?.forEach((code) => {
-              group.codeList.push({
-                value: code.code,
-                text: code.codeNm,
-              });
-            });
-            state.sharedComComList.push(group);
+            state.sharedComCodeList = state.sharedComCodeList.filter(
+              (item) => item.gourpId !== node.groupId,
+            );
           }
+
+          const group = {
+            groupId: node.groupId,
+            codeList: [],
+          };
+          node.codeList?.forEach((code) => {
+            group.codeList.push({
+              value: code.code,
+              text: code.codeNm,
+            });
+          });
+          state.sharedComCodeList.push(group);
         });
       }
 
@@ -435,5 +451,10 @@ const comCodeMgmt = createSlice({
   },
 });
 
-export const { setComCodeParams, setIsComCodeDuplicated } = comCodeMgmt.actions;
+export const {
+  setComCodeParams,
+  setIsComCodeDuplicated,
+  setComCodeOpenDialog,
+  setComCodeDialogInfo,
+} = comCodeMgmt.actions;
 export default comCodeMgmt.reducer;
