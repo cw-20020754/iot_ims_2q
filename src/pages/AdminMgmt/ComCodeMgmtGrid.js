@@ -47,7 +47,6 @@ const ComCodeMgmtGrid = (props) => {
         codeNm: searchCondition['codeNm'] || '',
       });
     }
-    await fetchComCodeData();
   };
 
   const dataGridColums = [
@@ -120,6 +119,8 @@ const ComCodeMgmtGrid = (props) => {
           params: {
             groupId: comCodeParams.groupId,
             groupNm: comCodeParams.groupNm,
+            code: '',
+            codeNm: '',
             langCode: 'ko',
           },
         }),
@@ -132,8 +133,8 @@ const ComCodeMgmtGrid = (props) => {
   };
 
   const fetchComCodeParams = useCallback(
-    (params) => {
-      dispatch(setComCodeParams(params));
+    async (params) => {
+      await dispatch(setComCodeParams(params));
     },
     [dispatch],
   );
@@ -146,7 +147,8 @@ const ComCodeMgmtGrid = (props) => {
     if (!isNull(comCodeParams.groupId)) {
       fetchComCodeData();
     }
-  }, [fetchComCodeData, comCodeParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [comCodeParams]);
 
   return (
     <>

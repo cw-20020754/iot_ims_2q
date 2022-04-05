@@ -18,6 +18,7 @@ const initialState = {
     severity: 'error',
     variant: 'filled',
   },
+  searchConditionParams: {},
 };
 
 const changeStateSlice = createSlice({
@@ -39,10 +40,27 @@ const changeStateSlice = createSlice({
         ...action.payload,
       };
     },
+    setSearchConditionParam(state, action) {
+      const param = action.payload;
+
+      if (param) {
+        state.searchConditionParams = {
+          ...state.searchConditionParams,
+          [param.name]: param.value,
+        };
+      } else {
+        state.searchConditionParams = {};
+      }
+    },
   },
   extraReducers: {},
 });
 
-export const { setSidebarShow, GlobalLoading, getDatagridInfo, setSnackbar } =
-  changeStateSlice.actions;
+export const {
+  setSidebarShow,
+  GlobalLoading,
+  getDatagridInfo,
+  setSnackbar,
+  setSearchConditionParam,
+} = changeStateSlice.actions;
 export default changeStateSlice.reducer;

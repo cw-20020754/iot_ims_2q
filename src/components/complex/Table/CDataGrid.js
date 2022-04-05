@@ -57,14 +57,6 @@ const CDataGrid = (props) => {
 
   const apiRef = useGridApiRef();
 
-  const CDataGrid = styled(DataGridPro)(({ theme }) => ({
-    '& .MuiDataGrid-columnHeadersInner': {
-      color: theme.palette.primary.black,
-      fontSize: '14px',
-      fontWeight: 'bold',
-    },
-  }));
-
   const toolBarRender = () => (
     <CToolbar
       columnsButton={columnsButton}
@@ -77,7 +69,13 @@ const CDataGrid = (props) => {
   return (
     <Card sx={{ width: 1 }}>
       <CardContent sx={{ pt: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            p: 0.5,
+          }}
+        >
           {title && (
             <Typography variant={'h4'} sx={{ flexGrow: 1 }}>
               {title}
@@ -102,7 +100,14 @@ const CDataGrid = (props) => {
             overflow: 'auto',
           }}
         >
-          <CDataGrid
+          <DataGridPro
+            sx={{
+              p: 0.5,
+              '& .MuiDataGrid-columnHeadersInner': {
+                fontSize: '14px',
+                fontWeight: 'bold',
+              },
+            }}
             apiRef={apiRef}
             {...rest}
             columns={columns}
@@ -126,9 +131,7 @@ const CDataGrid = (props) => {
               toolbarColumns: t('word.display') + t('word.item'),
             }}
             initialState={initialState}
-            onColumnVisibilityModelChange={() =>
-              onColumnVisibilityModelChange()
-            }
+            onColumnVisibilityModelChange={onColumnVisibilityModelChange}
             page={page}
             pageSize={pageSize}
             rowsPerPageOptions={rowsPerPage}

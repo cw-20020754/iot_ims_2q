@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { FormControl } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -20,15 +20,17 @@ import {
   postComCode,
   putComCode,
   deleteComCode,
+  setComCodeDialogInfo,
+  setComCodeOpenDialog,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import { setSnackbar } from 'redux/reducers/changeStateSlice';
 
-let hasError = false;
-
 const ComCodeDialog = (props) => {
-  const { open, onClose, info } = props;
+  const { onClose } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const [hasError, setHasError] = useState('false');
 
   const texts = {
     addGroup: t('word.group') + ' ' + t('word.add'),
@@ -47,16 +49,26 @@ const ComCodeDialog = (props) => {
     mdfCodeNm: t('word.mdf') + ' ' + t('word.code') + ' ' + t('word.nm'),
   };
 
+  const openDialog = useSelector(
+    (state) => state.comCodeMgmt.openDialog,
+    shallowEqual,
+  );
+
+  const dialogInfo = useSelector(
+    (state) => state.comCodeMgmt.dialogInfo,
+    shallowEqual,
+  );
+
   const langCodeList = useSelector(
     (state) =>
-      state.comCodeMgmt.sharedComComList.filter(
+      state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '012',
       ),
     shallowEqual,
   )[0]?.codeList;
 
   const renderForm = () => {
-    switch (info.type) {
+    switch (dialogInfo.type) {
       case 'addGroup':
         return (
           <>
@@ -66,8 +78,8 @@ const ComCodeDialog = (props) => {
                 placeholder={texts.addGroupNm}
                 label={texts.groupNm}
                 sx={{ width: 1 }}
-                value={info.params.groupNm}
-                onChange={(e) => (info.params.groupNm = e.target.value)}
+                value={dialogInfo.params.groupNm}
+                onChange={(e) => handleChange({ groupNm: e.target.value })}
                 onValidation={(value) =>
                   rules.requireAlert(value) || rules.maxLength(value, 50)
                 }
@@ -85,8 +97,8 @@ const ComCodeDialog = (props) => {
                 placeholder={texts.mdfGroupNm}
                 label={texts.groupNm}
                 sx={{ width: 1 }}
-                defaultValue={info.params.groupNm}
-                onChange={(e) => (info.params.groupNm = e.target.value)}
+                defaultValue={dialogInfo.params.groupNm}
+                onChange={(e) => handleChange({ groupNm: e.target.value })}
                 onValidation={(value) =>
                   rules.requireAlert(value) || rules.maxLength(value, 50)
                 }
@@ -100,22 +112,24 @@ const ComCodeDialog = (props) => {
         return (
           <>
             <CDialogContent grids={[12, 12, 12, 12]}>
-              <CInput
-                name="groupNm"
-                label={texts.groupNm}
-                sx={{ width: 1 }}
-                defaultValue={info.params.groupNm}
-                InputProps={{
-                  readOnly: true,
-                }}
-              ></CInput>
+              {dialogInfo.params.groupNm && (
+                <CInput
+                  name="groupNm"
+                  label={texts.groupNm}
+                  sx={{ width: 1 }}
+                  defaultValue={dialogInfo.params.groupNm}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                ></CInput>
+              )}
               <CInput
                 name="code"
                 placeholder={texts.addCode}
                 label={texts.code}
                 sx={{ width: 1 }}
-                value={info.params.code}
-                onChange={(e) => (info.params.code = e.target.value)}
+                value={dialogInfo.params.code}
+                onChange={(e) => handleChange({ code: e.target.value })}
                 onValidation={(value) =>
                   rules.requireAlert(value) || rules.maxLength(value, 5)
                 }
@@ -126,8 +140,8 @@ const ComCodeDialog = (props) => {
                 placeholder={texts.addCodeNm}
                 label={texts.codeNm}
                 sx={{ width: 1 }}
-                value={info.params.codeNm}
-                onChange={(e) => (info.params.codeNm = e.target.value)}
+                value={dialogInfo.params.codeNm}
+                onChange={(e) => handleChange({ codeNm: e.target.value })}
                 onValidation={(value) =>
                   rules.requireAlert(value) || rules.maxLength(value, 50)
                 }
@@ -136,8 +150,8 @@ const ComCodeDialog = (props) => {
               <CSelect
                 label={texts.langCode}
                 sx={{ width: 1 }}
-                value={info.params.langCode || 'ko'}
-                onChange={(e) => (info.params.langCode = e.target.value)}
+                value={dialogInfo.params.langCode}
+                onChange={(e) => handleChange({ langCode: e.target.value })}
                 optionArray={langCodeList}
               ></CSelect>
             </CDialogContent>
@@ -152,8 +166,8 @@ const ComCodeDialog = (props) => {
                 placeholder={texts.addCodeNm}
                 label={texts.codeNm}
                 sx={{ width: 1 }}
-                defaultValue={info.params.codeNm}
-                onChange={(e) => (info.params.codeNm = e.target.value)}
+                defaultValue={dialogInfo.params.codeNm}
+                onChange={(e) => handleChange({ codeNm: e.target.value })}
                 onValidation={(value) =>
                   rules.requireAlert(value) || rules.maxLength(value, 50)
                 }
@@ -166,8 +180,14 @@ const ComCodeDialog = (props) => {
     }
   };
 
+  const handleChange = async (values) => {
+    await dispatch(
+      setComCodeDialogInfo({ params: { ...dialogInfo.params, ...values } }),
+    );
+  };
+
   const handleValidation = (e) => {
-    switch (info.type) {
+    switch (dialogInfo.type) {
       case 'addGroup':
       case 'mdfGroup':
         e.target.form.groupNm.focus();
@@ -188,7 +208,7 @@ const ComCodeDialog = (props) => {
   };
 
   const handleFormChildrenError = () => {
-    hasError = true;
+    setHasError(true);
   };
 
   const handleSubmit = async (e) => {
@@ -196,23 +216,23 @@ const ComCodeDialog = (props) => {
     e.preventDefault();
 
     if (hasError) {
-      hasError = false;
+      setHasError(false);
       return;
     }
 
-    switch (info.type) {
+    switch (dialogInfo.type) {
       case 'addGroup':
-        await dispatch(postComCodeGroup(info.params));
+        await dispatch(postComCodeGroup(dialogInfo.params));
         break;
       case 'mdfGroup':
-        await dispatch(putComCodeGroup(info.params));
+        await dispatch(putComCodeGroup(dialogInfo.params));
         break;
       case 'delGroup':
-        await dispatch(deleteComCodeGroup(info.params.groupId));
+        await dispatch(deleteComCodeGroup(dialogInfo.params.groupId));
         break;
       case 'addCode':
         isComCodeDuplicated = await (
-          await comCodeAPI.getComCodeDuplicateCheck(info.params)
+          await comCodeAPI.getComCodeDuplicateCheck(dialogInfo.params)
         )?.data?.content;
         if (isComCodeDuplicated) {
           dispatch(
@@ -223,27 +243,28 @@ const ComCodeDialog = (props) => {
             }),
           );
         } else {
-          await dispatch(postComCode(info.params));
+          await dispatch(postComCode(dialogInfo.params));
         }
         break;
       case 'mdfCode':
-        await dispatch(putComCode(info.params));
+        await dispatch(putComCode(dialogInfo.params));
         break;
       case 'delCode':
-        await dispatch(deleteComCode(info.params));
+        await dispatch(deleteComCode(dialogInfo.params));
         break;
       default:
     }
 
     if (!isComCodeDuplicated) {
-      const submitType = info.type.includes('Group') ? 'group' : 'code';
+      const submitType = dialogInfo.type.includes('Group') ? 'group' : 'code';
       return handleClose(true, submitType);
     }
   };
 
-  const handleClose = (isSubmit, submitType) => {
-    hasError = false;
-    info.params = {};
+  const handleClose = async (isSubmit, submitType) => {
+    setHasError(false);
+    await dispatch(setComCodeDialogInfo({}));
+    await dispatch(setComCodeOpenDialog(false));
     return onClose(isSubmit, submitType);
   };
 
@@ -259,17 +280,17 @@ const ComCodeDialog = (props) => {
   return (
     <CDialog
       id="comCodeForm"
-      open={open || false}
+      open={openDialog}
       onClose={handleClose}
       component="form"
       onSubmit={async (e) => await handleSubmit(e)}
     >
       <CDialogTitle
-        prependIcon={info.type.includes('del') && WarningIcon}
-        title={texts[info.type]}
+        prependIcon={dialogInfo.type.includes('del') && WarningIcon}
+        title={texts[dialogInfo.type]}
       ></CDialogTitle>
       <FormControl component="fieldset">
-        {renderForm(info.type)}
+        {renderForm(dialogInfo.type)}
         <CDialogActions>
           <CButton type="button" onClick={() => handleClose()}>
             {t('word.cancel')}
