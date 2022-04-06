@@ -35,7 +35,11 @@ const CTabs = (props) => {
           >
             {tabDataList &&
               tabDataList.map((tab, index) => (
-                <Tab key={index} value={tab.value} label={tab.label} />
+                <Tab
+                  key={index}
+                  value={tab.value}
+                  label={tab.label || tab.text}
+                />
               ))}
           </TabList>
 

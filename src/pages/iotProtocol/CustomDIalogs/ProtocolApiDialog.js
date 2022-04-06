@@ -17,7 +17,6 @@ import {
   postComCodeList,
   setComCodeDialogInfo,
   setComCodeOpenDialog,
-  getSharedComCodeList,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import {
   postProtocolApi,
@@ -89,14 +88,6 @@ const ProtocolApiDialog = (props) => {
       (code) => code?.groupId === '001',
     )[0]?.codeList;
   }, shallowEqual);
-
-  // const protocolGroupList = useSelector(
-  //   (state) =>
-  //     state.comCodeMgmt.sharedComCodeList.filter(
-  //       (code) => code?.groupId === '001',
-  //     )[0],
-  //   shallowEqual,
-  // );
 
   const apiNmList = useSelector(
     (state) =>

@@ -88,7 +88,7 @@
     "firmwareDetail": "펌웨어 상세",
     "IoTProtocol": "IoT 프로토콜",
     "protocolApi": "프로토콜 기준 - API",
-    "protocolFeatures": "프로토콜 기준 - 기능",
+    "protocolFunc": "프로토콜 기준 - 기능",
     "productByProtocol": "제품별 프로토콜",
     "admin": "Admin",
     "code": "코드",
@@ -112,7 +112,13 @@
     "sir": "님",
     "api": "API",
     "req": "요청",
-    "direction": "방향"
+    "direction": "방향",
+    "func": "기능",
+    "value": "Value",
+    "deprecated": "Deprecated",
+    "attribute": "Attribute",
+    "len": "길이",
+    "total": "전체"
   },
   "desc": {
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",

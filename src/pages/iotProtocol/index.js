@@ -1,5 +1,5 @@
 import ProtocolApi from './ProtocolApi';
-import ProtocolFeatures from './ProtocolFeatures';
+import ProtocolFunc from './ProtocolFunc';
 import ProductByProtocol from './ProductByProtocol';
 
-export { ProtocolApi, ProtocolFeatures, ProductByProtocol };
+export { ProtocolApi, ProtocolFunc, ProductByProtocol };
