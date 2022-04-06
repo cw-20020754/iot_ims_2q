@@ -1,11 +1,11 @@
 import React from 'react';
-import i18n from '../common/locale/i18n';
-import DefaultLayout from '../components/layout/DefaultLayout';
+import i18n from 'common/locale/i18n';
+import DefaultLayout from 'components/layout/DefaultLayout';
 import {
   ProductByProtocol,
   ProtocolApi,
-  ProtocolFeatures,
-} from '../pages/iotProtocol';
+  ProtocolFunc,
+} from 'pages/iotProtocol';
 import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
 import PrivateRoute from './PrivateRoute';
 
@@ -39,15 +39,15 @@ const iotProtocol = {
       show: true,
     },
     {
-      path: 'protocolFeatures',
-      element: <ProtocolFeatures />,
+      path: 'protocolFunc',
+      element: <ProtocolFunc />,
       type: 'item',
-      title: `${i18n.t('word.protocolFeatures')}`,
+      title: `${i18n.t('word.protocolFunc')}`,
       meta: {
         public: false,
         breadcrumb: [
           { title: `${i18n.t('word.IoTProtocol')}` },
-          { title: `${i18n.t('word.protocolFeatures')}` },
+          { title: `${i18n.t('word.protocolFunc')}` },
         ],
       },
       show: true,

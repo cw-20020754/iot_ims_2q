@@ -3,5 +3,13 @@ import * as fotaAPI from './fotaAPI';
 import * as authAPI from './authAPI';
 import * as comCodeAPI from './adminMgmt/comCodeAPI';
 import * as protocolAPI from './iotProtocol/protocolAPI';
+import * as protocolFuncAPI from './iotProtocol/protocolFuncAPI';
 
-export { productInfoAPI, fotaAPI, authAPI, comCodeAPI, protocolAPI };
+export {
+  productInfoAPI,
+  fotaAPI,
+  authAPI,
+  comCodeAPI,
+  protocolAPI,
+  protocolFuncAPI,
+};
