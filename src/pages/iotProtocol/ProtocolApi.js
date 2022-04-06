@@ -26,17 +26,17 @@ const ProtocolApi = () => {
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '002',
-      ),
+      )[0]?.codeList,
     shallowEqual,
-  )[0]?.codeList;
+  );
 
   const prodTypeList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '004',
-      ),
+      )[0]?.codeList,
     shallowEqual,
-  )[0]?.codeList;
+  );
 
   const openDialog = useSelector(
     (state) => state.protocolApi.openDialog,

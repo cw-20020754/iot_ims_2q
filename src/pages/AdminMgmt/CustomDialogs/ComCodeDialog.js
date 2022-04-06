@@ -63,9 +63,9 @@ const ComCodeDialog = (props) => {
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '012',
-      ),
+      )[0]?.codeList,
     shallowEqual,
-  )[0]?.codeList;
+  );
 
   const renderForm = () => {
     switch (dialogInfo.type) {
@@ -215,7 +215,7 @@ const ComCodeDialog = (props) => {
     let isComCodeDuplicated = false;
     e.preventDefault();
 
-    if (hasError) {
+    if (hasError === true) {
       setHasError(false);
       return;
     }
