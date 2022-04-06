@@ -17,6 +17,7 @@ import {
   postComCodeList,
   setComCodeDialogInfo,
   setComCodeOpenDialog,
+  getSharedComCodeList,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import {
   postProtocolApi,
@@ -62,45 +63,56 @@ const ProtocolApiDialog = (props) => {
     apiNmAdd: t('word.api') + ' ' + t('word.nm') + ' ' + t('word.add'),
   };
 
+  const sharedComCodeList = useSelector(
+    (state) => state.comCodeMgmt.sharedComCodeList,
+    shallowEqual,
+  );
+
   const protocolTypeList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '002',
-      ),
+      )[0]?.codeList,
     shallowEqual,
-  )[0]?.codeList;
+  );
 
   const prodTypeList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '004',
-      ),
+      )[0]?.codeList,
     shallowEqual,
-  )[0]?.codeList;
+  );
 
-  const protocolGroupList = useSelector(
-    (state) =>
-      state.comCodeMgmt.sharedComCodeList.filter(
-        (code) => code?.groupId === '001',
-      ),
-    shallowEqual,
-  )[0]?.codeList;
+  const protocolGroupList = useSelector((state) => {
+    return state.comCodeMgmt.sharedComCodeList.filter(
+      (code) => code?.groupId === '001',
+    )[0]?.codeList;
+  }, shallowEqual);
+
+  // const protocolGroupList = useSelector(
+  //   (state) =>
+  //     state.comCodeMgmt.sharedComCodeList.filter(
+  //       (code) => code?.groupId === '001',
+  //     )[0],
+  //   shallowEqual,
+  // );
 
   const apiNmList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '003',
-      ),
+      )[0]?.codeList,
     shallowEqual,
-  )[0]?.codeList;
+  );
 
   const apiReqDerectionList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '010',
-      ),
+      )[0]?.codeList,
     shallowEqual,
-  )[0]?.codeList;
+  );
 
   const renderForm = () => {
     switch (dialogInfo.type) {
@@ -227,7 +239,7 @@ const ProtocolApiDialog = (props) => {
     let isDuplicated = false;
     e.preventDefault();
 
-    if (hasError) {
+    if (hasError === true) {
       setHasError(false);
       return;
     }
@@ -300,7 +312,14 @@ const ProtocolApiDialog = (props) => {
       setComCodeSubmit(false);
       fetchComCodeList();
     }
-  }, [fetchComCodeList, comCodeSubmit]);
+  }, [
+    fetchComCodeList,
+    comCodeSubmit,
+    protocolGroupList,
+    apiNmList,
+    apiReqDerectionList,
+    sharedComCodeList,
+  ]);
 
   useEffect(() => {
     if (!protocolGroupList || !apiNmList || !apiReqDerectionList) {

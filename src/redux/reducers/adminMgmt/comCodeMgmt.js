@@ -1,4 +1,9 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
+import { rootState } from 'redux';
 import i18n from 'common/locale/i18n';
 import { comCodeAPI } from 'api';
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -70,6 +75,18 @@ const initialState = {
   loading: false,
   error: false,
 };
+
+const selectSharedComCodeList = (state = initialState) =>
+  state.sharedComCodeList;
+
+const selectGroupId = (state = initialState, groupId) => groupId;
+
+export const getSharedComCodeList = createSelector(
+  [selectSharedComCodeList, selectGroupId],
+  (list, groupId) => {
+    return list?.filter((code) => code.groupId === groupId)[0].codeList;
+  },
+);
 
 const makeTreeNodeChildren = (groupId, child) => {
   return {
@@ -224,22 +241,31 @@ const comCodeMgmt = createSlice({
               (item) => item.groupId === node.groupId,
             )
           ) {
-            state.sharedComCodeList = state.sharedComCodeList.filter(
-              (item) => item.gourpId !== node.groupId,
-            );
-          }
-
-          const group = {
-            groupId: node.groupId,
-            codeList: [],
-          };
-          node.codeList?.forEach((code) => {
-            group.codeList.push({
-              value: code.code,
-              text: code.codeNm,
+            state.sharedComCodeList
+              .filter((item) => item.groupId === node.groupId)
+              .map((group) => {
+                group.codeList = [];
+                node.codeList?.forEach((code) => {
+                  group.codeList.push({
+                    value: code.code,
+                    text: code.codeNm,
+                  });
+                });
+                return group;
+              });
+          } else {
+            const group = {
+              groupId: node.groupId,
+              codeList: [],
+            };
+            node.codeList?.forEach((code) => {
+              group.codeList.push({
+                value: code.code,
+                text: code.codeNm,
+              });
             });
-          });
-          state.sharedComCodeList.push(group);
+            state.sharedComCodeList.push(group);
+          }
         });
       }
 

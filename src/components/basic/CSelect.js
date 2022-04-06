@@ -58,11 +58,13 @@ const CSelect = React.forwardRef((props, ref) => {
         {...rest}
       >
         {optionArray &&
-          optionArray.map((option) => (
-            <MenuItem key={option.text} value={option.value}>
-              {option.text}
-            </MenuItem>
-          ))}
+          optionArray.map((option) => {
+            return (
+              <MenuItem key={option.value} value={option.value}>
+                {option.text}
+              </MenuItem>
+            );
+          })}
       </Select>
       {!isNull(helpText) && <FormHelperText>{helpText}</FormHelperText>}
     </FormControl>
