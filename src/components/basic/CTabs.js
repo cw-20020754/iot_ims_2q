@@ -3,14 +3,15 @@ import { Tab, Box, Card } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 const CTabs = (props) => {
-  const { tabDataList, sx, orientation, children } = props;
+  const { tabDataList, sx, orientation, children, onChange } = props;
 
   const [value, setValue] = React.useState(
     tabDataList ? tabDataList[0].value : 0,
   );
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (e, newValue) => {
     setValue(newValue);
+    return onChange(newValue, e.target.textContent);
   };
 
   return (
@@ -44,11 +45,13 @@ const CTabs = (props) => {
           </TabList>
 
           {tabDataList &&
-            tabDataList.map((tab, index) => (
-              <TabPanel key={index} value={tab.value}>
-                {children[index]}
-              </TabPanel>
-            ))}
+            tabDataList.map((tab, index) => {
+              return (
+                <TabPanel key={index} value={tab.value}>
+                  {children[index]}
+                </TabPanel>
+              );
+            })}
         </Box>
       </TabContext>
     </Card>

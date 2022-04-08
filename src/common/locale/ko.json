@@ -118,7 +118,8 @@
     "deprecated": "Deprecated",
     "attribute": "Attribute",
     "len": "길이",
-    "total": "전체"
+    "total": "전체",
+    "confirm": "확인"
   },
   "desc": {
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",
@@ -133,8 +134,10 @@
     "pageNotFound": "Sorry, Page not found.",
     "goHome": "Go Home",
     "sessonExpired": "세션이 만료되어 재로그인이 필요합니다.",
+    "protocolHasChildNoti": "프로토콜 기능 하위 Value값이 존재합니다.",
     "alert": {
-      "dataDuplicated": "이미 존재하는 값이 있습니다."
+      "dataDuplicated": "이미 존재하는 값이 있습니다.",
+      "deprecatedConfirm": "이전 버전 항목이 존재합니다.\nDeprecated 후 새 버전을 등록 하시겠습니까?"
     },
     "validation": {
       "frmwrName": "펌웨어 이름을 입력해주세요. (128자 이내).",

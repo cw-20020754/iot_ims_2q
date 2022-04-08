@@ -1,9 +1,4 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  createSelector,
-} from '@reduxjs/toolkit';
-import { rootState } from 'redux';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import i18n from 'common/locale/i18n';
 import { comCodeAPI } from 'api';
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -75,18 +70,6 @@ const initialState = {
   loading: false,
   error: false,
 };
-
-const selectSharedComCodeList = (state = initialState) =>
-  state.sharedComCodeList;
-
-const selectGroupId = (state = initialState, groupId) => groupId;
-
-export const getSharedComCodeList = createSelector(
-  [selectSharedComCodeList, selectGroupId],
-  (list, groupId) => {
-    return list?.filter((code) => code.groupId === groupId)[0].codeList;
-  },
-);
 
 const makeTreeNodeChildren = (groupId, child) => {
   return {

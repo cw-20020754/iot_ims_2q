@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { Card, CardActions, Divider, Collapse } from '@mui/material';
+import { Card, CardActions, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -69,6 +69,9 @@ const CTree = (props) => {
       />
 
       <CardActions sx={{ pt: 0 }}>
+        {treeDataList.length === 0 && (
+          <Typography variant={'h3'}>No Data</Typography>
+        )}
         <CTree
           sx={sx}
           selected={selected}
@@ -85,7 +88,7 @@ const CTree = (props) => {
           {...other}
         >
           {/* TODO... transition 방법 찾아 적용  */}
-          {treeDataList && treeDataList.length > 1 && renderTree(treeDataList)}
+          {treeDataList && treeDataList.length > 0 && renderTree(treeDataList)}
         </CTree>
       </CardActions>
     </Card>

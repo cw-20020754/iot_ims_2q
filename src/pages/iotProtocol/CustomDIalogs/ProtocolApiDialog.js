@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { FormControl } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import WarningIcon from '@mui/icons-material/Warning';
 import CDialog from 'components/basic/CDialog';
@@ -62,11 +61,6 @@ const ProtocolApiDialog = (props) => {
     apiNmAdd: t('word.api') + ' ' + t('word.nm') + ' ' + t('word.add'),
   };
 
-  const sharedComCodeList = useSelector(
-    (state) => state.comCodeMgmt.sharedComCodeList,
-    shallowEqual,
-  );
-
   const protocolTypeList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
@@ -97,7 +91,7 @@ const ProtocolApiDialog = (props) => {
     shallowEqual,
   );
 
-  const apiReqDerectionList = useSelector(
+  const apiReqDirectionList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '010',
@@ -176,7 +170,7 @@ const ProtocolApiDialog = (props) => {
                 onChange={(e) =>
                   handleChange({ apiDirectionCode: e.target.value })
                 }
-                optionArray={apiReqDerectionList}
+                optionArray={apiReqDirectionList}
                 onValidation={(value) => rules.requireAlert(value)}
                 onValidationError={handleFormChildrenError}
               ></CSelect>
@@ -242,7 +236,7 @@ const ProtocolApiDialog = (props) => {
           prodTypeCode: dialogInfo.params.prodTypeCode,
           typeCode: dialogInfo.params.typeCode,
         };
-        isDuplicated = await (
+        isDuplicated = (
           await protocolAPI.getProtocolApiDuplicateCheck(duplicateCheckParams)
         )?.data?.content;
         if (isDuplicated) {
@@ -275,7 +269,7 @@ const ProtocolApiDialog = (props) => {
     setHasError(false);
     await dispatch(setDialogInfo({}));
     await dispatch(setOpenDialog(false));
-    return onClose(isSubmit);
+    return () => onClose(isSubmit);
   };
 
   const handleComCodeDialogOpen = async (values) => {
@@ -299,7 +293,7 @@ const ProtocolApiDialog = (props) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (comCodeSubmit) {
+    if (comCodeSubmit === true) {
       setComCodeSubmit(false);
       fetchComCodeList();
     }
@@ -308,12 +302,11 @@ const ProtocolApiDialog = (props) => {
     comCodeSubmit,
     protocolGroupList,
     apiNmList,
-    apiReqDerectionList,
-    sharedComCodeList,
+    apiReqDirectionList,
   ]);
 
   useEffect(() => {
-    if (!protocolGroupList || !apiNmList || !apiReqDerectionList) {
+    if (!protocolGroupList || !apiNmList || !apiReqDirectionList) {
       fetchComCodeList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -368,7 +361,7 @@ const ProtocolApiDialog = (props) => {
         </CDialogTitle>
         {renderForm(dialogInfo.type)}
         <CDialogActions>
-          <CButton type="button" onClick={() => handleClose()}>
+          <CButton type="cancel" onClick={() => handleClose()}>
             {t('word.cancel')}
           </CButton>
           <CButton type="submit" onClick={(e) => handleValidation(e)}>

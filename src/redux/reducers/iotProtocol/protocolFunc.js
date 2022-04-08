@@ -2,12 +2,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import i18n from 'common/locale/i18n';
 import { protocolFuncAPI } from 'api';
 import { isNull } from 'common/utils';
+import ArticleIcon from '@mui/icons-material/Article';
+import GridViewIcon from '@mui/icons-material/GridView';
 
 const name = 'protocolFunc';
 
 const initialState = {
-  protocolItemList: [],
-  protocolItemParams: {
+  protocolFuncList: [],
+  protocolFuncParams: {
     prodTypeCode: '',
     typeCode: '',
     page: 0,
@@ -15,6 +17,32 @@ const initialState = {
     rowPerPage: [5, 10, 25],
   },
   totalElements: 0,
+  protocolItem: {
+    itemSeq: '',
+    prodTypeCode: '',
+    typeCode: '',
+    groupCode: '',
+    itemTypeCode: '',
+    itemId: '',
+    itemCode: '',
+    length: 0,
+    attribute: '',
+    itemDesc: '',
+  },
+  protocolValue: {
+    itemSeq: '',
+    valueSeq: '',
+    prodTypeCode: '',
+    typeCode: '',
+    groupCode: '',
+    itemId: '',
+    itemCode: '',
+    valueId: '',
+    valueCode: '',
+    valueDirectionCode: '',
+    valueDesc: '',
+  },
+  treeDataList: [],
   openDialog: false,
   dialogInfo: {
     type: '',
@@ -256,22 +284,159 @@ const initialState = {
 };
 
 /**
+ * 프로토콜 기능 + Value 목록 조회
+ */
+export const postProtocolFuncList = createAsyncThunk(
+  `${name}/postProtocolFuncList`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.postProtocolFuncList(params);
+  },
+);
+
+/**
+ * 프로토콜 기능 중복체크
+ */
+export const getProtocolItemDuplicateCheck = createAsyncThunk(
+  `${name}/getProtocolItemDuplicateCheck`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.getProtocolItemDuplicateCheck(params);
+  },
+);
+
+/**
  * 프로토콜 기능 목록 조회
  */
 export const postProtocolItemList = createAsyncThunk(
   `${name}/postProtocolItemList`,
-  async (params, thunkAPI) => {
-    return await protocolFuncAPI.postProtocolItemList(params);
+  async (body, thunkAPI) => {
+    return await protocolFuncAPI.postProtocolItemList(body);
   },
 );
+
+/**
+ * 프로토콜 기능 조회
+ */
+export const getProtocolItem = createAsyncThunk(
+  `${name}/getProtocolItem`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.getProtocolItem(params);
+  },
+);
+
+/**
+ * 프로토콜 기능 등록
+ */
+export const postProtocolItem = createAsyncThunk(
+  `${name}/postProtocolItem`,
+  async (body, thunkAPI) => {
+    return await protocolFuncAPI.postProtocolItem(body);
+  },
+);
+
+/**
+ * 프로토콜 기능 수정
+ */
+export const putProtocolItem = createAsyncThunk(
+  `${name}/putProtocolItem`,
+  async (body, thunkAPI) => {
+    return await protocolFuncAPI.putProtocolItem(body);
+  },
+);
+
+/**
+ * 프로토콜 기능 삭제
+ */
+export const deleteProtocolItem = createAsyncThunk(
+  `${name}/deleteProtocolItem`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.deleteProtocolItem(params);
+  },
+);
+
+/**
+ * 프로토콜 Value 목록 조회
+ */
+export const getProtocolValueList = createAsyncThunk(
+  `${name}/getProtocolValueList`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.getProtocolValueList(params);
+  },
+);
+
+/**
+ * 프로토콜 Value 중복체크
+ */
+export const getProtocolValueDuplicateCheck = createAsyncThunk(
+  `${name}/getProtocolValueDuplicateCheck`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.getProtocolValueDuplicateCheck(params);
+  },
+);
+
+/**
+ * 프로토콜 Value 조회
+ */
+export const getProtocolValue = createAsyncThunk(
+  `${name}/getProtocolValue`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.getProtocolValue(params);
+  },
+);
+
+/**
+ * 프로토콜 Value 등록
+ */
+export const postProtocolValue = createAsyncThunk(
+  `${name}/postProtocolValue`,
+  async (body, thunkAPI) => {
+    return await protocolFuncAPI.postProtocolValue(body);
+  },
+);
+
+/**
+ * 프로토콜 Value 수정
+ */
+export const putProtocolValue = createAsyncThunk(
+  `${name}/putProtocolValue`,
+  async (params, thunkAPI) => {
+    return await protocolFuncAPI.putProtocolValue(params);
+  },
+);
+
+/**
+ * 프로토콜 Value 삭제
+ */
+export const deleteProtocolValue = createAsyncThunk(
+  `${name}/deleteProtocolValue`,
+  async (body, thunkAPI) => {
+    return await protocolFuncAPI.deleteProtocolValue(body);
+  },
+);
+
+const makeTreeNodeChildren = (parentId, child) => {
+  return {
+    id: parentId + '|' + child.valueSeq,
+    labelText: child.valueId + ' - ' + child.valueNm,
+    labelInfo: child.controlYn === 'Y' ? i18n.t('word.control') : '',
+    prependIcon: ArticleIcon,
+  };
+};
 
 const protocolFunc = createSlice({
   name,
   initialState,
   reducers: {
-    setProtocolItemParams(state, action) {
+    setProtocolFuncParams(state, action) {
       const obj = action.payload;
-      state.protocolItemParams = { ...state.protocolItemParams, ...obj };
+      state.protocolFuncParams = { ...state.protocolFuncParams, ...obj };
+    },
+    setProtocolItem(state, action) {
+      const obj = action.payload;
+      state.protocolItem = { ...state.protocolItem, ...obj };
+    },
+    setProtocolValue(state, action) {
+      const obj = action.payload;
+      state.protocolValue = { ...state.protocolValue, ...obj };
     },
     setConditionSelctList(state, action) {
       const obj = action.payload;
@@ -284,7 +449,7 @@ const protocolFunc = createSlice({
         } else if (item.id === 'groupCode') {
           item.optionArray = obj.protocolGroupList;
         } else if (item.id === 'apiDirectionCode') {
-          item.optionArray = obj.apiReqDerectionList;
+          item.optionArray = obj.apiReqDirectionList;
         }
       });
     },
@@ -307,6 +472,34 @@ const protocolFunc = createSlice({
   },
   extraReducers: (builder) => {
     /**
+     * 프로토콜 기능 + Value 목록 조회
+     */
+    builder.addCase(postProtocolFuncList.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(postProtocolFuncList.fulfilled, (state, action) => {
+      const response = action.payload.data.content;
+      const pageInfo = action.payload.data.pageInfo;
+      state.protocolFuncList = [];
+
+      response.forEach((row, index) => {
+        state.protocolFuncList.push({ ...row, id: index });
+      });
+
+      if (state.protocolFuncList.length > 0 && isNull(state.dataGridTitle)) {
+        state.dataGridTitle = `${state.protocolFuncList[0].prodTypeNm} / ${state.protocolFuncList[0].typeNm}`;
+      }
+
+      state.totalElements = pageInfo.totalRecord;
+
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(postProtocolFuncList.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
      * 프로토콜 기능 목록 조회
      */
     builder.addCase(postProtocolItemList.pending, (state, action) => {
@@ -314,18 +507,20 @@ const protocolFunc = createSlice({
     });
     builder.addCase(postProtocolItemList.fulfilled, (state, action) => {
       const response = action.payload.data.content;
-      const pageInfo = action.payload.data.pageInfo;
-      state.protocolItemList = [];
-
-      response.forEach((row, index) => {
-        state.protocolItemList.push({ ...row, id: index });
-      });
-
-      if (state.protocolItemList.length > 0 && isNull(state.dataGridTitle)) {
-        state.dataGridTitle = `${state.protocolItemList[0].prodTypeNm} / ${state.protocolItemList[0].typeNm}`;
+      state.treeDataList = [];
+      if (response && response.length > 0) {
+        response.forEach((node) => {
+          state.treeDataList.push({
+            id: node.itemSeq.toString(),
+            labelText: `${node.itemId} - ${node.itemNm}${
+              node.deprecatedYn === 'Y' ? ' / ' + i18n.t('word.deprecated') : ''
+            }`,
+            labelInfo: node.count,
+            prependIcon: GridViewIcon,
+            children: node.count > 0 ? [{}] : [],
+          });
+        });
       }
-
-      state.totalElements = pageInfo.totalRecord;
 
       state.loading = false;
       state.error = false;
@@ -334,16 +529,207 @@ const protocolFunc = createSlice({
       state.loading = false;
       state.error = true;
     });
+    /**
+     * 프로토콜 기능 중복체크
+     */
+    builder.addCase(getProtocolItemDuplicateCheck.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      getProtocolItemDuplicateCheck.fulfilled,
+      (state, action) => {
+        const response = action.payload.data.content;
+        state.isDuplicated = response;
+
+        state.loading = false;
+        state.error = false;
+      },
+    );
+    builder.addCase(getProtocolItemDuplicateCheck.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 기능 조회
+     */
+    builder.addCase(getProtocolItem.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getProtocolItem.fulfilled, (state, action) => {
+      const response = action.payload.data.content;
+      state.protocolItem = { ...state.protocolItem, ...response };
+
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(getProtocolItem.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 기능 등록
+     */
+    builder.addCase(postProtocolItem.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(postProtocolItem.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(postProtocolItem.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 기능 수정
+     */
+    builder.addCase(putProtocolItem.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(putProtocolItem.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(putProtocolItem.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 기능 삭제
+     */
+    builder.addCase(deleteProtocolItem.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteProtocolItem.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(deleteProtocolItem.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 Value 목록 조회
+     */
+    builder.addCase(getProtocolValueList.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getProtocolValueList.fulfilled, (state, action) => {
+      const response = action.payload.data.content;
+      if (response && response.length > 0) {
+        state.treeDataList.forEach((treeItem) => {
+          if (
+            response.find((node) => node.itemSeq.toString() === treeItem.id) !==
+              undefined &&
+            treeItem.children.length < 2
+          ) {
+            treeItem.children = response
+              .filter((node) => node.itemSeq.toString() === treeItem.id)
+              .map((row) => makeTreeNodeChildren(treeItem.id, row));
+          }
+        });
+      }
+
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(getProtocolValueList.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 Value 중복체크
+     */
+    builder.addCase(getProtocolValueDuplicateCheck.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      getProtocolValueDuplicateCheck.fulfilled,
+      (state, action) => {
+        const response = action.payload.data.content;
+        state.isDuplicated = response;
+
+        state.loading = false;
+        state.error = false;
+      },
+    );
+    builder.addCase(
+      getProtocolValueDuplicateCheck.rejected,
+      (state, action) => {
+        state.loading = false;
+        state.error = true;
+      },
+    );
+    /**
+     * 프로토콜 Value 조회
+     */
+    builder.addCase(getProtocolValue.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getProtocolValue.fulfilled, (state, action) => {
+      const response = action.payload.data.content;
+      state.protocolValue = { ...state.protocolValue, ...response };
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(getProtocolValue.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 Value 등록
+     */
+    builder.addCase(postProtocolValue.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(postProtocolValue.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(postProtocolValue.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 Value 수정
+     */
+    builder.addCase(putProtocolValue.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(putProtocolValue.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(putProtocolValue.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
+    /**
+     * 프로토콜 Value 삭제
+     */
+    builder.addCase(deleteProtocolValue.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteProtocolValue.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = false;
+    });
+    builder.addCase(deleteProtocolValue.rejected, (state, action) => {
+      state.loading = false;
+      state.error = true;
+    });
   },
 });
 
 export const {
-  setProtocolItemParams,
+  setProtocolFuncParams,
   setConditionSelctList,
   setDataGridTitle,
   setIsDuplicated,
   setOpenDialog,
   setDialogInfo,
   setColumnVisibilityModel,
+  setProtocolItem,
+  setProtocolValue,
 } = protocolFunc.actions;
 export default protocolFunc.reducer;

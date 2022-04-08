@@ -3,8 +3,8 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import CDataGrid from 'components/complex/Table/CDataGrid';
 import {
-  postProtocolItemList,
-  setProtocolItemParams,
+  postProtocolFuncList,
+  setProtocolFuncParams,
   setDataGridTitle,
   setColumnVisibilityModel,
 } from 'redux/reducers/iotProtocol/protocolFunc';
@@ -14,7 +14,7 @@ import { fileDownload, isNull } from 'common/utils';
 const ProtocolFuncGrid = (props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { defaultProtocolItemParams } = props;
+  const { defaultProtocolFuncParams } = props;
 
   const columnVisibilityModel = useSelector(
     (state) => state.protocolFunc.columnVisibilityModel,
@@ -26,8 +26,8 @@ const ProtocolFuncGrid = (props) => {
     shallowEqual,
   );
 
-  const protocolItemParams = useSelector(
-    (state) => state.protocolFunc.protocolItemParams,
+  const protocolFuncParams = useSelector(
+    (state) => state.protocolFunc.protocolFuncParams,
     shallowEqual,
   );
 
@@ -41,8 +41,8 @@ const ProtocolFuncGrid = (props) => {
     shallowEqual,
   );
 
-  const protocolItemList = useSelector(
-    (state) => state.protocolFunc.protocolItemList,
+  const protocolFuncList = useSelector(
+    (state) => state.protocolFunc.protocolFuncList,
     shallowEqual,
   );
 
@@ -53,12 +53,12 @@ const ProtocolFuncGrid = (props) => {
 
   const handleExportButtonClick = async () => {
     const exportParams = {
-      ...protocolItemParams,
+      ...protocolFuncParams,
       columns: Object.entries(columnVisibilityModel)
         .filter((col) => col[1])
         .map((col) => col[0]),
     };
-    const result = await protocolFuncAPI.postProtocolApiExport(exportParams);
+    const result = await protocolFuncAPI.postProtocolFuncExport(exportParams);
     fileDownload(result);
   };
 
@@ -66,16 +66,16 @@ const ProtocolFuncGrid = (props) => {
     await dispatch(setColumnVisibilityModel(newModel));
   };
 
-  const fetchProtocolItemParams = useCallback(
+  const fetchProtocolFuncParams = useCallback(
     async (params) => {
-      await dispatch(setProtocolItemParams(params));
+      await dispatch(setProtocolFuncParams(params));
     },
     [dispatch],
   );
 
-  const fetchProtocolItemData = useCallback(async () => {
-    await dispatch(postProtocolItemList(protocolItemParams));
-  }, [dispatch, protocolItemParams]);
+  const fetchProtocolFuncData = useCallback(async () => {
+    await dispatch(postProtocolFuncList(protocolFuncParams));
+  }, [dispatch, protocolFuncParams]);
 
   const fetchDataGridTitle = useCallback(
     async (title) => {
@@ -85,13 +85,13 @@ const ProtocolFuncGrid = (props) => {
   );
 
   useEffect(() => {
-    if (!isNull(protocolItemParams.prodTypeCode)) {
-      fetchProtocolItemData();
+    if (!isNull(protocolFuncParams.prodTypeCode)) {
+      fetchProtocolFuncData();
     }
-  }, [fetchProtocolItemData, protocolItemParams]);
+  }, [fetchProtocolFuncData, protocolFuncParams]);
 
   useEffect(() => {
-    fetchProtocolItemParams(defaultProtocolItemParams);
+    fetchProtocolFuncParams(defaultProtocolFuncParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,17 +101,17 @@ const ProtocolFuncGrid = (props) => {
         height={457}
         title={dataGridTitle}
         columns={dataGridColums}
-        rows={protocolItemList}
+        rows={protocolFuncList}
         totalElement={totalElements}
         isLoading={loading}
         pagination
-        page={protocolItemParams.page}
-        pageSize={protocolItemParams.pageSize}
-        rowsPerPage={protocolItemParams.rowPerPage}
+        page={protocolFuncParams.page}
+        pageSize={protocolFuncParams.pageSize}
+        rowsPerPage={protocolFuncParams.rowPerPage}
         onPageSizeChange={(newPageSize) =>
-          fetchProtocolItemParams({ pageSize: newPageSize })
+          fetchProtocolFuncParams({ pageSize: newPageSize })
         }
-        onPageChange={(newPages) => fetchProtocolItemParams({ page: newPages })}
+        onPageChange={(newPages) => fetchProtocolFuncParams({ page: newPages })}
         exportButton={true}
         onExportButtonClick={handleExportButtonClick}
         columnsButton={true}
