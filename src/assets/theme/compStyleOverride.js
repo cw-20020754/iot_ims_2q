@@ -47,7 +47,7 @@ export default function componentStyleOverrides(theme) {
           padding: '24px',
         },
         title: {
-          fontSize: '1.125rem',
+          fontSize: '1rem',
         },
       },
     },

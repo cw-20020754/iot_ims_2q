@@ -63,7 +63,7 @@ const CDataGrid = (props) => {
       exportButton={exportButton}
       exportText={t('word.export')}
       onExportButtonClick={onExportButtonClick}
-    ></CToolbar>
+    />
   );
 
   return (
@@ -86,6 +86,7 @@ const CDataGrid = (props) => {
                 <CButton
                   key={item.id}
                   color={item.color}
+                  disabled={item.disabled}
                   onClick={() => item.onTitleButtonClick(item.id)}
                 >
                   {item.text}

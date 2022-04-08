@@ -2,6 +2,17 @@ import React from 'react';
 import { makeStyles } from '@mui/styles';
 
 const AuthStyle = makeStyles((theme) => ({
+  paperRoot: {
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '400px',
+    opacity: 0.9,
+  },
   cardHeaderRoot: {
     alignItems: 'baseline',
     padding: '24px 24px 0px',

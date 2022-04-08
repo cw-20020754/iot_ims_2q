@@ -1,9 +1,16 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import { DialogTitle, Grid, Box } from '@mui/material';
+import { DialogTitle, Grid, Box, Divider } from '@mui/material';
 
 const CDialogTitle = (props) => {
-  const { sx, prependIcon: LabelIcon, title, children, ...rest } = props;
+  const {
+    sx,
+    prependIcon: LabelIcon,
+    title,
+    children,
+    gridsx,
+    ...rest
+  } = props;
 
   const CDialogTitle = styled(DialogTitle)(({ theme }) => ({
     fontWeight: 500,
@@ -16,7 +23,7 @@ const CDialogTitle = (props) => {
 
   return (
     <CDialogTitle sx={sx} {...rest}>
-      <Grid container spacing={1} justifyContent="space-between">
+      <Grid container spacing={1} justifyContent="space-between" sx={gridsx}>
         <Grid item xs sx={{ alignItems: 'center' }}>
           {LabelIcon && (
             <Box

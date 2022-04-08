@@ -2,7 +2,7 @@ import React from 'react';
 import i18n from 'common/locale/i18n';
 import DefaultLayout from 'components/layout/DefaultLayout';
 import {
-  ProductByProtocol,
+  ProdByProtocol,
   ProtocolApi,
   ProtocolFunc,
 } from 'pages/iotProtocol';
@@ -54,7 +54,7 @@ const iotProtocol = {
     },
     {
       path: 'productByProtocol',
-      element: <ProductByProtocol />,
+      element: <ProdByProtocol />,
       type: 'item',
       title: `${i18n.t('word.productByProtocol')}`,
       meta: {

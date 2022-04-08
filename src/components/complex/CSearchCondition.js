@@ -86,7 +86,6 @@ const CSearchCondition = (props) => {
         <Grid container spacing={3}>
           {conditionList &&
             conditionList.map((item, index) => {
-              const ref = React.createRef();
               return (
                 <Grid
                   item
@@ -105,14 +104,12 @@ const CSearchCondition = (props) => {
                       onChange={(e) =>
                         handleChangeFormData(e.target.name, e.target.value)
                       }
-                      ref={ref}
                       fullWidth
                       onValidation={item.onValidation}
                     />
                   )}
                   {item.type === 'selectBox' && (
                     <CSelect
-                      ref={ref}
                       label={item.label}
                       name={item.id}
                       value={searchConditionParams[item.category] || ''}
@@ -124,17 +121,21 @@ const CSearchCondition = (props) => {
                   )}
                   {item.type === 'autoSelectBox' && (
                     <CSlectAutocomplete
-                      ref={ref}
                       defaultValue={item.defaultValue}
                       value={item.value || ''}
                       name={item.id}
                       label={item.label}
-                      getOption={'text'}
-                      getValue={'value'}
+                      getOption={item.getOption}
+                      getValue={item.getValue}
                       optionArray={item.optionArray}
-                      onChange={(e, newValue) =>
-                        handleChangeFormData(item.id, newValue.value)
-                      }
+                      onChange={(e, newValue) => {
+                        handleChangeFormData(
+                          item.id,
+                          item.getValue && newValue
+                            ? newValue[item.getValue]
+                            : newValue,
+                        );
+                      }}
                     />
                   )}
                 </Grid>

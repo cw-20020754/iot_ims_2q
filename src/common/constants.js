@@ -18,6 +18,7 @@ const API = {
     'Content-Type': 'multipart/form-data',
     Authorization: '',
   },
+  EXPORT_HEADERS: { 'Content-Type': 'application/octet-stream' },
 };
 
 const HTTP_STATUS = {
@@ -30,4 +31,16 @@ const HTTP_STATUS = {
   INTERNAL_SERVER_ERROR: 500,
 };
 
-export { API, HTTP_STATUS };
+const GROUP_ID = {
+  PROTOCOL_GROUP: '001',
+  PROTOCOL_TYPE: '002',
+  PROTOCOL_API: '003',
+  PROD_TYPE: '004',
+  PROTOCOL_ITEM: '005',
+  PROTOCOL_VALUE: '006',
+  DEVICE_DISCONNECT_REASON: '007',
+  DEVICE_RECONNECT_REASON: '008',
+  PROTOCOL_ITEM_TYPE: '009',
+};
+
+export { API, HTTP_STATUS, GROUP_ID };

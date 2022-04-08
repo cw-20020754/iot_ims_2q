@@ -268,4 +268,5 @@ export {
   checkValidtaion,
   checkErrorStatus,
   fileDownload,
+  getCodeToText,
 };
