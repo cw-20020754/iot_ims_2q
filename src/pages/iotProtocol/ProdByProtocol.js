@@ -311,6 +311,7 @@ const ProdByProtocol = () => {
             onClickSearch={handleClickSearch}
             conditionList={conditionList}
             expanded={true}
+            autoClear
           />
         )}
         <Grid sx={{ mt: 1 }}>
@@ -326,6 +327,7 @@ const ProdByProtocol = () => {
             >
               {!isNull(tabDataList) &&
                 tabDataList.map((item) => {
+                  // console.log('tabDataList >> ', tabDataList);
                   return (
                     <CDataGrid
                       key={item.value}
@@ -353,7 +355,7 @@ const ProdByProtocol = () => {
       <ProdChangeProtocolDialog
         open={openDialog}
         onClose={dialogClose}
-        maxWidth={'xl'}
+        maxWidth={'lg'}
         dialogInfo={dialogInfo}
       />
     </Grid>

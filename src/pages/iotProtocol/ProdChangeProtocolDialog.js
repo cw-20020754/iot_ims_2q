@@ -21,28 +21,24 @@ import { useTheme } from '@mui/styles';
 import {
   getChangeProtocolByProduct,
   handleChangeList,
-  handleCheckList,
   handleCheckLists,
   postProtocolByProduct,
 } from 'redux/reducers/iotProtocolSlice';
-import { TreeItem, TreeView } from '@mui/lab';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { checkedToggleAll } from '../../common/iotProtocol';
-import {
-  GlobalLoading,
-  setSnackbar,
-} from '../../redux/reducers/changeStateSlice';
-import { HTTP_STATUS } from '../../common/constants';
+import { checkedToggleAll } from 'common/iotProtocol';
+import { GlobalLoading, setSnackbar } from 'redux/reducers/changeStateSlice';
+import { HTTP_STATUS } from 'common/constants';
+import CTree from 'components/basic/CTree';
 
 const ProdChangeProtocolDialog = (props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { open, onClose, dialogInfo } = props;
+  const { open, onClose, dialogInfo, maxWidth } = props;
 
   const classes = IotProtocolStyle();
   const theme = useTheme();
-  const [initial, setInitial] = useState(true);
+
   const [selectedValue, setSelectedValue] = useState('');
 
   const protocolApiList = useSelector(
@@ -298,146 +294,140 @@ const ProdChangeProtocolDialog = (props) => {
     };
   };
 
-  const reformatCheckList = (handle, type, list, checked, nodes) => {
-    let array = [...list];
-    const category = type === 'protocolApiList' ? 'apiId' : 'valueSeq';
-    const listIndex = getDataIndex(array, 'groupCode', nodes.groupCode);
-    let children = [...array[listIndex].children];
-
-    if (handle === 'item') {
-      if (listIndex > -1) {
-        const itemIndex = getDataIndex(children, category, nodes[category]);
-
-        children[itemIndex] = getReplaceItem(
-          itemIndex,
-          children,
-          !nodes.checked,
-        );
-        array[listIndex] = getReplaceGroupItem(listIndex, array, children);
-      }
-    } else if (handle === 'group') {
-      if (listIndex > -1) {
-        const childrenResult = children.map((item, index) => {
-          return {
-            ...item,
-            checked: !nodes.checked,
-          };
-        });
-        array[listIndex] = getReplaceGroupItem(
-          listIndex,
-          array,
-          childrenResult,
-        );
-      }
-    }
-    // 자동 선택
-    if (
-      (nodes.groupCode === '0002' || nodes.groupCode === '0002-A1011') &&
-      type !== 'protocolApiList'
-    ) {
-      let checkGroupCode = '';
-      nodes.groupCode === '0002'
-        ? (checkGroupCode = '0002-A1011')
-        : (checkGroupCode = '0002');
-      const groupCodeIdx = getDataIndex(array, 'groupCode', checkGroupCode);
-      let groupCodeChildren = [...array[groupCodeIdx].children];
+  const reformatCheckList = useCallback(
+    (handle, type, list, checked, nodes) => {
+      let array = [...list];
+      const category = type === 'protocolApiList' ? 'apiId' : 'valueSeq';
+      const listIndex = getDataIndex(array, 'groupCode', nodes.groupCode);
+      let children = [...array[listIndex].children];
 
       if (handle === 'item') {
-        let groupCodeChildren = [...array[groupCodeIdx].children];
-        const listIdx = getDataIndex(
-          groupCodeChildren,
-          'valueSeq',
-          nodes.valueSeq,
-        );
-        groupCodeChildren[listIdx] = getReplaceItem(
-          listIdx,
-          groupCodeChildren,
-          !nodes.checked,
-        );
+        if (listIndex > -1) {
+          const itemIndex = getDataIndex(children, category, nodes[category]);
 
-        array[groupCodeIdx] = getReplaceGroupItem(
-          groupCodeIdx,
-          array,
-          groupCodeChildren,
-        );
-      } else {
-        const result = groupCodeChildren.map((v) => {
-          const value = array[listIndex].children.find(
-            (item) => item.valueSeq === v.valueSeq,
+          children[itemIndex] = getReplaceItem(
+            itemIndex,
+            children,
+            !nodes.checked,
           );
-          if (!isNull(value)) {
+          array[listIndex] = getReplaceGroupItem(listIndex, array, children);
+        }
+      } else if (handle === 'group') {
+        if (listIndex > -1) {
+          const childrenResult = children.map((item, index) => {
             return {
-              ...v,
-              checked: value.checked,
+              ...item,
+              checked: !nodes.checked,
             };
-          } else {
-            return v;
-          }
-        });
-
-        array[groupCodeIdx] = getReplaceGroupItem(groupCodeIdx, array, result);
+          });
+          array[listIndex] = getReplaceGroupItem(
+            listIndex,
+            array,
+            childrenResult,
+          );
+        }
       }
-    }
-    dispatch(handleCheckLists({ type: type, list: array }));
-  };
+      // 자동 선택
+      if (
+        (nodes.groupCode === '0002' || nodes.groupCode === '0002-A1011') &&
+        type !== 'protocolApiList'
+      ) {
+        let checkGroupCode = '';
+        nodes.groupCode === '0002'
+          ? (checkGroupCode = '0002-A1011')
+          : (checkGroupCode = '0002');
+        const groupCodeIdx = getDataIndex(array, 'groupCode', checkGroupCode);
+        let groupCodeChildren = [...array[groupCodeIdx].children];
 
-  const getOnChange = (checked, nodes, type) => {
-    const list =
-      type === 'usedProtocolList'
-        ? [...usedProtocolList.children]
-        : [...unusedProtocolList.children];
+        if (handle === 'item') {
+          let groupCodeChildren = [...array[groupCodeIdx].children];
+          const listIdx = getDataIndex(
+            groupCodeChildren,
+            'valueSeq',
+            nodes.valueSeq,
+          );
+          groupCodeChildren[listIdx] = getReplaceItem(
+            listIdx,
+            groupCodeChildren,
+            !nodes.checked,
+          );
 
-    // 전체 선택
-    if (nodes.id === 'root') {
-      dispatch(
-        handleCheckList({
-          handle: 'all',
-          type: type,
-          array: nodes.children,
-          checked: checked,
-        }),
-      );
-      return;
-    }
+          array[groupCodeIdx] = getReplaceGroupItem(
+            groupCodeIdx,
+            array,
+            groupCodeChildren,
+          );
+        } else {
+          const result = groupCodeChildren.map((v) => {
+            const value = array[listIndex].children.find(
+              (item) => item.valueSeq === v.valueSeq,
+            );
+            if (!isNull(value)) {
+              return {
+                ...v,
+                checked: value.checked,
+              };
+            } else {
+              return v;
+            }
+          });
 
-    if (type === 'usedProtocolList' || type === 'unusedProtocolList') {
-      // 일반기능 구현(제어) 체크
-      if (isNull(nodes.valueSeq)) {
-        reformatCheckList('group', type, list, checked, nodes);
+          array[groupCodeIdx] = getReplaceGroupItem(
+            groupCodeIdx,
+            array,
+            result,
+          );
+        }
+      }
+      dispatch(handleCheckLists({ type: type, list: array }));
+    },
+    [dispatch],
+  );
+
+  const getOnChange = useCallback(
+    (checked, nodes) => {
+      const { type } = nodes;
+
+      const list =
+        type === 'usedProtocolList'
+          ? [...usedProtocolList.children]
+          : [...unusedProtocolList.children];
+
+      if (type === 'usedProtocolList' || type === 'unusedProtocolList') {
+        // 일반기능 구현(제어) 체크
+        if (isNull(nodes.valueSeq)) {
+          reformatCheckList('group', type, list, checked, nodes);
+        } else {
+          reformatCheckList('item', type, list, checked, nodes);
+        }
+        // 전체
       } else {
-        reformatCheckList('item', type, list, checked, nodes);
+        if (nodes.children) {
+          reformatCheckList(
+            'group',
+            type,
+            protocolApiList.children,
+            checked,
+            nodes,
+          );
+        } else {
+          reformatCheckList(
+            'item',
+            type,
+            protocolApiList.children,
+            checked,
+            nodes,
+          );
+        }
       }
-      // 전체
-    } else {
-      if (nodes.children) {
-        reformatCheckList(
-          'group',
-          type,
-          protocolApiList.children,
-          checked,
-          nodes,
-        );
-      } else {
-        reformatCheckList(
-          'item',
-          type,
-          protocolApiList.children,
-          checked,
-          nodes,
-        );
-        // dispatch(
-        //   handleCheckList({
-        //     handle: 'item',
-        //     type: type,
-        //     array: protocolApiList.children,
-        //     checked: checked,
-        //     item: nodes,
-        //     category: 'apiId',
-        //   }),
-        // );
-      }
-    }
-  };
+    },
+    [
+      protocolApiList.children,
+      usedProtocolList.children,
+      unusedProtocolList.children,
+      reformatCheckList,
+    ],
+  );
 
   useEffect(() => {
     if (isNull(selectedValue)) {
@@ -445,96 +435,53 @@ const ProdChangeProtocolDialog = (props) => {
     }
   }, [selectedValue, dialogInfo]);
 
-  const RenderTreeWithCheckboxes = (type, nodes) => {
+  const handleCheckAll = (e, type, items) => {
+    const { checked } = e.target;
+
+    const array = [...items.children];
+
+    const toggleArray =
+      array &&
+      array.map((v) => {
+        return {
+          ...v,
+          checked: checked,
+          children: v.children?.map((i, cIndex) => ({
+            ...i,
+            checked: checked,
+          })),
+        };
+      });
+
+    dispatch(handleCheckLists({ type: type, list: toggleArray }));
+  };
+
+  const TreeItemComponent = (node) => {
     return (
-      <TreeItem
-        key={nodes.id}
-        nodeId={nodes.id}
-        classes={{
-          content: nodes.id === 'root' && classes.headerTitle,
-          group: classes.itemContent,
-        }}
-        label={
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={nodes.checked}
-                // indeterminate={true}
-                onChange={(event) =>
-                  getOnChange(event.currentTarget.checked, nodes, type)
-                }
-                onClick={(e) => e.stopPropagation()}
-              />
-            }
-            label={<>{getLabel(nodes)}</>}
-            key={nodes.id}
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={node.checked}
+            onChange={(event) => getOnChange(event.currentTarget.checked, node)}
+            onClick={(e) => e.stopPropagation()}
           />
         }
-      >
-        {Array.isArray(nodes.children)
-          ? nodes.children.map((node, index) =>
-              RenderTreeWithCheckboxes(type, node),
-            )
-          : null}
-      </TreeItem>
+        label={<>{getLabel(node)}</>}
+        key={node.id}
+      />
     );
   };
 
-  const onCheckedAll = () => {};
-
-  const handleNodeSelect = () => {};
-
-  const handleNodeToggle = () => {};
-
-  // const protocolChangeList = (type, title, items) => {
-  //   console.log('items.children >> ', items.children);
-  //   return (
-  //     <Card
-  //       sx={{
-  //         border: `1px solid ${theme.palette.grey[500]}`,
-  //         borderRadius: 1,
-  //         margin: 2,
-  //       }}
-  //     >
-  //       <CTree
-  //         sx={{
-  //           height: 450,
-  //           flexGrow: 1,
-  //           maxWidth: '100%',
-  //           overflowY: 'auto',
-  //           maxHeight: 450,
-  //         }}
-  //         treeDataList={items.children}
-  //         defaultExpanded={['root']}
-  //         defaultCollapseIcon={<ExpandMoreIcon />}
-  //         defaultExpandIcon={<ChevronRightIcon />}
-  //         onNodeSelect={handleNodeSelect}
-  //         onNodeToggle={handleNodeToggle}
-  //         headerChildren={
-  //           <FormControlLabel
-  //             label={title}
-  //             control={<Checkbox onChange={onCheckedAll} />}
-  //           />
-  //         }
-  //       />
-  //     </Card>
-  //   );
-  // };
-
-  const protocolChangeList = (type, items) => {
+  const protocolChangeList = (type, title, items) => {
     return (
       <Card
         sx={{
-          border: `1px solid ${theme.palette.grey[500]}`,
+          border: `1px solid ${theme.palette.grey[600]}`,
           borderRadius: 1,
           margin: 2,
         }}
       >
-        <TreeView
-          aria-label="file system navigator"
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-          defaultExpanded={['root']}
+        <CTree
           sx={{
             height: 450,
             flexGrow: 1,
@@ -542,15 +489,27 @@ const ProdChangeProtocolDialog = (props) => {
             overflowY: 'auto',
             maxHeight: 450,
           }}
-        >
-          {RenderTreeWithCheckboxes(type, items)}
-        </TreeView>
+          treeDataList={items.children}
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          onNodeSelect={(e) => {}}
+          onNodeToggle={(e) => {}}
+          headerChildren={
+            <FormControlLabel
+              label={title}
+              control={
+                <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
+              }
+            />
+          }
+          treeItemLabel={TreeItemComponent}
+        />
       </Card>
     );
   };
 
   return (
-    <CDialog open={open} onClose={onClose} maxWidth={'xl'}>
+    <CDialog open={open} onClose={onClose} maxWidth={maxWidth}>
       <CDialogTitle
         title={
           t('word.prod') + ' ' + t('word.protocol') + ' ' + t('word.change')
@@ -576,12 +535,20 @@ const ProdChangeProtocolDialog = (props) => {
         <Grid container justifyContent="center" alignItems="center">
           {/* protocol API */}
           <Grid item xs={12}>
-            {protocolChangeList('protocolApiList', protocolApiList)}
+            {protocolChangeList(
+              'protocolApiList',
+              t('word.all'),
+              protocolApiList,
+            )}
           </Grid>
           <Grid container alignItems="center" justifyContent="center">
             {/* 사용*/}
             <Grid item xs={5}>
-              {protocolChangeList('usedProtocolList', usedProtocolList)}
+              {protocolChangeList(
+                'usedProtocolList',
+                t('word.use'),
+                usedProtocolList,
+              )}
             </Grid>
             {/* moved button */}
             <Grid
@@ -600,6 +567,7 @@ const ProdChangeProtocolDialog = (props) => {
                   !usedProtocolList.children.some((v) => v.checked) ||
                   usedProtocolList.children.length === 0
                 }
+                className={classes.CButton}
                 aria-label="move selected right"
               >
                 &gt;
@@ -613,6 +581,7 @@ const ProdChangeProtocolDialog = (props) => {
                   !unusedProtocolList.children.some((v) => v.checked) ||
                   unusedProtocolList.children.length === 0
                 }
+                className={classes.CButton}
                 aria-label="move selected left"
               >
                 &lt;
@@ -620,7 +589,11 @@ const ProdChangeProtocolDialog = (props) => {
             </Grid>
             {/* 미사용 */}
             <Grid item xs={5}>
-              {protocolChangeList('unusedProtocolList', unusedProtocolList)}
+              {protocolChangeList(
+                'unusedProtocolList',
+                t('word.unused'),
+                unusedProtocolList,
+              )}
             </Grid>
           </Grid>
         </Grid>

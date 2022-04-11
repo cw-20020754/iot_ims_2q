@@ -1,11 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { prodByProtocolAPI } from 'api';
 import { isNull } from 'common/utils';
-import {
-  handleGroupChecked,
-  handleItemChecked,
-  reformatCheckList,
-} from 'common/iotProtocol';
+import { reformatCheckList } from 'common/iotProtocol';
 import i18n from 'common/locale/i18n';
 
 const name = 'iotProtocol';
@@ -28,9 +24,6 @@ const initialState = {
     name: i18n.t('word.unused'),
     children: [],
   },
-  // protocolApiList: [],
-  // usedProtocolList: [],
-  // unusedProtocolList: [],
   conditionList: [
     {
       id: 'prodTypeCode',
@@ -97,23 +90,8 @@ const initialState = {
     mdfId: true,
     mdfDate: true,
   },
-  dataGridTitle: '전체',
+  dataGridTitle: i18n.t('word.all'),
   tabDataList: [],
-  // tabDataList: [
-  //   { value: '0000', label: '전체', list: [], tatal: 0 },
-  //   { value: '0001', label: '연결', list: [], tatal: 0 },
-  //   { value: '0002', label: '일반기능 구현', list: [], tatal: 0 },
-  //   { value: '0003', label: '센서기능 구현', list: [], tatal: 0 },
-  //   { value: '0004', label: '에러', list: [], tatal: 0 },
-  //   { value: '0005', label: '파라미터 변경', list: [], tatal: 0 },
-  //   { value: '0006', label: 'FOTA', list: [], tatal: 0 },
-  //   { value: '0007', label: '인증만료', list: [], tatal: 0 },
-  //   { value: '0008', label: '스마트진단(상시)', list: [], tatal: 0 },
-  //   { value: '0009', label: '스마트진단(정밀)', list: [], tatal: 0 },
-  //   { value: '0010', label: '제품 데이터 동기화', list: [], tatal: 0 },
-  //   { value: '0011', label: '부가정보요청', list: [], tatal: 0 },
-  // ],
-
   protocolGroupList: [],
   protocolParams: {},
   dataRowsTotalElements: {
@@ -296,23 +274,6 @@ const iotProtocolSlice = createSlice({
         }
       });
     },
-    handleCheckList(state, action) {
-      const { handle, type, checked, array, groupCode, item, category } =
-        action.payload;
-
-      if (handle === 'all') {
-        state[type].children = reformatCheckList(array, checked);
-      } else if (handle === 'group') {
-        state[type].children = handleGroupChecked(array, checked, groupCode);
-      } else {
-        state[type].children = handleItemChecked(
-          array,
-          checked,
-          item,
-          category,
-        );
-      }
-    },
     handleCheckLists(state, action) {
       const { type, list } = action.payload;
       state[type].children = list;
@@ -343,8 +304,8 @@ const iotProtocolSlice = createSlice({
           return { id: index, ...item };
         });
 
-      const tabDataList = initialState.tabDataList.map((item) => {
-        if (item.value === '0000') {
+      const tabDataList = state.tabDataList.map((item) => {
+        if (isNull(item.value)) {
           return {
             ...item,
             list: result,
@@ -381,23 +342,6 @@ const iotProtocolSlice = createSlice({
       if (!isNull(data) && !isNull(data.content)) {
         const { protocolApiList, usedProtocolList, unusedProtocolList } =
           data.content;
-
-        // console.log('protocolApiList >> ', protocolApiList);
-        //
-        // const test = reformatCheckList(
-        //   'protocolApiList',
-        //   protocolApiList,
-        //   false,
-        //   usedProtocolList
-        // );
-        // console.log('test >> ', test);
-        // state.protocolApiList.children = reformatCheckList(
-        //   'protocolApiList',
-        //   protocolApiList,
-        //   false,
-        //   'groupNm',
-        //   'desc',
-        // );
         state.protocolApiList.children = state.protocolApiList['children'] =
           reformatCheckList(
             'protocolApiList',
@@ -432,7 +376,6 @@ const iotProtocolSlice = createSlice({
 });
 
 export const {
-  handleCheckList,
   handleChangeList,
   setProtocolParams,
   setConditionSelctList,

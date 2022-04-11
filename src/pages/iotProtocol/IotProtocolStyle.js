@@ -25,6 +25,12 @@ const IotProtocolStyle = makeStyles((theme) => ({
     borderRadius: 1,
     margin: 1,
   },
+  CButton: {
+    borderWidth: 2,
+    '&.Mui-disabled': {
+      borderWidth: 2,
+    },
+  },
 }));
 
 export default IotProtocolStyle;
