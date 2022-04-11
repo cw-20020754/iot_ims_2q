@@ -1,11 +1,10 @@
-import React from 'react';
+import React,   from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Card, CardActions, Divider } from '@mui/material';
+import { Card, CardActions, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CTreeItem from './CTreeItem';
-import { isNull } from '../../common/utils';
 
 const CTree = (props) => {
   const {
@@ -46,6 +45,7 @@ const CTree = (props) => {
         labelIcon={node.prependIcon}
         labelInfo={node.labelInfo}
         appendIconButtons={node.appendIconButtons}
+        onNodeButtonClick={onNodeButtonClick}
         labelComponent={!isNull(treeItemLabel) ? treeItemLabel(node) : null}
       >
         {Array.isArray(node.children) ? renderTree(node.children) : null}
@@ -65,6 +65,9 @@ const CTree = (props) => {
       />
 
       <CardActions sx={{ pt: 0 }}>
+        {treeDataList.length === 0 && (
+          <Typography variant={'h3'}>No Data</Typography>
+        )}
         <TreeView
           sx={{
             ...sx,
@@ -86,7 +89,7 @@ const CTree = (props) => {
           {...other}
         >
           {/* TODO... transition 방법 찾아 적용  */}
-          {treeDataList && treeDataList.length > 1 && renderTree(treeDataList)}
+          {treeDataList && treeDataList.length > 0 && renderTree(treeDataList)}
         </TreeView>
       </CardActions>
     </Card>

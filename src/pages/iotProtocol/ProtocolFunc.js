@@ -5,26 +5,23 @@ import CSearchCondition from 'components/complex/CSearchCondition';
 import CTabs from 'components/basic/CTabs';
 import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import {
-  postProtocolItemList,
-  setProtocolItemParams,
+  postProtocolFuncList,
+  setProtocolFuncParams,
   setConditionSelctList,
   setDataGridTitle,
+  setProtocolItem,
+  setProtocolValue,
 } from 'redux/reducers/iotProtocol/protocolFunc';
+import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
 import { isNull } from 'common/utils';
 import ProtocolFuncGrid from './ProtocolFuncGrid';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  CardActions,
-  IconButton,
-  Box,
-} from '@mui/material';
+import ProtocolFuncTree from './ProtocolFuncTree';
 
 const ProtocolFunc = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const [tabValue, setTabValue] = React.useState('total');
 
   const protocolTypeList = useSelector(
     (state) =>
@@ -50,10 +47,42 @@ const ProtocolFunc = () => {
     shallowEqual,
   );
 
-  const apiReqDerectionList = useSelector(
+  const apiReqDirectionList = useSelector(
     (state) =>
       state.comCodeMgmt.sharedComCodeList.filter(
         (code) => code?.groupId === '010',
+      )[0]?.codeList,
+    shallowEqual,
+  );
+
+  const itemNmList = useSelector(
+    (state) =>
+      state.comCodeMgmt.sharedComCodeList.filter(
+        (code) => code?.groupId === '005',
+      )[0]?.codeList,
+    shallowEqual,
+  );
+
+  const valueNmList = useSelector(
+    (state) =>
+      state.comCodeMgmt.sharedComCodeList.filter(
+        (code) => code?.groupId === '006',
+      )[0]?.codeList,
+    shallowEqual,
+  );
+
+  const itemTypeList = useSelector(
+    (state) =>
+      state.comCodeMgmt.sharedComCodeList.filter(
+        (code) => code?.groupId === '009',
+      )[0]?.codeList,
+    shallowEqual,
+  );
+
+  const directionList = useSelector(
+    (state) =>
+      state.comCodeMgmt.sharedComCodeList.filter(
+        (code) => code?.groupId === '011',
       )[0]?.codeList,
     shallowEqual,
   );
@@ -65,42 +94,20 @@ const ProtocolFunc = () => {
 
   // 정수기, MQTT Only
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const defaultProtocolItemParams = {
+  const defaultProtocolFuncParams = {
     prodTypeCode: '02',
     typeCode: '0003',
+    groupCode: '',
   };
 
-  const protocolItemParams = useSelector(
-    (state) => state.protocolFunc.protocolItemParams,
-    shallowEqual,
-  );
-
-  const loading = useSelector(
-    (state) => state.protocolFunc.loading,
-    shallowEqual,
-  );
-
-  const dataGridTitle = useSelector(
-    (state) => state.protocolFunc.dataGridTitle,
-    shallowEqual,
-  );
-
-  const protocolItemList = useSelector(
-    (state) => state.protocolFunc.protocolItemList,
-    shallowEqual,
-  );
-
-  const totalElements = useSelector(
-    (state) => state.protocolFunc.totalElements,
+  const protocolFuncParams = useSelector(
+    (state) => state.protocolFunc.protocolFuncParams,
     shallowEqual,
   );
 
   const handleClickSearch = async (searchConditionParams) => {
     if (searchConditionParams) {
-      fetchProtocolItemParams({
-        prodTypeCode: searchConditionParams['prodTypeCode'] || '',
-        typeCode: searchConditionParams['typeCode'] || '',
-      });
+      fetchProtocolFuncParams(searchConditionParams);
       const prodTypeCodeNm = prodTypeList.filter(
         (item) => item.value === searchConditionParams['prodTypeCode'],
       )[0].text;
@@ -111,16 +118,52 @@ const ProtocolFunc = () => {
     }
   };
 
-  const fetchProtocolItemParams = useCallback(
+  const handleTabChange = async (value, text) => {
+    setTabValue(value);
+    fetchProtocolFuncParams({
+      groupCode: value,
+    });
+
+    const name = 'groupCode';
+    await dispatch(setSearchConditionParam({ name, value }));
+    await dispatch(
+      setProtocolItem({
+        itemSeq: 0,
+        prodTypeCode: protocolFuncParams.prodTypeCode,
+        typeCode: protocolFuncParams.typeCode,
+        groupCode: value,
+        itemTypeCode: '',
+        itemId: '',
+        itemCode: '',
+        length: 0,
+        attribute: '',
+        itemDesc: '',
+        cnt: 0,
+      }),
+    );
+    await dispatch(
+      setProtocolValue({
+        itemSeq: 0,
+        valueSeq: 0,
+        prodTypeCode: protocolFuncParams.prodTypeCode,
+        typeCode: protocolFuncParams.typeCode,
+        groupCode: value,
+        itemId: '',
+        itemCode: '',
+        valueId: '',
+        valueCode: '',
+        valueDirectionCode: '',
+        valueDesc: '',
+      }),
+    );
+  };
+
+  const fetchProtocolFuncParams = useCallback(
     async (params) => {
-      await dispatch(setProtocolItemParams(params));
+      await dispatch(setProtocolFuncParams(params));
     },
     [dispatch],
   );
-
-  const fetchProtocolItemData = useCallback(async () => {
-    await dispatch(postProtocolItemList(protocolItemParams));
-  }, [dispatch, protocolItemParams]);
 
   const fetchConditionSelectList = useCallback(async () => {
     await dispatch(
@@ -128,7 +171,7 @@ const ProtocolFunc = () => {
         protocolTypeList,
         prodTypeList,
         protocolGroupList,
-        apiReqDerectionList,
+        apiReqDirectionList,
       }),
     );
   }, [
@@ -136,7 +179,7 @@ const ProtocolFunc = () => {
     protocolTypeList,
     prodTypeList,
     protocolGroupList,
-    apiReqDerectionList,
+    apiReqDirectionList,
   ]);
 
   const fetchDataGridTitle = useCallback(
@@ -149,30 +192,48 @@ const ProtocolFunc = () => {
   /**
    * 001 : 프로토콜 그룹
    * 002 : 프로토콜 유형
-   * 003 : API 이름
    * 004 : 제품 유형
    * 010 : API 요청방향
+   * 005 : 기능 이름
+   * 009 : 기능 유형
+   * 006 : Value 이름
+   * 011 : Value 방향
    */
   const fetchComCodeList = useCallback(async () => {
     await dispatch(
-      postComCodeList({ groupIdList: ['001', '002', '003', '004', '010'] }),
+      postComCodeList({
+        groupIdList: ['001', '002', '004', '005', '006', '009', '010', '011'],
+      }),
     );
   }, [dispatch]);
 
+  const fetchProtocolFuncData = useCallback(async () => {
+    await dispatch(postProtocolFuncList(protocolFuncParams));
+  }, [dispatch, protocolFuncParams]);
+
   useEffect(() => {
-    if (!isNull(protocolItemParams.prodTypeCode)) {
-      fetchProtocolItemData();
+    if (!isNull(protocolFuncParams.prodTypeCode) && tabValue === 'total') {
+      fetchProtocolFuncData();
     }
-  }, [fetchProtocolItemData, protocolItemParams]);
+  }, [fetchProtocolFuncData, protocolFuncParams, tabValue]);
 
   useEffect(() => {
     fetchConditionSelectList();
   }, [fetchConditionSelectList]);
 
   useEffect(() => {
-    if (!protocolTypeList || !prodTypeList) {
+    if (
+      !protocolTypeList ||
+      !prodTypeList ||
+      !protocolGroupList ||
+      !apiReqDirectionList ||
+      !itemNmList ||
+      !valueNmList ||
+      !itemTypeList ||
+      !directionList
+    ) {
       fetchComCodeList();
-      fetchProtocolItemParams(defaultProtocolItemParams);
+      fetchProtocolFuncParams(defaultProtocolFuncParams);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -183,7 +244,7 @@ const ProtocolFunc = () => {
         <CSearchCondition
           onClickSearch={handleClickSearch}
           conditionList={conditionList}
-          defaultValues={defaultProtocolItemParams}
+          defaultValues={defaultProtocolFuncParams}
         />
       )}
       {protocolGroupList?.length > 0 && (
@@ -191,12 +252,24 @@ const ProtocolFunc = () => {
           tabDataList={[{ value: 'total', text: t('word.total') }].concat(
             protocolGroupList,
           )}
+          onChange={(value, text) =>
+            handleTabChange(value === 'total' ? '' : value, text)
+          }
         >
-          <ProtocolFuncGrid
-            defaultProtocolItemParams={defaultProtocolItemParams}
-          />
-          <Typography variant="h4">panel1</Typography>
-          <Typography variant="h4">panel2</Typography>
+          {[{ value: 'total', text: t('word.total') }]
+            .concat(protocolGroupList)
+            .map((panel, index) => {
+              if (panel.value === 'total') {
+                return (
+                  <ProtocolFuncGrid
+                    key={index}
+                    defaultProtocolItemParams={defaultProtocolFuncParams}
+                  />
+                );
+              } else {
+                return <ProtocolFuncTree key={index} />;
+              }
+            })}
         </CTabs>
       )}
     </>

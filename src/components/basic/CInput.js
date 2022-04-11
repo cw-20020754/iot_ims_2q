@@ -26,7 +26,7 @@ const CInput = React.forwardRef((props, ref) => {
     if (!isNull(errorMessage) && typeof errorMessage === 'string') {
       setHelpText(errorMessage);
       if (onValidationError) {
-        return onValidationError();
+        return () => onValidationError();
       }
     }
   };

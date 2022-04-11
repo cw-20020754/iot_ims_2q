@@ -265,7 +265,7 @@ const ComCodeDialog = (props) => {
     setHasError(false);
     await dispatch(setComCodeDialogInfo({}));
     await dispatch(setComCodeOpenDialog(false));
-    return onClose(isSubmit, submitType);
+    return () => onClose(isSubmit, submitType);
   };
 
   const fetchComCodeList = useCallback(async () => {
@@ -292,7 +292,7 @@ const ComCodeDialog = (props) => {
       <FormControl component="fieldset">
         {renderForm(dialogInfo.type)}
         <CDialogActions>
-          <CButton type="button" onClick={() => handleClose()}>
+          <CButton type="cancel" onClick={() => handleClose()}>
             {t('word.cancel')}
           </CButton>
           <CButton type="submit" onClick={(e) => handleValidation(e)}>

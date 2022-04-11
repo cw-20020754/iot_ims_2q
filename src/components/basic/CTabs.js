@@ -3,7 +3,7 @@ import { Tab, Box, Card } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 const CTabs = (props) => {
-  const { tabDataList, sx, orientation, children, onClickTab, ...rest } = props;
+  const { tabDataList, sx, orientation, children, onChange } = props;
 
   const [value, setValue] = React.useState(
     tabDataList ? tabDataList[0].value : 0,
@@ -11,7 +11,7 @@ const CTabs = (props) => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    return onClickTab(newValue);
+    return onChange(newValue, e.target.textContent);
   };
 
   return (
@@ -29,11 +29,11 @@ const CTabs = (props) => {
           }
         >
           <TabList
+            onChange={handleChange}
             orientation={orientation}
             variant="scrollable"
             scrollButtons
             allowScrollButtonsMobile
-            onChange={handleChange}
           >
             {tabDataList &&
               tabDataList.map((tab, index) => (
@@ -46,11 +46,13 @@ const CTabs = (props) => {
           </TabList>
 
           {tabDataList &&
-            tabDataList.map((tab, index) => (
-              <TabPanel key={index} value={tab.value} sx={sx}>
-                {children[index]}
-              </TabPanel>
-            ))}
+            tabDataList.map((tab, index) => {
+              return (
+                <TabPanel key={index} value={tab.value} sx={sx}>
+                  {children[index]}
+                </TabPanel>
+              );
+            })}
         </Box>
       </TabContext>
     </Card>
