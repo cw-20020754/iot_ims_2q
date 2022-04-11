@@ -323,7 +323,7 @@ const ProdByProtocol = () => {
               }}
               orientation={'vertical'}
               tabDataList={tabDataList}
-              onClickTab={onClickTab}
+              onChange={onClickTab}
             >
               {!isNull(tabDataList) &&
                 tabDataList.map((item) => {

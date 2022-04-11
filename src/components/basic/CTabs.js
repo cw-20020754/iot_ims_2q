@@ -11,7 +11,7 @@ const CTabs = (props) => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    return onChange(newValue, e.target.textContent);
+    return onChange(newValue, event.target.textContent);
   };
 
   return (

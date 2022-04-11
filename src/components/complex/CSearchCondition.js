@@ -50,7 +50,7 @@ const CSearchCondition = (props) => {
 
       await dispatch(setSearchConditionParam({ name, value }));
     },
-    [dispatch],
+    [dispatch, autoClear],
   );
 
   const fetchDefaultSearchConditionParam = useCallback(async () => {

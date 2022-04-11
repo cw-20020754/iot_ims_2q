@@ -1,10 +1,11 @@
-import React,   from 'react';
+import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Card, CardActions, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CTreeItem from './CTreeItem';
+import { isNull } from 'common/utils';
 
 const CTree = (props) => {
   const {
