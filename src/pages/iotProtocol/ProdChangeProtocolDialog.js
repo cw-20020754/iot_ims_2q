@@ -467,7 +467,7 @@ const ProdChangeProtocolDialog = (props) => {
       usedProtocolList.children,
       unusedProtocolList.children,
       reformatCheckList,
-      // moveUnUsedList,
+      moveUnUsedList,
     ],
   );
 

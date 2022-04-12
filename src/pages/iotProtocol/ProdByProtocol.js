@@ -95,10 +95,6 @@ const ProdByProtocol = () => {
     devModelCode: '',
   });
 
-  const dialogClose = useCallback(() => {
-    setOpenDialog(false);
-  }, []);
-
   // 제품 프로토콜 변경 버튼 클릭
   const onTitleButtonClick = async (id) => {
     dispatch(GlobalLoading(true));
@@ -321,6 +317,16 @@ const ProdByProtocol = () => {
   const handleColumnVisibilityModelChange = async (newModel) => {
     await dispatch(setColumnVisibilityModel(newModel));
   };
+
+  const dialogClose = useCallback(async () => {
+    setOpenDialog(false);
+
+    if (!isNull(searchCondition)) {
+      await fetchProtocolData({
+        ...searchCondition,
+      });
+    }
+  }, [fetchProtocolData, searchCondition]);
 
   return (
     <Grid container>
