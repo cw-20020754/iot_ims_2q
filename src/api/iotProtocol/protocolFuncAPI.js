@@ -121,7 +121,7 @@ export const getProtocolItem = async (params) => {
 /**
  * 프로토콜 기능 등록
  * @body {
-  "attribute": "string",
+  "itemAttrNm": "string",
   "deprecatedYn": "string",
   "groupCode": "string",
   "itemCode": "string",
@@ -146,7 +146,7 @@ export const postProtocolItem = async (body) => {
 /**
  * 프로토콜 기능 수정
  * @body {
-  "attribute": "string",
+  "itemAttrNm": "string",
   "deprecatedYn": "string",
   "groupCode": "string",
   "itemCode": "string",

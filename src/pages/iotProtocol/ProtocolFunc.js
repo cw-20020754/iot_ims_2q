@@ -136,7 +136,7 @@ const ProtocolFunc = () => {
         itemId: '',
         itemCode: '',
         length: 0,
-        attribute: '',
+        itemAttrNm: '',
         itemDesc: '',
         cnt: 0,
       }),
