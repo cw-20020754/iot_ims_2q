@@ -19,9 +19,10 @@ import {
   GlobalLoading,
 } from 'redux/reducers/changeStateSlice';
 import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
-import { GROUP_ID } from 'common/constants';
+import { GROUP_ID, HTTP_STATUS } from 'common/constants';
 import { prodByProtocolAPI } from 'api';
 import ProdChangeProtocolDialog from './ProdChangeProtocolDialog';
+import rules from '../../common/rules';
 
 const ProdByProtocol = () => {
   const { t } = useTranslation();
@@ -29,6 +30,10 @@ const ProdByProtocol = () => {
   const [groupCode, setGroupCode] = useState('');
   const [searchCondition, setSearchCondition] = useState(null);
 
+  const defaultProtocolApiParams = {
+    prodTypeCode: '02',
+    typeCode: '0003',
+  };
   const { tabDataList } = useSelector((state) => state.iotProtocol);
 
   const conditionList = useSelector(
@@ -40,6 +45,7 @@ const ProdByProtocol = () => {
     (state) => state.changeState.devModelCodeList,
     shallowEqual,
   );
+
   // 제품 유형
   const prodTypeList = useSelector(
     (state) =>
@@ -198,14 +204,7 @@ const ProdByProtocol = () => {
     if (tabDataList && tabDataList.length === 0 && protocolGroupList) {
       fetchTabDataList(protocolGroupList);
     }
-  }, [
-    fetchConditionSelectList,
-    tabDataList,
-    protocolGroupList,
-    fetchTabDataList,
-  ]);
 
-  useEffect(() => {
     if (
       searchConditionParams['prodTypeCode'] &&
       searchConditionParams['typeCode'] &&
@@ -218,12 +217,22 @@ const ProdByProtocol = () => {
     searchCondition,
     devModelCodeList,
     fetchDevModeCodeList,
+    fetchConditionSelectList,
+    tabDataList,
+    protocolGroupList,
+    fetchTabDataList,
   ]);
 
   useEffect(() => {
     if (!protocolTypeList || !prodTypeList) {
       fetchComCodeList();
     }
+
+    // 타이틀, 제품 상태
+    return () => {
+      fetchDataGridTitle('');
+      fetchTabDataList([]);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -267,9 +276,12 @@ const ProdByProtocol = () => {
         ),
       }));
 
-      await fetchProtocolData({
-        ...searchCondition,
-      });
+      if (!isNull(searchCondition.devModelCode)) {
+        await fetchProtocolData({
+          ...searchCondition,
+        });
+      }
+
       let label = tabDataList?.find((v) => v.value === groupCode).text;
       setprodByProtocolTitle(label);
     }
@@ -282,18 +294,18 @@ const ProdByProtocol = () => {
       const exportParams = {
         ...searchCondition,
         groupCode: groupCode,
-        columns: isNull(groupCode)
-          ? []
-          : Object.entries(columnVisibilityModel)
-              .filter((col) => col[1])
-              .map((col) => col[0]),
+        columns: Object.entries(columnVisibilityModel)
+          .filter((col) => col[1])
+          .map((col) => col[0]),
       };
 
       const result = await prodByProtocolAPI.postProdByProtocolExport(
         exportParams,
       );
 
-      fileDownload(result);
+      if (result.status === HTTP_STATUS.SUCCESS) {
+        fileDownload(result);
+      }
 
       dispatch(GlobalLoading(false));
     }
@@ -311,6 +323,7 @@ const ProdByProtocol = () => {
             onClickSearch={handleClickSearch}
             conditionList={conditionList}
             expanded={true}
+            defaultValues={defaultProtocolApiParams}
             autoClear
           />
         )}
@@ -327,7 +340,6 @@ const ProdByProtocol = () => {
             >
               {!isNull(tabDataList) &&
                 tabDataList.map((item) => {
-                  // console.log('tabDataList >> ', tabDataList);
                   return (
                     <CDataGrid
                       key={item.value}
@@ -335,8 +347,8 @@ const ProdByProtocol = () => {
                       title={dataGridTitle}
                       titleButtons={dataGridTitleButtons}
                       columns={dataGridColums}
-                      rows={item.list}
-                      totalElement={item.total}
+                      rows={item.list || []}
+                      totalElement={item.total || 0}
                       isLoading={loading}
                       columnsButton={true}
                       columnVisibilityModel={columnVisibilityModel}

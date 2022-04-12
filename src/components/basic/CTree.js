@@ -24,6 +24,7 @@ const CTree = (props) => {
     height,
     expanded,
     treeItemLabel,
+    dividersx,
     ...other
   } = props;
 
@@ -62,7 +63,11 @@ const CTree = (props) => {
       </CardActions>
       <Divider
         variant="middle"
-        sx={{ borderBottomWidth: 2, borderColor: theme.palette.primary.black }}
+        sx={{
+          borderBottomWidth: 2,
+          borderColor: theme.palette.primary.black,
+          ...dividersx,
+        }}
       />
 
       <CardActions sx={{ pt: 0 }}>
@@ -97,4 +102,4 @@ const CTree = (props) => {
   );
 };
 
-export default CTree;
+export default React.memo(CTree);

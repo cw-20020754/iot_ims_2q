@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
   Accordion,
@@ -17,6 +17,7 @@ import CSlectAutocomplete from 'components/basic/CSlectAutocomplete';
 import CButton from 'components/basic/CButton';
 import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
 import { isNull } from 'common/utils';
+import rules from 'common/rules';
 
 const CSearchCondition = (props) => {
   const { conditionList, onClickSearch, expanded, defaultValues, autoClear } =
@@ -24,6 +25,7 @@ const CSearchCondition = (props) => {
   const classes = AppStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [hasError, setHasError] = useState('false');
 
   const autoCRef = useRef(null);
 
@@ -35,7 +37,29 @@ const CSearchCondition = (props) => {
   const handleClickSearch = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (hasError === true) {
+      setHasError(false);
+      return;
+    }
+
+    checkValidation(e);
+
     return onClickSearch(searchConditionParams);
+  };
+
+  const checkValidation = (e) => {
+    let check = true;
+    conditionList &&
+      conditionList.map((item) => {
+        if (!isNull(item.rules)) {
+          e.target.form[item.id].focus();
+          e.target.form[item.id].blur();
+        }
+        return item;
+      });
+
+    return check;
   };
 
   const handleChangeFormData = useCallback(
@@ -62,6 +86,10 @@ const CSearchCondition = (props) => {
     }
   }, [dispatch, defaultValues]);
 
+  const handleFormChildrenError = () => {
+    setHasError(true);
+  };
+
   useEffect(() => {
     if (!isNull(defaultValues)) {
       fetchDefaultSearchConditionParam();
@@ -74,7 +102,7 @@ const CSearchCondition = (props) => {
   }, []);
 
   return (
-    <Accordion expanded={expanded}>
+    <Accordion expanded={expanded} component="form">
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
@@ -139,6 +167,8 @@ const CSearchCondition = (props) => {
                       getOption={item.getOption}
                       getValue={item.getValue}
                       optionArray={item.optionArray}
+                      onValidation={(value) => rules[item.rules](value)}
+                      onValidationError={handleFormChildrenError}
                       onChange={(e, newValue) => {
                         handleChangeFormData(
                           item.id,

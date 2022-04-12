@@ -65,6 +65,8 @@ const ProdChangeProtocolDialog = (props) => {
     shallowEqual,
   );
 
+  // console.log('usedProtocolList >> ', usedProtocolList);
+
   // 체크된 것 찾기
   const findCheckList = (list) => {
     return (
@@ -241,10 +243,6 @@ const ProdChangeProtocolDialog = (props) => {
     }
     onClose();
   };
-
-  // console.log('protocolApiList >> ', protocolApiList);
-  // console.log('usedProtocolList >> ', usedProtocolList);
-  // console.log('unusedProtocolList >> ', unusedProtocolList);
 
   const fetchProtocolData = useCallback(
     async (params) => {
@@ -459,6 +457,8 @@ const ProdChangeProtocolDialog = (props) => {
   const TreeItemComponent = (node) => {
     return (
       <FormControlLabel
+        key={node.id}
+        label={<>{getLabel(node)}</>}
         control={
           <Checkbox
             checked={node.checked}
@@ -466,8 +466,6 @@ const ProdChangeProtocolDialog = (props) => {
             onClick={(e) => e.stopPropagation()}
           />
         }
-        label={<>{getLabel(node)}</>}
-        key={node.id}
       />
     );
   };
@@ -489,6 +487,7 @@ const ProdChangeProtocolDialog = (props) => {
             overflowY: 'auto',
             maxHeight: 450,
           }}
+          dividersx={{ borderBottomWidth: 1 }}
           treeDataList={items.children}
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
@@ -497,6 +496,7 @@ const ProdChangeProtocolDialog = (props) => {
           headerChildren={
             <FormControlLabel
               label={title}
+              checked={items.children.some((v) => v.checked)}
               control={
                 <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
               }
