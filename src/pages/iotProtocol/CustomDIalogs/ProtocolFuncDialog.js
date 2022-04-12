@@ -44,13 +44,15 @@ const ProtocolFuncDialog = (props) => {
       case 'hasChildNoti':
         return handleClose(false);
       case 'delitem':
-        await dispatch(deleteProtocolItem(dialogInfo.params.itemSeq));
+        await dispatch(
+          deleteProtocolItem(dialogInfo.params.itemSeq.toString()),
+        );
         return handleClose(true);
       case 'delvalue':
         await dispatch(
           deleteProtocolValue({
-            itemSeq: dialogInfo.params.itemSeq,
-            valueSeq: dialogInfo.params.valueSeq,
+            itemSeq: dialogInfo.params.itemSeq.toString(),
+            valueSeq: dialogInfo.params.valueSeq.toString(),
           }),
         );
         return handleClose(true);

@@ -361,6 +361,9 @@ const ProtocolFuncForm = (props) => {
                   sx={{ width: 1 }}
                   value={protocolValue.itemCode}
                   optionArray={itemNmList}
+                  inputProps={{
+                    readOnly: true,
+                  }}
                 ></CSelect>
               </Grid>
               <Grid item xs={4}></Grid>
@@ -571,6 +574,19 @@ const ProtocolFuncForm = (props) => {
     await dispatch(setComCodeOpenDialog(true));
   };
 
+  const handleFormTypeChnage = async (values) => {
+    if (values === 'value') {
+      await dispatch(
+        setProtocolValue({
+          itemSeq: protocolItem.itemSeq,
+          itemId: protocolItem.itemId,
+          itemCode: protocolItem.itemCode,
+        }),
+      );
+    }
+    return onFormTypeChnage(values);
+  };
+
   const handleDialogOpen = async (values) => {
     if (values.type === 'delitem' && values.params.cnt > 0) {
       values.type = 'hasChildNoti';
@@ -642,15 +658,17 @@ const ProtocolFuncForm = (props) => {
                 color="success"
                 variant={formType === 'item' ? 'fill' : 'outlined'}
                 sx={{ mr: 1 }}
-                onClick={() => onFormTypeChnage('item')}
+                onClick={() => handleFormTypeChnage('item')}
               />
-              <Chip
-                label={texts.value}
-                color="success"
-                variant={formType === 'value' ? 'fill' : 'outlined'}
-                sx={{ mr: 1 }}
-                onClick={() => onFormTypeChnage('value')}
-              />
+              {protocolItem.itemSeq > 0 && (
+                <Chip
+                  label={texts.value}
+                  color="success"
+                  variant={formType === 'value' ? 'fill' : 'outlined'}
+                  sx={{ mr: 1 }}
+                  onClick={() => handleFormTypeChnage('value')}
+                />
+              )}
               <Chip
                 label={protocolItem.itemSeq === 0 ? texts.add : texts.mdf}
                 color="info"
@@ -718,7 +736,11 @@ const ProtocolFuncForm = (props) => {
       </Card>
       <ComCodeDialog />
       <ProtocolFuncDialog
-        onClose={(isSubmit) => onSubmit(isSubmit)}
+        onClose={(isSubmit) => {
+          if (isSubmit === true) {
+            return onSubmit();
+          }
+        }}
         onConfirm={handleDeprecatedConfirm}
       />
     </>
