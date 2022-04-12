@@ -42,10 +42,8 @@ const AppHeader = () => {
   }));
 
   const executeLogout = async () => {
-    dispatch(setLogoutInfo());
-
+    await dispatch(setLogoutInfo());
     await persistor.purge();
-
     navigate('/login');
   };
 
