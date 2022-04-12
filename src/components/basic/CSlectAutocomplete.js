@@ -40,6 +40,9 @@ const CSlectAutocomplete = React.forwardRef((props, ref) => {
         name={name}
         options={optionArray}
         getOptionLabel={(option) => option[getOption]}
+        isOptionEqualToValue={(option, value) =>
+          option[getValue] === value[getValue]
+        }
         sx={{ ...style, width: 1 }}
         onBlur={(e) => onValidation && handleValidation(e)}
         onClick={(e) => onValidation && handleValidation(e)}
