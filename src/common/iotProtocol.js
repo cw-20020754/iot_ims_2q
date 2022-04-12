@@ -42,16 +42,18 @@ const reformatCheckList = (type, array, checked, filterArray) => {
   );
 };
 
-const checkedToggleAll = (list, checked) => {
+const checkedToggleAll = (list, checked, changeType) => {
   return (
     list &&
     list.map((item) => {
       return {
         ...item,
         checked: checked,
+        type: changeType,
         children: item.children?.map((i, cIndex) => ({
           ...i,
           checked: checked,
+          type: changeType,
         })),
       };
     })

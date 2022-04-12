@@ -195,7 +195,11 @@ const ProdChangeProtocolDialog = (props) => {
     const cloneUsedList = [...usedProtocolList.children];
     const cloneUnusedList = [...unusedProtocolList.children];
 
-    const checkdedList = checkedToggleAll(findCheckList(cloneUsedList), false);
+    const checkdedList = checkedToggleAll(
+      findCheckList(cloneUsedList),
+      false,
+      'unusedProtocolList',
+    );
 
     const usedList = removeCheckedList(cloneUsedList);
 
@@ -220,6 +224,7 @@ const ProdChangeProtocolDialog = (props) => {
     const checkdedList = checkedToggleAll(
       findCheckList(cloneUnusedList),
       false,
+      'usedProtocolList',
     );
 
     const unusedList = removeCheckedList(cloneUnusedList);
@@ -335,7 +340,7 @@ const ProdChangeProtocolDialog = (props) => {
       let array = [...list];
       const category = type === 'protocolApiList' ? 'apiId' : 'valueSeq';
       const listIndex = getDataIndex(array, 'groupCode', nodes.groupCode);
-      let children = [...array[listIndex].children];
+      let children = listIndex > -1 ? [...array[listIndex].children] : [];
 
       if (handle === 'item') {
         if (listIndex > -1) {
@@ -363,30 +368,32 @@ const ProdChangeProtocolDialog = (props) => {
           );
         }
       }
-      // 자동 선택
       if (nodes.groupCode === '0002-A1011' && type !== 'protocolApiList') {
         let checkGroupCode = '0002';
         const groupCodeIdx = getDataIndex(array, 'groupCode', checkGroupCode);
-        let groupCodeChildren = [...array[groupCodeIdx].children];
+        let groupCodeChildren =
+          groupCodeIdx > -1 ? [...array[groupCodeIdx].children] : [];
 
         if (handle === 'item') {
-          let groupCodeChildren = [...array[groupCodeIdx].children];
-          const listIdx = getDataIndex(
-            groupCodeChildren,
-            'valueSeq',
-            nodes.valueSeq,
-          );
-          groupCodeChildren[listIdx] = getReplaceItem(
-            listIdx,
-            groupCodeChildren,
-            !nodes.checked,
-          );
+          if (groupCodeIdx > -1) {
+            let groupCodeChildren = [...array[groupCodeIdx].children];
+            const listIdx = getDataIndex(
+              groupCodeChildren,
+              'valueSeq',
+              nodes.valueSeq,
+            );
+            groupCodeChildren[listIdx] = getReplaceItem(
+              listIdx,
+              groupCodeChildren,
+              !nodes.checked,
+            );
 
-          array[groupCodeIdx] = getReplaceGroupItem(
-            groupCodeIdx,
-            array,
-            groupCodeChildren,
-          );
+            array[groupCodeIdx] = getReplaceGroupItem(
+              groupCodeIdx,
+              array,
+              groupCodeChildren,
+            );
+          }
         } else {
           const result = groupCodeChildren.map((v) => {
             const value = array[listIndex].children.find(
@@ -432,9 +439,9 @@ const ProdChangeProtocolDialog = (props) => {
         }
         // 전체
       } else {
-        // if (nodes.checked) {
-        //   moveUnUsedList(nodes);
-        // }
+        if (nodes.checked) {
+          moveUnUsedList(nodes);
+        }
         // 전체에서 체크 해제한 경우
         if (nodes.children) {
           reformatCheckList(
@@ -453,10 +460,6 @@ const ProdChangeProtocolDialog = (props) => {
             nodes,
           );
         }
-
-        // if (nodes.checked) {
-        //   moveUnUsedList(nodes);
-        // }
       }
     },
     [
@@ -467,21 +470,6 @@ const ProdChangeProtocolDialog = (props) => {
       // moveUnUsedList,
     ],
   );
-
-  // useEffect(() => {
-  //   // if (isNull(selectedValue)) {
-  //   //
-  //   //   setSelectedValue(dialogInfo.devModelCode);
-  //   // }
-  // }, [selectedValue, dialogInfo]);
-  // useEffect(() => {
-  //   console.log('dialogInfo >> ', dialogInfo.devModelCode);
-  //   // if (isNull(selectedValue)) {
-  //   //
-  //   //   setSelectedValue(dialogInfo.devModelCode);
-  //   // }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   const handleCheckAll = (e, type, items) => {
     const { checked } = e.target;
