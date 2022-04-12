@@ -519,11 +519,11 @@ const ProdChangeProtocolDialog = (props) => {
       >
         <CTree
           sx={{
-            height: 450,
+            height: type === 'protocolApiList' ? 350 : 450,
             flexGrow: 1,
             maxWidth: '100%',
             overflowY: 'auto',
-            maxHeight: 450,
+            maxHeight: type === 'protocolApiList' ? 350 : 450,
           }}
           dividersx={{ borderBottomWidth: 1 }}
           treeDataList={items.children}
@@ -531,6 +531,13 @@ const ProdChangeProtocolDialog = (props) => {
           defaultExpandIcon={<ChevronRightIcon />}
           onNodeSelect={(e) => {}}
           onNodeToggle={(e) => {}}
+          // TODO... 전체 열고 닫기시 아래 참고. expanded state 관리 필요
+          // 그보다 전체 열고 선택 / 해제가 매우 느림. 해결 이후 작업.
+          // expanded={
+          //   type !== 'protocolApiList'
+          //     ? items.children.map((item) => item.id)
+          //     : []
+          // }
           headerChildren={
             <>
               <FormControlLabel
@@ -540,11 +547,13 @@ const ProdChangeProtocolDialog = (props) => {
                   <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
                 }
               />
-              <Chip
-                label={subTitle}
-                color="info"
-                sx={{ fontWeight: 600, fontSize: '12px' }}
-              />
+              {subTitle && (
+                <Chip
+                  label={subTitle}
+                  color="info"
+                  sx={{ fontWeight: 600, fontSize: '12px' }}
+                />
+              )}
             </>
           }
           treeItemLabel={TreeItemComponent}
@@ -581,7 +590,7 @@ const ProdChangeProtocolDialog = (props) => {
           <Grid item xs={12}>
             {protocolChangeList(
               'protocolApiList',
-              t('word.all'),
+              `${t('word.total')} ${t('word.select')}`,
               '',
               protocolApiList,
             )}
