@@ -658,7 +658,7 @@ const ProtocolFuncForm = (props) => {
                 label={texts.func}
                 color="success"
                 variant={formType === 'item' ? 'fill' : 'outlined'}
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, fontWeight: 600, fontSize: '12px' }}
                 onClick={() => handleFormTypeChnage('item')}
               />
               {protocolItem.itemSeq > 0 && (
@@ -666,13 +666,14 @@ const ProtocolFuncForm = (props) => {
                   label={texts.value}
                   color="success"
                   variant={formType === 'value' ? 'fill' : 'outlined'}
-                  sx={{ mr: 1 }}
+                  sx={{ mr: 1, fontWeight: 600, fontSize: '12px' }}
                   onClick={() => handleFormTypeChnage('value')}
                 />
               )}
               <Chip
                 label={protocolItem.itemSeq === 0 ? texts.add : texts.mdf}
                 color="info"
+                sx={{ fontWeight: 600, fontSize: '12px' }}
               />
             </>
           }

@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   Grid,
   Typography,
+  Chip,
 } from '@mui/material';
 import IotProtocolStyle from './IotProtocolStyle';
 import { useTheme } from '@mui/styles';
@@ -519,7 +520,7 @@ const ProdChangeProtocolDialog = (props) => {
     );
   };
 
-  const protocolChangeList = (type, title, items) => {
+  const protocolChangeList = (type, title, subTitle, items) => {
     return (
       <Card
         sx={{
@@ -543,13 +544,20 @@ const ProdChangeProtocolDialog = (props) => {
           onNodeSelect={(e) => {}}
           onNodeToggle={(e) => {}}
           headerChildren={
-            <FormControlLabel
-              label={title}
-              checked={items.children.some((v) => v.checked)}
-              control={
-                <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
-              }
-            />
+            <>
+              <FormControlLabel
+                label={title}
+                checked={items.children.some((v) => v.checked)}
+                control={
+                  <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
+                }
+              />
+              <Chip
+                label={subTitle}
+                color="info"
+                sx={{ fontWeight: 600, fontSize: '12px' }}
+              />
+            </>
           }
           treeItemLabel={TreeItemComponent}
         />
@@ -586,6 +594,7 @@ const ProdChangeProtocolDialog = (props) => {
             {protocolChangeList(
               'protocolApiList',
               t('word.all'),
+              '',
               protocolApiList,
             )}
           </Grid>
@@ -594,6 +603,7 @@ const ProdChangeProtocolDialog = (props) => {
             <Grid item xs={5}>
               {protocolChangeList(
                 'usedProtocolList',
+                `${t('word.total')} ${t('word.select')}`,
                 t('word.use'),
                 usedProtocolList,
               )}
@@ -639,6 +649,7 @@ const ProdChangeProtocolDialog = (props) => {
             <Grid item xs={5}>
               {protocolChangeList(
                 'unusedProtocolList',
+                `${t('word.total')} ${t('word.select')}`,
                 t('word.unused'),
                 unusedProtocolList,
               )}
