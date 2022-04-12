@@ -43,10 +43,13 @@ const CSearchCondition = (props) => {
       if (isNull(name)) {
         return;
       }
-      const ele = autoCRef.current.getElementsByClassName(
-        'MuiAutocomplete-clearIndicator',
-      )[0];
-      if (autoClear && ele) ele.click();
+
+      if (autoClear && !isNull(autoCRef.current)) {
+        const ele = autoCRef.current.getElementsByClassName(
+          'MuiAutocomplete-clearIndicator',
+        )[0];
+        if (ele) ele.click();
+      }
 
       await dispatch(setSearchConditionParam({ name, value }));
     },
