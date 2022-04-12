@@ -572,7 +572,6 @@ const ProdChangeProtocolDialog = (props) => {
       <Divider />
       <CDialogContent grids={[3, 12, 12]}>
         <CSlectAutocomplete
-          defaultValue={dialogInfo.defaultValue}
           value={selectedValue}
           label={t('word.copy') + ' ' + t('word.devModelCode')}
           getOption={'desc'}
