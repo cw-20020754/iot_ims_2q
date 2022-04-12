@@ -214,8 +214,6 @@ const ComCodeDialog = (props) => {
     let isComCodeDuplicated = false;
     e.preventDefault();
 
-    console.log('hasError', hasError);
-
     if (hasError === true) {
       setHasError(false);
       return;

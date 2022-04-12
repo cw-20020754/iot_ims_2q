@@ -123,7 +123,8 @@
     "all": "전체",
     "length": "길이",
     "total": "전체",
-    "confirm": "확인"
+    "confirm": "확인",
+    "copy": "복제"
   },
   "desc": {
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",

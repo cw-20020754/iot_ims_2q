@@ -64,8 +64,9 @@ const ProdChangeProtocolDialog = (props) => {
     (state) => state.iotProtocol.dataGridTitle,
     shallowEqual,
   );
-
+  // console.log('protocolApiList >> ', protocolApiList);
   // console.log('usedProtocolList >> ', usedProtocolList);
+  // console.log('unusedProtocolList >> ', unusedProtocolList);
 
   // 체크된 것 찾기
   const findCheckList = (list) => {
@@ -155,6 +156,39 @@ const ProdChangeProtocolDialog = (props) => {
     );
   };
 
+  // 전체 해제한 경우 미사용으로 이동
+  const moveUnUsedList = useCallback(
+    (nodes) => {
+      const cloneApiList = [...protocolApiList.children];
+      const cloneUsedList = [...usedProtocolList.children];
+      const cloneUnusedList = [...unusedProtocolList.children];
+
+      const usedList = cloneUsedList.filter(
+        (v) => v.groupCode.split('-')[0] !== nodes.groupCode,
+      );
+
+      const moveUnusedList = cloneUsedList.filter(
+        (v) => v.groupCode.split('-')[0] === nodes.groupCode,
+      );
+
+      const unusedList = addList(cloneUnusedList, moveUnusedList);
+
+      dispatch(
+        handleChangeList({
+          protocolApiList: cloneApiList,
+          usedProtocolList: usedList,
+          unusedProtocolList: unusedList,
+        }),
+      );
+    },
+    [
+      dispatch,
+      protocolApiList.children,
+      usedProtocolList.children,
+      unusedProtocolList.children,
+    ],
+  );
+
   const handleCheckedRight = () => {
     const cloneApiList = [...protocolApiList.children];
     const cloneUsedList = [...usedProtocolList.children];
@@ -236,8 +270,9 @@ const ProdChangeProtocolDialog = (props) => {
       await dispatch(
         setSnackbar({
           snackbarOpen: true,
+          severity: 'success',
           snackbarMessage: t('desc.saveSuccess'),
-          autoHideDuration: 1000,
+          autoHideDuration: 3000,
         }),
       );
     }
@@ -258,13 +293,15 @@ const ProdChangeProtocolDialog = (props) => {
   );
 
   const handleChange = async (e, newValue) => {
-    dispatch(GlobalLoading(true));
-    setSelectedValue(newValue);
+    if (!isNull(newValue)) {
+      dispatch(GlobalLoading(true));
+      setSelectedValue(newValue);
 
-    await fetchProtocolData({
-      ...dialogInfo.searchCondition,
-      devModelCode: newValue.devModelCode,
-    });
+      await fetchProtocolData({
+        ...dialogInfo.searchCondition,
+        devModelCode: newValue.devModelCode,
+      });
+    }
   };
 
   const getLabel = (nodes) => {
@@ -326,14 +363,8 @@ const ProdChangeProtocolDialog = (props) => {
         }
       }
       // 자동 선택
-      if (
-        (nodes.groupCode === '0002' || nodes.groupCode === '0002-A1011') &&
-        type !== 'protocolApiList'
-      ) {
-        let checkGroupCode = '';
-        nodes.groupCode === '0002'
-          ? (checkGroupCode = '0002-A1011')
-          : (checkGroupCode = '0002');
+      if (nodes.groupCode === '0002-A1011' && type !== 'protocolApiList') {
+        let checkGroupCode = '0002';
         const groupCodeIdx = getDataIndex(array, 'groupCode', checkGroupCode);
         let groupCodeChildren = [...array[groupCodeIdx].children];
 
@@ -400,6 +431,10 @@ const ProdChangeProtocolDialog = (props) => {
         }
         // 전체
       } else {
+        // if (nodes.checked) {
+        //   moveUnUsedList(nodes);
+        // }
+        // 전체에서 체크 해제한 경우
         if (nodes.children) {
           reformatCheckList(
             'group',
@@ -417,6 +452,10 @@ const ProdChangeProtocolDialog = (props) => {
             nodes,
           );
         }
+
+        // if (nodes.checked) {
+        //   moveUnUsedList(nodes);
+        // }
       }
     },
     [
@@ -424,14 +463,24 @@ const ProdChangeProtocolDialog = (props) => {
       usedProtocolList.children,
       unusedProtocolList.children,
       reformatCheckList,
+      // moveUnUsedList,
     ],
   );
 
-  useEffect(() => {
-    if (isNull(selectedValue)) {
-      setSelectedValue(dialogInfo.devModelCode);
-    }
-  }, [selectedValue, dialogInfo]);
+  // useEffect(() => {
+  //   // if (isNull(selectedValue)) {
+  //   //
+  //   //   setSelectedValue(dialogInfo.devModelCode);
+  //   // }
+  // }, [selectedValue, dialogInfo]);
+  // useEffect(() => {
+  //   console.log('dialogInfo >> ', dialogInfo.devModelCode);
+  //   // if (isNull(selectedValue)) {
+  //   //
+  //   //   setSelectedValue(dialogInfo.devModelCode);
+  //   // }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const handleCheckAll = (e, type, items) => {
     const { checked } = e.target;
@@ -523,12 +572,12 @@ const ProdChangeProtocolDialog = (props) => {
       <Divider />
       <CDialogContent grids={[3, 12, 12]}>
         <CSlectAutocomplete
-          defaultValue={dialogInfo.devModelCode}
+          defaultValue={dialogInfo.defaultValue}
           value={selectedValue}
-          label={t('word.devModelCode')}
+          label={t('word.copy') + ' ' + t('word.devModelCode')}
           getOption={'desc'}
           getValue={'devModelCode'}
-          optionArray={devModelCodeList}
+          optionArray={dialogInfo.devModelCode}
           onChange={(e, newValue) => handleChange(e, newValue)}
           style={{ minWidth: 300, marginLeft: 2, p: 1 }}
         />

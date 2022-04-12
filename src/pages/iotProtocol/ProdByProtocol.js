@@ -22,7 +22,6 @@ import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import { GROUP_ID, HTTP_STATUS } from 'common/constants';
 import { prodByProtocolAPI } from 'api';
 import ProdChangeProtocolDialog from './ProdChangeProtocolDialog';
-import rules from '../../common/rules';
 
 const ProdByProtocol = () => {
   const { t } = useTranslation();
@@ -106,9 +105,10 @@ const ProdByProtocol = () => {
 
     setDialogInfo((prevState) => ({
       ...prevState,
+      defaultValue: { devModelCode: '', desc: '' },
       searchCondition: searchCondition,
-      devModelCode: devModelCodeList.find(
-        (v) => v.devModelCode === searchConditionParams.devModelCode,
+      devModelCode: devModelCodeList.filter(
+        (v) => v.devModelCode !== searchConditionParams.devModelCode,
       ),
     }));
 
@@ -239,7 +239,8 @@ const ProdByProtocol = () => {
   const setprodByProtocolTitle = (label) => {
     if (
       !isNull(searchConditionParams['prodTypeCode']) &&
-      !isNull(searchConditionParams['typeCode'])
+      !isNull(searchConditionParams['typeCode']) &&
+      !isNull(searchConditionParams['devModelCode'])
     ) {
       const prodTypeCodeNm = prodTypeList.filter(
         (item) => item.value === searchCondition['prodTypeCode'],
@@ -248,7 +249,13 @@ const ProdByProtocol = () => {
         (item) => item.value === searchCondition['typeCode'],
       )[0].text;
 
-      fetchDataGridTitle(`${label} / ${prodTypeCodeNm} / ${typeCodeNm}`);
+      const devModelCodeNm = devModelCodeList.filter(
+        (item) => item.devModelCode === searchCondition['devModelCode'],
+      )[0].desc;
+
+      fetchDataGridTitle(
+        `${label} / ${prodTypeCodeNm} / ${typeCodeNm} / ${devModelCodeNm}`,
+      );
     } else {
       fetchDataGridTitle(`${label}`);
     }
