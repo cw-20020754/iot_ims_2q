@@ -63,7 +63,7 @@ const ProtocolFuncDialog = (props) => {
   const handleClose = async (isSubmit) => {
     await dispatch(setDialogInfo({}));
     await dispatch(setOpenDialog(false));
-    return () => onClose(isSubmit);
+    return onClose(isSubmit);
   };
 
   return (

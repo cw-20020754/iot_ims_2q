@@ -2,12 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { authAPI } from 'api';
 import { isNull } from 'common/utils';
 import { HTTP_STATUS } from 'common/constants';
-import {
-  encryptData,
-  isAuthenticated,
-  removeCookie,
-  setCookie,
-} from 'common/auth';
+import { encryptData, removeCookie, setCookie } from 'common/auth';
 
 const name = 'auth';
 
@@ -27,7 +22,6 @@ const initialState = {
     'Content-Type': 'multipart/form-data',
     Authorization: '',
   },
-  isAuthenticated: false,
 };
 
 // 로그인
@@ -66,9 +60,6 @@ const authSlice = createSlice({
       state.userTeam = initialState.userTeam;
       state.accessToken = initialState.accessToken;
     },
-    setAuthencication(state, action) {
-      state.isAuthenticated = isAuthenticated();
-    },
     setUserInfo(state, action) {
       state.username = action.payload;
     },
@@ -89,11 +80,6 @@ const authSlice = createSlice({
   },
 });
 
-export const {
-  setLoginInfo,
-  setLogoutInfo,
-  setApiHeaders,
-  setAuthencication,
-  setUserInfo,
-} = authSlice.actions;
+export const { setLoginInfo, setLogoutInfo, setApiHeaders, setUserInfo } =
+  authSlice.actions;
 export default authSlice.reducer;
