@@ -73,7 +73,7 @@ const initialState = {
 
 const makeTreeNodeChildren = (groupId, child) => {
   return {
-    id: groupId + '.' + child.code,
+    id: groupId + '|' + child.code,
     labelText: child.codeNm,
     prependIcon: ArticleIcon,
   };

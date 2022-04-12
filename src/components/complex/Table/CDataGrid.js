@@ -63,6 +63,7 @@ const CDataGrid = (props) => {
       exportButton={exportButton}
       exportText={t('word.export')}
       onExportButtonClick={onExportButtonClick}
+      rowCnt={rows?.length || 0}
     />
   );
 
@@ -127,6 +128,9 @@ const CDataGrid = (props) => {
               Toolbar: toolBarRender,
               LoadingOverlay: CLoadingOverlay,
               NoRowsOverlay: CNoRowsOverlay,
+            }}
+            componentsProps={{
+              rowCnt: rows?.length,
             }}
             localeText={{
               toolbarColumns: t('word.display') + t('word.item'),

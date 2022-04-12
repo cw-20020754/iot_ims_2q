@@ -9,8 +9,13 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CButton from 'components/basic/CButton';
 
 const CToolbar = (props) => {
-  const { columnsButton, exportButton, exportText, onExportButtonClick } =
-    props;
+  const {
+    columnsButton,
+    exportButton,
+    exportText,
+    onExportButtonClick,
+    rowCnt,
+  } = props;
 
   return (
     <GridToolbarContainer>
@@ -19,6 +24,7 @@ const CToolbar = (props) => {
         {exportButton && (
           <CButton
             variant="text"
+            disabled={rowCnt > 0 ? false : true}
             startIcon={<FileDownloadIcon />}
             onClick={() => onExportButtonClick()}
           >

@@ -10,6 +10,7 @@ import {
   setComCodeParams,
   postComCodeListForTree,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
+import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
 
 const ComCodeMgmtTree = (props) => {
   const { onComCodeDialogOpen } = props;
@@ -25,13 +26,31 @@ const ComCodeMgmtTree = (props) => {
 
   const handleNodeSelect = useCallback(
     async (e, nodeIds) => {
-      await dispatch(
-        setComCodeParams({
-          page: 0,
-          groupId: nodeIds,
-          groupNm: e.target.textContent,
-        }),
-      );
+      const name = 'codeId';
+      let value = '';
+      if (nodeIds.indexOf('|') !== -1) {
+        const nodeId = nodeIds.split('|');
+        await dispatch(
+          setComCodeParams({
+            page: 0,
+            groupId: nodeId[0],
+            code: nodeId[1],
+            groupNm: e.target.textContent,
+          }),
+        );
+        value = nodeId[1];
+      } else {
+        await dispatch(
+          setComCodeParams({
+            page: 0,
+            groupId: nodeIds,
+            groupNm: e.target.textContent,
+            code: '',
+            codeNm: '',
+          }),
+        );
+      }
+      await dispatch(setSearchConditionParam({ name, value }));
     },
     [dispatch],
   );

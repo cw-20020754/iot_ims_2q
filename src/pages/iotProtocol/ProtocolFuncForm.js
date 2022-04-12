@@ -504,7 +504,7 @@ const ProtocolFuncForm = (props) => {
         }
         break;
       case 'value':
-        if (protocolItem.itemSeq === 0) {
+        if (protocolValue.valueSeq === 0) {
           isDuplicated = await (
             await protocolFuncAPI.getProtocolValueDuplicateCheck(protocolValue)
           )?.data?.content;
@@ -522,7 +522,7 @@ const ProtocolFuncForm = (props) => {
             await dispatch(postProtocolValue(protocolValue));
           }
         } else {
-          await dispatch(putProtocolValue(protocolItem));
+          await dispatch(putProtocolValue(protocolValue));
         }
         return onSubmit();
       default:
@@ -540,16 +540,17 @@ const ProtocolFuncForm = (props) => {
           length: 0,
           itemAttrNm: '',
           itemDesc: '',
+          deprecatedYn: 'N',
           cnt: 0,
         }),
       );
     } else {
       await dispatch(
         setProtocolValue({
-          itemSeq: 0,
+          itemSeq: protocolItem.itemSeq,
           valueSeq: 0,
-          itemId: '',
-          itemCode: '',
+          itemId: protocolItem.itemId,
+          itemCode: protocolItem.itemCode,
           valueId: '',
           valueCode: '',
           valueDirectionCode: '',
