@@ -34,7 +34,7 @@ const CSlectAutocomplete = React.forwardRef((props, ref) => {
   };
 
   return (
-    <FormControl error={!isNull(helpText)} fullWidth>
+    <FormControl fullWidth>
       <Autocomplete
         ref={ref}
         name={name}
@@ -55,11 +55,12 @@ const CSlectAutocomplete = React.forwardRef((props, ref) => {
               value={value}
               variant={!isNull(variant) ? variant : 'standard'}
               name={name}
+              error={!isNull(helpText)}
+              helperText={helpText}
             />
           );
         }}
       />
-      {!isNull(helpText) && <FormHelperText>{helpText}</FormHelperText>}
     </FormControl>
   );
 });

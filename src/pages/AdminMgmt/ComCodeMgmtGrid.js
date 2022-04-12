@@ -7,6 +7,8 @@ import CDataGrid from 'components/complex/Table/CDataGrid';
 import {
   getComCode,
   setComCodeParams,
+  setConditionSelctList,
+  postComCodeList,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import { comCodeAPI } from 'api';
 import { fileDownload, isNull } from 'common/utils';
@@ -16,35 +18,29 @@ const ComCodeMgmtGrid = (props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const conditionList = [
-    {
-      id: 'codeId',
-      category: 'codeId',
-      label: t('word.code') + ' ' + t('word.id'),
-      type: 'textBox',
-      value: '',
-      size: {
-        xs: 6,
-      },
-    },
-    {
-      id: 'codeNm',
-      category: 'codeNm',
-      label: t('word.code') + ' ' + t('word.nm'),
-      type: 'textBox',
-      value: '',
-      size: {
-        xs: 6,
-      },
-    },
-  ];
+  const conditionList = useSelector(
+    (state) => state.comCodeMgmt.conditionList,
+    shallowEqual,
+  );
+
+  const langCodeList = useSelector(
+    (state) =>
+      state.comCodeMgmt.sharedComCodeList.filter(
+        (code) => code?.groupId === '012',
+      )[0]?.codeList,
+    shallowEqual,
+  );
 
   const handleClickSearch = async (searchCondition) => {
     if (searchCondition) {
+      const langCode = langCodeList.filter(
+        (item) => item.value === searchCondition['langCode'],
+      )[0]?.value;
       fetchComCodeParams({
         page: 0,
         code: searchCondition['codeId'] || '',
         codeNm: searchCondition['codeNm'] || '',
+        langCode: langCode || '',
       });
     }
   };
@@ -139,6 +135,14 @@ const ComCodeMgmtGrid = (props) => {
     [dispatch],
   );
 
+  const fetchComCodeList = useCallback(async () => {
+    await dispatch(postComCodeList({ groupIdList: ['012'] }));
+  }, [dispatch]);
+
+  const fetchConditionSelectList = useCallback(async () => {
+    await dispatch(setConditionSelctList({ langCodeList }));
+  }, [dispatch, langCodeList]);
+
   const fetchComCodeData = useCallback(async () => {
     await dispatch(getComCode(comCodeParams));
   }, [dispatch, comCodeParams]);
@@ -147,15 +151,25 @@ const ComCodeMgmtGrid = (props) => {
     if (!isNull(comCodeParams.groupId)) {
       fetchComCodeData();
     }
+  }, [fetchComCodeData, comCodeParams]);
+
+  useEffect(() => {
+    fetchConditionSelectList();
+  }, [fetchConditionSelectList]);
+
+  useEffect(() => {
+    !langCodeList && fetchComCodeList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [comCodeParams]);
+  }, []);
 
   return (
     <>
-      <CSearchCondition
-        onClickSearch={handleClickSearch}
-        conditionList={conditionList}
-      />
+      {langCodeList?.length > 0 && (
+        <CSearchCondition
+          onClickSearch={handleClickSearch}
+          conditionList={conditionList}
+        />
+      )}
       <CDataGrid
         height={457}
         title={dataGridTitle}

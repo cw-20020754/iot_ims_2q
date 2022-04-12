@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { FormControl } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,6 @@ import CSelect from 'components/basic/CSelect';
 import rules from 'common/rules';
 import { comCodeAPI } from 'api';
 import {
-  postComCodeList,
   postComCodeGroup,
   putComCodeGroup,
   deleteComCodeGroup,
@@ -215,6 +214,8 @@ const ComCodeDialog = (props) => {
     let isComCodeDuplicated = false;
     e.preventDefault();
 
+    console.log('hasError', hasError);
+
     if (hasError === true) {
       setHasError(false);
       return;
@@ -265,17 +266,8 @@ const ComCodeDialog = (props) => {
     setHasError(false);
     await dispatch(setComCodeDialogInfo({}));
     await dispatch(setComCodeOpenDialog(false));
-    return () => onClose(isSubmit, submitType);
+    return onClose(isSubmit, submitType);
   };
-
-  const fetchComCodeList = useCallback(async () => {
-    await dispatch(postComCodeList({ groupIdList: ['012'] }));
-  }, [dispatch]);
-
-  useEffect(() => {
-    !langCodeList && fetchComCodeList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <CDialog

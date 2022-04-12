@@ -35,6 +35,9 @@ const ComCodeMgmtTree = (props) => {
             page: 0,
             groupId: nodeId[0],
             code: nodeId[1],
+            langCode: treeDataList
+              .filter((data) => data.id === nodeId[0])[0]
+              .children.filter((child) => child.id === nodeIds)[0]?.labelInfo,
             groupNm: e.target.textContent,
           }),
         );
@@ -52,7 +55,7 @@ const ComCodeMgmtTree = (props) => {
       }
       await dispatch(setSearchConditionParam({ name, value }));
     },
-    [dispatch],
+    [dispatch, treeDataList],
   );
 
   const handleNodeToggle = async (nodeIds) => {
@@ -102,7 +105,14 @@ const ComCodeMgmtTree = (props) => {
           <IconButton onClick={() => fetchComCodeGroupData()}>
             <AutorenewIcon />
           </IconButton>
-          <CButton onClick={() => onComCodeDialogOpen({ type: 'addGroup' })}>
+          <CButton
+            onClick={() =>
+              onComCodeDialogOpen({
+                type: 'addGroup',
+                params: { groupId: '', groupNm: '' },
+              })
+            }
+          >
             {t('word.group') + ' ' + t('word.add')}
           </CButton>
         </>
