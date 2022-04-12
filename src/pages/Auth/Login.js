@@ -240,6 +240,7 @@ const Login = () => {
                   },
                 }}
                 sx={{ fontSize: 20 }}
+                autoComplete="on"
                 type={values.showPassword ? 'text' : 'password'}
                 fullWidth
                 InputProps={{

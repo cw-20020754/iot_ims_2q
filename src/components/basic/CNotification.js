@@ -59,7 +59,9 @@ const CNotification = (props) => {
         onClose={handleClose}
         {...rest}
       >
-        <strong>{snackbarMessage}</strong>
+        <strong>
+          {typeof snackbarMessage === 'string' && snackbarMessage}
+        </strong>
       </Alert>
     </Snackbar>
   );
