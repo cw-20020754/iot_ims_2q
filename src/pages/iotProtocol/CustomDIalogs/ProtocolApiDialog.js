@@ -255,7 +255,7 @@ const ProtocolApiDialog = (props) => {
         await dispatch(putProtocolApi(dialogInfo.params));
         break;
       case 'delApi':
-        await dispatch(deleteProtocolApi(dialogInfo.params.groupId));
+        await dispatch(deleteProtocolApi(dialogInfo.params.groupId.toString()));
         break;
       default:
     }

@@ -125,7 +125,7 @@ const initialState = {
     },
     {
       field: 'apiId',
-      headerName: i18n.t('word.api') + ' ' + i18n.t('word.num'),
+      headerName: i18n.t('word.api') + ' ' + i18n.t('word.id'),
       headerAlign: 'center',
     },
     {
