@@ -8,6 +8,8 @@ import {
   CardContent,
   CardActions,
   Chip,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 import CButton from 'components/basic/CButton';
 import CInput from 'components/basic/CInput';
@@ -251,7 +253,7 @@ const ProtocolFuncForm = (props) => {
                   value={protocolItem.length}
                   type={'number'}
                   onChange={(e) =>
-                    handleItemFormChange({ length: e.target.value })
+                    handleItemFormChange({ length: Number(e.target.value) })
                   }
                   onValidation={(value) => rules.requireAlert(value)}
                   onValidationError={handleFormChildrenError}
@@ -259,19 +261,26 @@ const ProtocolFuncForm = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <CInput
-                  name="attribute"
+                  name="itemAttrNm"
                   placeholder={texts.attribute}
                   label={texts.attribute}
                   sx={{ width: 1 }}
-                  value={protocolItem.attribute}
+                  value={protocolItem.itemAttrNm}
                   onChange={(e) =>
-                    handleItemFormChange({ attribute: e.target.value })
+                    handleItemFormChange({ itemAttrNm: e.target.value })
                   }
                 ></CInput>
               </Grid>
               <Grid item xs={4}>
-                {/* name="deprecated" */}
-                {/* value="deprecatedYn" */}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={protocolItem.deprecatedYn === 'Y' ? true : false}
+                      disabled
+                    />
+                  }
+                  label={texts.deprecated}
+                />
               </Grid>
               <Grid item xs={12}>
                 <CInput
@@ -437,22 +446,22 @@ const ProtocolFuncForm = (props) => {
     switch (formType) {
       case 'item':
         e.target.form.funcType.click();
+        e.target.form.funcNm.click();
         e.target.form.funcId.focus();
         e.target.form.funcId.blur();
-        e.target.form.funcNm.click();
         e.target.form.len.focus();
         e.target.form.len.blur();
-        e.target.form.attribute.focus();
-        e.target.form.attribute.blur();
+        e.target.form.itemAttrNm.focus();
+        e.target.form.itemAttrNm.blur();
         e.target.form.funcDesc.focus();
         e.target.form.funcDesc.blur();
 
         break;
       case 'value':
-        e.target.form.valueId.focus();
-        e.target.form.valueId.blur();
         e.target.form.valueNm.click();
         e.target.form.direction.click();
+        e.target.form.valueId.focus();
+        e.target.form.valueId.blur();
         e.target.form.valueDesc.focus();
         e.target.form.valueDesc.blur();
         break;
@@ -526,7 +535,7 @@ const ProtocolFuncForm = (props) => {
           itemId: '',
           itemCode: '',
           length: 0,
-          attribute: '',
+          itemAttrNm: '',
           itemDesc: '',
           cnt: 0,
         }),

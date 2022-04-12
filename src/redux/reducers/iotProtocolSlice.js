@@ -81,7 +81,7 @@ const initialState = {
     itemNm: true,
     itemDesc: true,
     itemVer: true,
-    attribute: true,
+    itemAttrNm: true,
     length: true,
     valueId: true,
     valueNm: true,
@@ -174,7 +174,7 @@ const initialState = {
       headerAlign: 'center',
     },
     {
-      field: 'attribute',
+      field: 'itemAttrNm',
       headerName: i18n.t('word.attribute'),
       headerAlign: 'center',
     },
