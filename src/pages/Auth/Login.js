@@ -26,7 +26,6 @@ import rules from 'common/rules';
 import { isNull, responseCheck } from 'common/utils';
 import {
   executeLogin,
-  setAuthencication,
   setLoginInfo,
   setUserInfo,
 } from 'redux/reducers/authSlice';
@@ -109,7 +108,6 @@ const Login = () => {
         await dispatch(setLoginInfo(result));
         if (isNull(authError) && isAuthenticated()) {
           dispatch(setUserInfo(encryptData(values.userId)));
-          dispatch(setAuthencication(true));
           navigate('/fota/firmwaremanage');
         } else {
           setAlertMessage(authError);
@@ -240,6 +238,7 @@ const Login = () => {
                   },
                 }}
                 sx={{ fontSize: 20 }}
+                autoComplete="on"
                 type={values.showPassword ? 'text' : 'password'}
                 fullWidth
                 InputProps={{

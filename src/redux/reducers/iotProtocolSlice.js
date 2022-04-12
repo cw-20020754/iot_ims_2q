@@ -65,6 +65,7 @@ const initialState = {
         lg: 6,
         md: 8,
       },
+      rules: 'requireAlert',
     },
   ],
   columnVisibilityModel: {
@@ -81,7 +82,7 @@ const initialState = {
     itemNm: true,
     itemDesc: true,
     itemVer: true,
-    attribute: true,
+    itemAttrNm: true,
     length: true,
     valueId: true,
     valueNm: true,
@@ -124,7 +125,7 @@ const initialState = {
     },
     {
       field: 'apiId',
-      headerName: i18n.t('word.api') + ' ' + i18n.t('word.num'),
+      headerName: i18n.t('word.api') + ' ' + i18n.t('word.id'),
       headerAlign: 'center',
     },
     {
@@ -174,7 +175,7 @@ const initialState = {
       headerAlign: 'center',
     },
     {
-      field: 'attribute',
+      field: 'itemAttrNm',
       headerName: i18n.t('word.attribute'),
       headerAlign: 'center',
     },
@@ -252,15 +253,27 @@ const iotProtocolSlice = createSlice({
       state.columnVisibilityModel = action.payload;
     },
     setDataGridTitle(state, action) {
-      state.dataGridTitle = action.payload;
+      state.dataGridTitle = isNull(action.payload)
+        ? initialState.dataGridTitle
+        : action.payload;
     },
     setTabDataList(state, action) {
       const protocolGroupList = action.payload;
 
-      state.tabDataList = [
-        { value: '', text: i18n.t('word.all') },
-        ...protocolGroupList,
-      ];
+      if (protocolGroupList.length > 0) {
+        state.tabDataList = [
+          { value: '', text: i18n.t('word.all') },
+          ...protocolGroupList,
+        ];
+      } else {
+        state.tabDataList = state.tabDataList.map((item) => {
+          return {
+            ...item,
+            list: [],
+            total: 0,
+          };
+        });
+      }
     },
     setConditionSelctList(state, action) {
       const obj = action.payload;

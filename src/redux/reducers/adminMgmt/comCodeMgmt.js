@@ -29,6 +29,39 @@ const initialState = {
   comCodeTotalElements: 0,
   treeDataList: [],
   dataGridTitle: i18n.t('word.com') + i18n.t('word.code'),
+  conditionList: [
+    {
+      id: 'codeId',
+      category: 'codeId',
+      label: i18n.t('word.code') + ' ' + i18n.t('word.id'),
+      type: 'textBox',
+      value: '',
+      size: {
+        xs: 6,
+      },
+    },
+    {
+      id: 'codeNm',
+      category: 'codeNm',
+      label: i18n.t('word.code') + ' ' + i18n.t('word.nm'),
+      type: 'textBox',
+      value: '',
+      size: {
+        xs: 6,
+      },
+    },
+    {
+      id: 'langCode',
+      category: 'langCode',
+      label: i18n.t('word.lang') + ' ' + i18n.t('word.code'),
+      type: 'selectBox',
+      value: '',
+      optionArray: [],
+      size: {
+        xs: 6,
+      },
+    },
+  ],
   dataGridColums: [
     {
       field: 'groupId',
@@ -73,8 +106,9 @@ const initialState = {
 
 const makeTreeNodeChildren = (groupId, child) => {
   return {
-    id: groupId + '.' + child.code,
+    id: groupId + '|' + child.code,
     labelText: child.codeNm,
+    labelInfo: child.langCode,
     prependIcon: ArticleIcon,
   };
 };
@@ -206,6 +240,14 @@ const comCodeMgmt = createSlice({
     setComCodeDialogInfo(state, action) {
       const obj = action.payload;
       state.dialogInfo = { ...state.dialogInfo, ...obj };
+    },
+    setConditionSelctList(state, action) {
+      const obj = action.payload;
+      state.conditionList.forEach((item) => {
+        if (item.id === 'langCode') {
+          item.optionArray = obj.langCodeList;
+        }
+      });
     },
   },
   extraReducers: (builder) => {
@@ -465,5 +507,6 @@ export const {
   setIsComCodeDuplicated,
   setComCodeOpenDialog,
   setComCodeDialogInfo,
+  setConditionSelctList,
 } = comCodeMgmt.actions;
 export default comCodeMgmt.reducer;

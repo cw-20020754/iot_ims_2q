@@ -19,7 +19,7 @@ const CTreeItem = React.forwardRef((props, ref) => {
     content: {
       padding: 0,
       '& .MuiTreeItem-iconContainer svg': {
-        fontSize: 'xx-large',
+        fontSize: labelComponent ? 'normal' : 'xx-large',
       },
     },
   });
@@ -74,4 +74,4 @@ const CTreeItem = React.forwardRef((props, ref) => {
 
 CTreeItem.displayName = 'CTreeItem';
 
-export default CTreeItem;
+export default React.memo(CTreeItem);

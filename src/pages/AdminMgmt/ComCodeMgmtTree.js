@@ -10,6 +10,7 @@ import {
   setComCodeParams,
   postComCodeListForTree,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
+import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
 
 const ComCodeMgmtTree = (props) => {
   const { onComCodeDialogOpen } = props;
@@ -25,15 +26,36 @@ const ComCodeMgmtTree = (props) => {
 
   const handleNodeSelect = useCallback(
     async (e, nodeIds) => {
-      await dispatch(
-        setComCodeParams({
-          page: 0,
-          groupId: nodeIds,
-          groupNm: e.target.textContent,
-        }),
-      );
+      const name = 'codeId';
+      let value = '';
+      if (nodeIds.indexOf('|') !== -1) {
+        const nodeId = nodeIds.split('|');
+        await dispatch(
+          setComCodeParams({
+            page: 0,
+            groupId: nodeId[0],
+            code: nodeId[1],
+            langCode: treeDataList
+              .filter((data) => data.id === nodeId[0])[0]
+              .children.filter((child) => child.id === nodeIds)[0]?.labelInfo,
+            groupNm: e.target.textContent,
+          }),
+        );
+        value = nodeId[1];
+      } else {
+        await dispatch(
+          setComCodeParams({
+            page: 0,
+            groupId: nodeIds,
+            groupNm: e.target.textContent,
+            code: '',
+            codeNm: '',
+          }),
+        );
+      }
+      await dispatch(setSearchConditionParam({ name, value }));
     },
-    [dispatch],
+    [dispatch, treeDataList],
   );
 
   const handleNodeToggle = async (nodeIds) => {
@@ -83,7 +105,14 @@ const ComCodeMgmtTree = (props) => {
           <IconButton onClick={() => fetchComCodeGroupData()}>
             <AutorenewIcon />
           </IconButton>
-          <CButton onClick={() => onComCodeDialogOpen({ type: 'addGroup' })}>
+          <CButton
+            onClick={() =>
+              onComCodeDialogOpen({
+                type: 'addGroup',
+                params: { groupId: '', groupNm: '' },
+              })
+            }
+          >
             {t('word.group') + ' ' + t('word.add')}
           </CButton>
         </>

@@ -10,8 +10,6 @@ import {
   getProtocolValue,
   setProtocolItem,
   setProtocolValue,
-  deleteProtocolItem,
-  deleteProtocolValue,
 } from 'redux/reducers/iotProtocol/protocolFunc';
 import ProtocolFuncForm from './ProtocolFuncForm';
 import { isNull } from 'common/utils';

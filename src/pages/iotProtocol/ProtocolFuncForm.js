@@ -8,6 +8,8 @@ import {
   CardContent,
   CardActions,
   Chip,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 import CButton from 'components/basic/CButton';
 import CInput from 'components/basic/CInput';
@@ -251,7 +253,7 @@ const ProtocolFuncForm = (props) => {
                   value={protocolItem.length}
                   type={'number'}
                   onChange={(e) =>
-                    handleItemFormChange({ length: e.target.value })
+                    handleItemFormChange({ length: Number(e.target.value) })
                   }
                   onValidation={(value) => rules.requireAlert(value)}
                   onValidationError={handleFormChildrenError}
@@ -259,19 +261,26 @@ const ProtocolFuncForm = (props) => {
               </Grid>
               <Grid item xs={4}>
                 <CInput
-                  name="attribute"
+                  name="itemAttrNm"
                   placeholder={texts.attribute}
                   label={texts.attribute}
                   sx={{ width: 1 }}
-                  value={protocolItem.attribute}
+                  value={protocolItem.itemAttrNm}
                   onChange={(e) =>
-                    handleItemFormChange({ attribute: e.target.value })
+                    handleItemFormChange({ itemAttrNm: e.target.value })
                   }
                 ></CInput>
               </Grid>
               <Grid item xs={4}>
-                {/* name="deprecated" */}
-                {/* value="deprecatedYn" */}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={protocolItem.deprecatedYn === 'Y' ? true : false}
+                      disabled
+                    />
+                  }
+                  label={texts.deprecated}
+                />
               </Grid>
               <Grid item xs={12}>
                 <CInput
@@ -352,6 +361,9 @@ const ProtocolFuncForm = (props) => {
                   sx={{ width: 1 }}
                   value={protocolValue.itemCode}
                   optionArray={itemNmList}
+                  inputProps={{
+                    readOnly: true,
+                  }}
                 ></CSelect>
               </Grid>
               <Grid item xs={4}></Grid>
@@ -437,22 +449,22 @@ const ProtocolFuncForm = (props) => {
     switch (formType) {
       case 'item':
         e.target.form.funcType.click();
+        e.target.form.funcNm.click();
         e.target.form.funcId.focus();
         e.target.form.funcId.blur();
-        e.target.form.funcNm.click();
         e.target.form.len.focus();
         e.target.form.len.blur();
-        e.target.form.attribute.focus();
-        e.target.form.attribute.blur();
+        e.target.form.itemAttrNm.focus();
+        e.target.form.itemAttrNm.blur();
         e.target.form.funcDesc.focus();
         e.target.form.funcDesc.blur();
 
         break;
       case 'value':
-        e.target.form.valueId.focus();
-        e.target.form.valueId.blur();
         e.target.form.valueNm.click();
         e.target.form.direction.click();
+        e.target.form.valueId.focus();
+        e.target.form.valueId.blur();
         e.target.form.valueDesc.focus();
         e.target.form.valueDesc.blur();
         break;
@@ -492,7 +504,7 @@ const ProtocolFuncForm = (props) => {
         }
         break;
       case 'value':
-        if (protocolItem.itemSeq === 0) {
+        if (protocolValue.valueSeq === 0) {
           isDuplicated = await (
             await protocolFuncAPI.getProtocolValueDuplicateCheck(protocolValue)
           )?.data?.content;
@@ -510,7 +522,7 @@ const ProtocolFuncForm = (props) => {
             await dispatch(postProtocolValue(protocolValue));
           }
         } else {
-          await dispatch(putProtocolValue(protocolItem));
+          await dispatch(putProtocolValue(protocolValue));
         }
         return onSubmit();
       default:
@@ -526,18 +538,19 @@ const ProtocolFuncForm = (props) => {
           itemId: '',
           itemCode: '',
           length: 0,
-          attribute: '',
+          itemAttrNm: '',
           itemDesc: '',
+          deprecatedYn: 'N',
           cnt: 0,
         }),
       );
     } else {
       await dispatch(
         setProtocolValue({
-          itemSeq: 0,
+          itemSeq: protocolItem.itemSeq,
           valueSeq: 0,
-          itemId: '',
-          itemCode: '',
+          itemId: protocolItem.itemId,
+          itemCode: protocolItem.itemCode,
           valueId: '',
           valueCode: '',
           valueDirectionCode: '',
@@ -560,6 +573,19 @@ const ProtocolFuncForm = (props) => {
   const handleComCodeDialogOpen = async (values) => {
     await dispatch(setComCodeDialogInfo({ ...comCodeDialogInfo, ...values }));
     await dispatch(setComCodeOpenDialog(true));
+  };
+
+  const handleFormTypeChnage = async (values) => {
+    if (values === 'value') {
+      await dispatch(
+        setProtocolValue({
+          itemSeq: protocolItem.itemSeq,
+          itemId: protocolItem.itemId,
+          itemCode: protocolItem.itemCode,
+        }),
+      );
+    }
+    return onFormTypeChnage(values);
   };
 
   const handleDialogOpen = async (values) => {
@@ -632,19 +658,22 @@ const ProtocolFuncForm = (props) => {
                 label={texts.func}
                 color="success"
                 variant={formType === 'item' ? 'fill' : 'outlined'}
-                sx={{ mr: 1 }}
-                onClick={() => onFormTypeChnage('item')}
+                sx={{ mr: 1, fontWeight: 600, fontSize: '12px' }}
+                onClick={() => handleFormTypeChnage('item')}
               />
-              <Chip
-                label={texts.value}
-                color="success"
-                variant={formType === 'value' ? 'fill' : 'outlined'}
-                sx={{ mr: 1 }}
-                onClick={() => onFormTypeChnage('value')}
-              />
+              {protocolItem.itemSeq > 0 && (
+                <Chip
+                  label={texts.value}
+                  color="success"
+                  variant={formType === 'value' ? 'fill' : 'outlined'}
+                  sx={{ mr: 1, fontWeight: 600, fontSize: '12px' }}
+                  onClick={() => handleFormTypeChnage('value')}
+                />
+              )}
               <Chip
                 label={protocolItem.itemSeq === 0 ? texts.add : texts.mdf}
                 color="info"
+                sx={{ fontWeight: 600, fontSize: '12px' }}
               />
             </>
           }
@@ -709,7 +738,11 @@ const ProtocolFuncForm = (props) => {
       </Card>
       <ComCodeDialog />
       <ProtocolFuncDialog
-        onClose={(isSubmit) => onSubmit(isSubmit)}
+        onClose={(isSubmit) => {
+          if (isSubmit === true) {
+            return onSubmit();
+          }
+        }}
         onConfirm={handleDeprecatedConfirm}
       />
     </>

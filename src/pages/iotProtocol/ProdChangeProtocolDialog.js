@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   Grid,
   Typography,
+  Chip,
 } from '@mui/material';
 import IotProtocolStyle from './IotProtocolStyle';
 import { useTheme } from '@mui/styles';
@@ -64,6 +65,9 @@ const ProdChangeProtocolDialog = (props) => {
     (state) => state.iotProtocol.dataGridTitle,
     shallowEqual,
   );
+  // console.log('protocolApiList >> ', protocolApiList);
+  // console.log('usedProtocolList >> ', usedProtocolList);
+  // console.log('unusedProtocolList >> ', unusedProtocolList);
 
   // 체크된 것 찾기
   const findCheckList = (list) => {
@@ -153,12 +157,49 @@ const ProdChangeProtocolDialog = (props) => {
     );
   };
 
+  // 전체 해제한 경우 미사용으로 이동
+  const moveUnUsedList = useCallback(
+    (nodes) => {
+      const cloneApiList = [...protocolApiList.children];
+      const cloneUsedList = [...usedProtocolList.children];
+      const cloneUnusedList = [...unusedProtocolList.children];
+
+      const usedList = cloneUsedList.filter(
+        (v) => v.groupCode.split('-')[0] !== nodes.groupCode,
+      );
+
+      const moveUnusedList = cloneUsedList.filter(
+        (v) => v.groupCode.split('-')[0] === nodes.groupCode,
+      );
+
+      const unusedList = addList(cloneUnusedList, moveUnusedList);
+
+      dispatch(
+        handleChangeList({
+          protocolApiList: cloneApiList,
+          usedProtocolList: usedList,
+          unusedProtocolList: unusedList,
+        }),
+      );
+    },
+    [
+      dispatch,
+      protocolApiList.children,
+      usedProtocolList.children,
+      unusedProtocolList.children,
+    ],
+  );
+
   const handleCheckedRight = () => {
     const cloneApiList = [...protocolApiList.children];
     const cloneUsedList = [...usedProtocolList.children];
     const cloneUnusedList = [...unusedProtocolList.children];
 
-    const checkdedList = checkedToggleAll(findCheckList(cloneUsedList), false);
+    const checkdedList = checkedToggleAll(
+      findCheckList(cloneUsedList),
+      false,
+      'unusedProtocolList',
+    );
 
     const usedList = removeCheckedList(cloneUsedList);
 
@@ -183,6 +224,7 @@ const ProdChangeProtocolDialog = (props) => {
     const checkdedList = checkedToggleAll(
       findCheckList(cloneUnusedList),
       false,
+      'usedProtocolList',
     );
 
     const unusedList = removeCheckedList(cloneUnusedList);
@@ -234,17 +276,14 @@ const ProdChangeProtocolDialog = (props) => {
       await dispatch(
         setSnackbar({
           snackbarOpen: true,
+          severity: 'success',
           snackbarMessage: t('desc.saveSuccess'),
-          autoHideDuration: 1000,
+          autoHideDuration: 3000,
         }),
       );
     }
     onClose();
   };
-
-  // console.log('protocolApiList >> ', protocolApiList);
-  // console.log('usedProtocolList >> ', usedProtocolList);
-  // console.log('unusedProtocolList >> ', unusedProtocolList);
 
   const fetchProtocolData = useCallback(
     async (params) => {
@@ -260,13 +299,15 @@ const ProdChangeProtocolDialog = (props) => {
   );
 
   const handleChange = async (e, newValue) => {
-    dispatch(GlobalLoading(true));
-    setSelectedValue(newValue);
+    if (!isNull(newValue)) {
+      dispatch(GlobalLoading(true));
+      setSelectedValue(newValue);
 
-    await fetchProtocolData({
-      ...dialogInfo.searchCondition,
-      devModelCode: newValue.devModelCode,
-    });
+      await fetchProtocolData({
+        ...dialogInfo.searchCondition,
+        devModelCode: newValue.devModelCode,
+      });
+    }
   };
 
   const getLabel = (nodes) => {
@@ -299,7 +340,7 @@ const ProdChangeProtocolDialog = (props) => {
       let array = [...list];
       const category = type === 'protocolApiList' ? 'apiId' : 'valueSeq';
       const listIndex = getDataIndex(array, 'groupCode', nodes.groupCode);
-      let children = [...array[listIndex].children];
+      let children = listIndex > -1 ? [...array[listIndex].children] : [];
 
       if (handle === 'item') {
         if (listIndex > -1) {
@@ -327,36 +368,32 @@ const ProdChangeProtocolDialog = (props) => {
           );
         }
       }
-      // 자동 선택
-      if (
-        (nodes.groupCode === '0002' || nodes.groupCode === '0002-A1011') &&
-        type !== 'protocolApiList'
-      ) {
-        let checkGroupCode = '';
-        nodes.groupCode === '0002'
-          ? (checkGroupCode = '0002-A1011')
-          : (checkGroupCode = '0002');
+      if (nodes.groupCode === '0002-A1011' && type !== 'protocolApiList') {
+        let checkGroupCode = '0002';
         const groupCodeIdx = getDataIndex(array, 'groupCode', checkGroupCode);
-        let groupCodeChildren = [...array[groupCodeIdx].children];
+        let groupCodeChildren =
+          groupCodeIdx > -1 ? [...array[groupCodeIdx].children] : [];
 
         if (handle === 'item') {
-          let groupCodeChildren = [...array[groupCodeIdx].children];
-          const listIdx = getDataIndex(
-            groupCodeChildren,
-            'valueSeq',
-            nodes.valueSeq,
-          );
-          groupCodeChildren[listIdx] = getReplaceItem(
-            listIdx,
-            groupCodeChildren,
-            !nodes.checked,
-          );
+          if (groupCodeIdx > -1) {
+            let groupCodeChildren = [...array[groupCodeIdx].children];
+            const listIdx = getDataIndex(
+              groupCodeChildren,
+              'valueSeq',
+              nodes.valueSeq,
+            );
+            groupCodeChildren[listIdx] = getReplaceItem(
+              listIdx,
+              groupCodeChildren,
+              !nodes.checked,
+            );
 
-          array[groupCodeIdx] = getReplaceGroupItem(
-            groupCodeIdx,
-            array,
-            groupCodeChildren,
-          );
+            array[groupCodeIdx] = getReplaceGroupItem(
+              groupCodeIdx,
+              array,
+              groupCodeChildren,
+            );
+          }
         } else {
           const result = groupCodeChildren.map((v) => {
             const value = array[listIndex].children.find(
@@ -402,6 +439,10 @@ const ProdChangeProtocolDialog = (props) => {
         }
         // 전체
       } else {
+        if (nodes.checked) {
+          moveUnUsedList(nodes);
+        }
+        // 전체에서 체크 해제한 경우
         if (nodes.children) {
           reformatCheckList(
             'group',
@@ -426,14 +467,9 @@ const ProdChangeProtocolDialog = (props) => {
       usedProtocolList.children,
       unusedProtocolList.children,
       reformatCheckList,
+      moveUnUsedList,
     ],
   );
-
-  useEffect(() => {
-    if (isNull(selectedValue)) {
-      setSelectedValue(dialogInfo.devModelCode);
-    }
-  }, [selectedValue, dialogInfo]);
 
   const handleCheckAll = (e, type, items) => {
     const { checked } = e.target;
@@ -459,6 +495,8 @@ const ProdChangeProtocolDialog = (props) => {
   const TreeItemComponent = (node) => {
     return (
       <FormControlLabel
+        key={node.id}
+        label={<>{getLabel(node)}</>}
         control={
           <Checkbox
             checked={node.checked}
@@ -466,13 +504,11 @@ const ProdChangeProtocolDialog = (props) => {
             onClick={(e) => e.stopPropagation()}
           />
         }
-        label={<>{getLabel(node)}</>}
-        key={node.id}
       />
     );
   };
 
-  const protocolChangeList = (type, title, items) => {
+  const protocolChangeList = (type, title, subTitle, items) => {
     return (
       <Card
         sx={{
@@ -483,24 +519,42 @@ const ProdChangeProtocolDialog = (props) => {
       >
         <CTree
           sx={{
-            height: 450,
+            height: type === 'protocolApiList' ? 350 : 450,
             flexGrow: 1,
             maxWidth: '100%',
             overflowY: 'auto',
-            maxHeight: 450,
+            maxHeight: type === 'protocolApiList' ? 350 : 450,
           }}
+          dividersx={{ borderBottomWidth: 1 }}
           treeDataList={items.children}
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           onNodeSelect={(e) => {}}
           onNodeToggle={(e) => {}}
+          // TODO... 전체 열고 닫기시 아래 참고. expanded state 관리 필요
+          // 그보다 전체 열고 선택 / 해제가 매우 느림. 해결 이후 작업.
+          // expanded={
+          //   type !== 'protocolApiList'
+          //     ? items.children.map((item) => item.id)
+          //     : []
+          // }
           headerChildren={
-            <FormControlLabel
-              label={title}
-              control={
-                <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
-              }
-            />
+            <>
+              <FormControlLabel
+                label={title}
+                checked={items.children.some((v) => v.checked)}
+                control={
+                  <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
+                }
+              />
+              {subTitle && (
+                <Chip
+                  label={subTitle}
+                  color="info"
+                  sx={{ fontWeight: 600, fontSize: '12px' }}
+                />
+              )}
+            </>
           }
           treeItemLabel={TreeItemComponent}
         />
@@ -523,12 +577,11 @@ const ProdChangeProtocolDialog = (props) => {
       <Divider />
       <CDialogContent grids={[3, 12, 12]}>
         <CSlectAutocomplete
-          defaultValue={dialogInfo.devModelCode}
           value={selectedValue}
-          label={t('word.devModelCode')}
+          label={t('word.copy') + ' ' + t('word.devModelCode')}
           getOption={'desc'}
           getValue={'devModelCode'}
-          optionArray={devModelCodeList}
+          optionArray={dialogInfo.devModelCode}
           onChange={(e, newValue) => handleChange(e, newValue)}
           style={{ minWidth: 300, marginLeft: 2, p: 1 }}
         />
@@ -537,7 +590,8 @@ const ProdChangeProtocolDialog = (props) => {
           <Grid item xs={12}>
             {protocolChangeList(
               'protocolApiList',
-              t('word.all'),
+              `${t('word.total')} ${t('word.select')}`,
+              '',
               protocolApiList,
             )}
           </Grid>
@@ -546,6 +600,7 @@ const ProdChangeProtocolDialog = (props) => {
             <Grid item xs={5}>
               {protocolChangeList(
                 'usedProtocolList',
+                `${t('word.total')} ${t('word.select')}`,
                 t('word.use'),
                 usedProtocolList,
               )}
@@ -591,6 +646,7 @@ const ProdChangeProtocolDialog = (props) => {
             <Grid item xs={5}>
               {protocolChangeList(
                 'unusedProtocolList',
+                `${t('word.total')} ${t('word.select')}`,
                 t('word.unused'),
                 unusedProtocolList,
               )}

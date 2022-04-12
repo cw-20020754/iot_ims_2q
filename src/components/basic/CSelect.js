@@ -30,7 +30,7 @@ const CSelect = React.forwardRef((props, ref) => {
     const errorMessage = onValidation(e.target.value);
     if (!isNull(errorMessage)) {
       setHelpText(errorMessage);
-      return () => onValidationError();
+      return onValidationError();
     }
   };
 
@@ -50,6 +50,7 @@ const CSelect = React.forwardRef((props, ref) => {
         name={name}
         value={value}
         inputProps={inputProps}
+        onBlur={(e) => onValidation && handleValidation(e)}
         onClick={(e) => onValidation && handleValidation(e)}
         onFocus={() => {
           setHelpText('');

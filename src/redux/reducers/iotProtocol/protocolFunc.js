@@ -26,7 +26,7 @@ const initialState = {
     itemId: '',
     itemCode: '',
     length: 0,
-    attribute: '',
+    itemAttrNm: '',
     itemDesc: '',
   },
   protocolValue: {
@@ -158,7 +158,7 @@ const initialState = {
     itemDesc: true,
     itemVer: true,
     deprecatedYn: true,
-    attribute: true,
+    itemAttrNm: true,
     length: true,
     valueId: true,
     valueNm: true,
@@ -238,7 +238,7 @@ const initialState = {
       headerAlign: 'center',
     },
     {
-      field: 'attribute',
+      field: 'itemAttrNm',
       headerName: i18n.t('word.attribute'),
       headerAlign: 'center',
     },
