@@ -1,4 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { productInfoAPI } from '../../api';
+import { isNull } from '../../common/utils';
 
 const name = 'changeState';
 
@@ -19,7 +21,16 @@ const initialState = {
     variant: 'filled',
   },
   searchConditionParams: {},
+  devModelCodeList: [],
 };
+
+// 기기 모델 코드 조회
+export const getDevModelCode = createAsyncThunk(
+  `${name}/getDevModelCode`,
+  async (param, thunkAPI) => {
+    return await productInfoAPI.getDevModelCode(param);
+  },
+);
 
 const changeStateSlice = createSlice({
   name,
@@ -53,7 +64,27 @@ const changeStateSlice = createSlice({
       }
     },
   },
-  extraReducers: {},
+  extraReducers: {
+    [getDevModelCode.pending.type]: (state, action) => {
+      state.loading = true;
+      state.error = false;
+    },
+    [getDevModelCode.fulfilled.type]: (state, action) => {
+      state.loading = false;
+      state.error = false;
+
+      if (!isNull(action.payload)) {
+        const { content } = action.payload.data;
+        state.devModelCodeList = content;
+      } else {
+        state.devModelCodeList = initialState.devModelCodeList;
+      }
+    },
+    [getDevModelCode.rejected.type]: (state, action) => {
+      state.loading = false;
+      state.error = true;
+    },
+  },
 });
 
 export const {

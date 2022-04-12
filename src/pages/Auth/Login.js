@@ -52,6 +52,8 @@ const Login = () => {
     showPassword: false,
   });
 
+  const [hasError, setHasError] = useState('false');
+
   useEffect(() => {
     if (initial && !isNull(state) && state.sessionExpired) {
       setInitial(false);
@@ -142,21 +144,28 @@ const Login = () => {
     event.preventDefault();
   };
 
+  const handleFormChildrenError = () => {
+    setHasError(true);
+  };
+
+  const handleValidation = (e) => {
+    e.target.form.userId.focus();
+    e.target.form.userId.blur();
+
+    e.target.form.password.focus();
+    e.target.form.password.blur();
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Paper
         elevation={3}
-        sx={{
-          marginTop: 50,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          width: '400px',
-          opacity: 0.9,
+        classes={{
+          root: classes.paperRoot,
         }}
       >
-        <Card>
+        <Card component="form" onSubmit={handleSubmit}>
           <CardHeader
             avatar={
               <Box
@@ -184,14 +193,16 @@ const Login = () => {
               root: classes.cardContent,
             }}
           >
-            <Box component="form" onSubmit={handleSubmit}>
+            <Box>
               <CInput
+                name={'userId'}
                 margin={'normal'}
                 label={t('word.userAccount')}
                 fullWidth
-                autoFocus
+                value={values.userId}
                 onChange={handleChange('userId')}
                 onValidation={(value) => rules.emptyIdAlert(value)}
+                onValidationError={handleFormChildrenError}
                 InputLabelProps={{
                   classes: {
                     root: classes.labelResize,
@@ -216,10 +227,13 @@ const Login = () => {
                 }}
               />
               <CInput
+                name={'password'}
                 margin={'normal'}
                 label={t('word.password')}
+                value={values.password}
                 onChange={handleChange('password')}
                 onValidation={(value) => rules.emptyPasswordAlert(value)}
+                onValidationError={handleFormChildrenError}
                 InputLabelProps={{
                   classes: {
                     root: classes.labelResize,
@@ -259,7 +273,8 @@ const Login = () => {
               variant={'contained'}
               className={classes.loginBtn}
               size={'large'}
-              onClick={handleSubmit}
+              type="submit"
+              onClick={(e) => handleValidation(e)}
             >
               {t('word.login')}
             </CButton>

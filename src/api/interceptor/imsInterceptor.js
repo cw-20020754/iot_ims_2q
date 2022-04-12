@@ -40,7 +40,7 @@ imsInterceptor.interceptors.response.use(
   async (error) => {
     const { status, data } = error.response;
     if (!isNull(error) && error.response) {
-      checkErrorStatus(status, data.error);
+      checkErrorStatus(status, !isNull(data.error) ? data.error : data);
     }
     return Promise.reject(error);
   },

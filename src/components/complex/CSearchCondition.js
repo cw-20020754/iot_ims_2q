@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
   Accordion,
@@ -19,10 +19,13 @@ import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
 import { isNull } from 'common/utils';
 
 const CSearchCondition = (props) => {
-  const { conditionList, onClickSearch, expanded, defaultValues } = props;
+  const { conditionList, onClickSearch, expanded, defaultValues, autoClear } =
+    props;
   const classes = AppStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const autoCRef = useRef(null);
 
   const searchConditionParams = useSelector(
     (state) => state.changeState.searchConditionParams,
@@ -40,10 +43,14 @@ const CSearchCondition = (props) => {
       if (isNull(name)) {
         return;
       }
+      const ele = autoCRef.current.getElementsByClassName(
+        'MuiAutocomplete-clearIndicator',
+      )[0];
+      if (autoClear && ele) ele.click();
 
       await dispatch(setSearchConditionParam({ name, value }));
     },
-    [dispatch],
+    [dispatch, autoClear],
   );
 
   const fetchDefaultSearchConditionParam = useCallback(async () => {
@@ -86,7 +93,6 @@ const CSearchCondition = (props) => {
         <Grid container spacing={3}>
           {conditionList &&
             conditionList.map((item, index) => {
-              const ref = React.createRef();
               return (
                 <Grid
                   item
@@ -105,14 +111,12 @@ const CSearchCondition = (props) => {
                       onChange={(e) =>
                         handleChangeFormData(e.target.name, e.target.value)
                       }
-                      ref={ref}
                       fullWidth
                       onValidation={item.onValidation}
                     />
                   )}
                   {item.type === 'selectBox' && (
                     <CSelect
-                      ref={ref}
                       label={item.label}
                       name={item.id}
                       value={searchConditionParams[item.category] || ''}
@@ -124,17 +128,22 @@ const CSearchCondition = (props) => {
                   )}
                   {item.type === 'autoSelectBox' && (
                     <CSlectAutocomplete
-                      ref={ref}
-                      defaultValue={item.defaultValue}
+                      ref={autoCRef}
+                      defaultValue={item.defaultValues}
                       value={item.value || ''}
                       name={item.id}
                       label={item.label}
-                      getOption={'text'}
-                      getValue={'value'}
+                      getOption={item.getOption}
+                      getValue={item.getValue}
                       optionArray={item.optionArray}
-                      onChange={(e, newValue) =>
-                        handleChangeFormData(item.id, newValue.value)
-                      }
+                      onChange={(e, newValue) => {
+                        handleChangeFormData(
+                          item.id,
+                          item.getValue && newValue
+                            ? newValue[item.getValue]
+                            : newValue,
+                        );
+                      }}
                     />
                   )}
                 </Grid>

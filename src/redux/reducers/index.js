@@ -8,6 +8,7 @@ import { comCodeMgmt } from './adminMgmt';
 import { protocolApi } from './iotProtocol';
 import { protocolFunc } from './iotProtocol';
 import authSlice from './authSlice';
+import iotProtocolSlice from './iotProtocolSlice';
 
 const rootReducer = combineReducers({
   changeState: changeStateSlice,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   protocolApi: protocolApi,
   protocolFunc: protocolFunc,
+  iotProtocol: iotProtocolSlice,
 });
 
 const persistConfig = {

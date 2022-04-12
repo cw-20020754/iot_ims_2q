@@ -118,6 +118,10 @@
     "deprecated": "Deprecated",
     "attribute": "Attribute",
     "len": "길이",
+    "change": "변경",
+    "unused": "미사용",
+    "all": "전체",
+    "length": "길이",
     "total": "전체",
     "confirm": "확인"
   },
@@ -139,6 +143,7 @@
       "dataDuplicated": "이미 존재하는 값이 있습니다.",
       "deprecatedConfirm": "이전 버전 항목이 존재합니다.\nDeprecated 후 새 버전을 등록 하시겠습니까?"
     },
+    "saveSuccess": "저장이 완료되었습니다.",
     "validation": {
       "frmwrName": "펌웨어 이름을 입력해주세요. (128자 이내).",
       "frmwrDesc": "펌웨어 설명을 입력해주세요. (2048자 이내).",

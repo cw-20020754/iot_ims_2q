@@ -9,9 +9,9 @@ const CTabs = (props) => {
     tabDataList ? tabDataList[0].value : 0,
   );
 
-  const handleChange = (e, newValue) => {
+  const handleChange = (event, newValue) => {
     setValue(newValue);
-    return onChange(newValue, e.target.textContent);
+    return onChange(newValue, event.target.textContent);
   };
 
   return (
@@ -23,6 +23,7 @@ const CTabs = (props) => {
               ? {
                   flexGrow: 1,
                   display: 'flex',
+                  heigth: 224,
                 }
               : { borderBottom: 1, borderColor: 'divider' }
           }
@@ -47,7 +48,7 @@ const CTabs = (props) => {
           {tabDataList &&
             tabDataList.map((tab, index) => {
               return (
-                <TabPanel key={index} value={tab.value}>
+                <TabPanel key={index} value={tab.value} sx={sx}>
                   {children[index]}
                 </TabPanel>
               );

@@ -223,18 +223,25 @@ const checkValidtaion = (ruleArray, value, option) => {
 
 const checkErrorStatus = async (status, error) => {
   let msg = '';
-  const { message, code } = error;
-  if (status === HTTP_STATUS.UNAUTHORIZED) {
-    removeCookie('accessToken');
-    await persistor.purge();
-    history.push('/login', { sessionExpired: true });
-    history.go();
-  } else if (status !== HTTP_STATUS.SUCCESS) {
-    msg = isNull(code) ? message : `[${code}]\n${message}`;
+
+  if (isNull(error.message)) {
+    msg = error;
   } else {
-    msg = `${i18n.t('desc.networkError')}`;
+    const { message, code } = error;
+
+    if (status === HTTP_STATUS.UNAUTHORIZED) {
+      removeCookie('accessToken');
+      await persistor.purge();
+      history.push('/login', { sessionExpired: true });
+      history.go();
+    } else if (status !== HTTP_STATUS.SUCCESS) {
+      msg = isNull(code) ? message : `[${code}]\n${message}`;
+    } else {
+      msg = `${i18n.t('desc.networkError')}`;
+    }
   }
-  if (!isNull(message)) {
+
+  if (!isNull(msg)) {
     store.dispatch(
       setSnackbar({
         snackbarOpen: true,
@@ -268,4 +275,5 @@ export {
   checkValidtaion,
   checkErrorStatus,
   fileDownload,
+  getCodeToText,
 };

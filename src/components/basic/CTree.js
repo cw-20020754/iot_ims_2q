@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import React from 'react';
+import { useTheme } from '@mui/material/styles';
 import { Card, CardActions, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CTreeItem from './CTreeItem';
+import { isNull } from 'common/utils';
 
 const CTree = (props) => {
   const {
@@ -22,16 +23,11 @@ const CTree = (props) => {
     headerChildren,
     height,
     expanded,
+    treeItemLabel,
     ...other
   } = props;
 
   const theme = useTheme();
-
-  const CTree = styled(TreeView)(({ theme }) => ({
-    flexGrow: 1,
-    height: height ? height : 500,
-    overflow: 'auto',
-  }));
 
   const handleChange = (e, nodeIds) => {
     let iconClicked = e.target.closest('.MuiTreeItem-iconContainer');
@@ -51,6 +47,7 @@ const CTree = (props) => {
         labelInfo={node.labelInfo}
         appendIconButtons={node.appendIconButtons}
         onNodeButtonClick={onNodeButtonClick}
+        labelComponent={!isNull(treeItemLabel) ? treeItemLabel(node) : null}
       >
         {Array.isArray(node.children) ? renderTree(node.children) : null}
       </CTreeItem>
@@ -72,8 +69,13 @@ const CTree = (props) => {
         {treeDataList.length === 0 && (
           <Typography variant={'h3'}>No Data</Typography>
         )}
-        <CTree
-          sx={sx}
+        <TreeView
+          sx={{
+            ...sx,
+            flexGrow: 1,
+            height: height ? height : 500,
+            overflow: 'auto',
+          }}
           selected={selected}
           defaultSelected={defaultSelected}
           defaultCollapseIcon={
@@ -89,7 +91,7 @@ const CTree = (props) => {
         >
           {/* TODO... transition 방법 찾아 적용  */}
           {treeDataList && treeDataList.length > 0 && renderTree(treeDataList)}
-        </CTree>
+        </TreeView>
       </CardActions>
     </Card>
   );
