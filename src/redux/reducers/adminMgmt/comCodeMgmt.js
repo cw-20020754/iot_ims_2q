@@ -37,7 +37,7 @@ const initialState = {
       type: 'textBox',
       value: '',
       size: {
-        xs: 6,
+        xs: 4,
       },
     },
     {
@@ -47,7 +47,7 @@ const initialState = {
       type: 'textBox',
       value: '',
       size: {
-        xs: 6,
+        xs: 4,
       },
     },
     {
@@ -58,7 +58,7 @@ const initialState = {
       value: '',
       optionArray: [],
       size: {
-        xs: 6,
+        xs: 4,
       },
     },
   ],
