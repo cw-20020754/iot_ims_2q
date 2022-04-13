@@ -89,6 +89,16 @@ const initialState = {
       headerAlign: 'center',
     },
     {
+      field: 'langCodeNm',
+      headerName:
+        i18n.t('word.lang') +
+        ' ' +
+        i18n.t('word.code') +
+        ' ' +
+        i18n.t('word.nm'),
+      headerAlign: 'center',
+    },
+    {
       field: 'mdfId',
       headerName: i18n.t('word.mdf') + i18n.t('word.char'),
       headerAlign: 'center',
