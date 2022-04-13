@@ -46,10 +46,6 @@ const ProdChangeProtocolDialog = (props) => {
     (state) => state.iotProtocol.protocolApiList,
     shallowEqual,
   );
-  const devModelCodeList = useSelector(
-    (state) => state.changeState.devModelCodeList,
-    shallowEqual,
-  ); // 기기모델코드
 
   const usedProtocolList = useSelector(
     (state) => state.iotProtocol.usedProtocolList,
@@ -65,9 +61,9 @@ const ProdChangeProtocolDialog = (props) => {
     (state) => state.iotProtocol.dataGridTitle,
     shallowEqual,
   );
-  // console.log('protocolApiList >> ', protocolApiList);
-  // console.log('usedProtocolList >> ', usedProtocolList);
-  // console.log('unusedProtocolList >> ', unusedProtocolList);
+  console.log('protocolApiList >> ', protocolApiList);
+  console.log('usedProtocolList >> ', usedProtocolList);
+  console.log('unusedProtocolList >> ', unusedProtocolList);
 
   // 체크된 것 찾기
   const findCheckList = (list) => {
@@ -126,6 +122,9 @@ const ProdChangeProtocolDialog = (props) => {
   const addList = (list, movedList) => {
     let array = list;
 
+    // console.log('@@ array >> ', JSON.stringify(array));
+    // console.log('@@ movedList >> ', JSON.stringify(movedList));
+
     // 요소에 없는값 추가
     const results = movedList.filter(
       ({ groupCode: id1 }) => !array.some(({ groupCode: id2 }) => id2 === id1),
@@ -143,12 +142,29 @@ const ProdChangeProtocolDialog = (props) => {
       array.map((v) => {
         const data = movedList.find((f) => f.groupCode === v.groupCode);
 
-        if (!isNull(data) && results.length === 0) {
+        if (!isNull(data)) {
+          const children = [...v.children, ...data.children];
+
           return {
             ...v,
-            children: [...v.children, ...data.children].sort(
-              (a, b) => a.valueSeq - b.valueSeq,
-            ),
+            checked: data.checked,
+            children: children.sort((a, b) => {
+              if (Number(a.itemId) > Number(b.itemId)) {
+                return 1;
+              } else if (Number(a.itemId) < Number(b.itemId)) {
+                return -1;
+              } else if (a.itemSeq > b.itemSeq) {
+                return 1;
+              } else if (a.itemSeq < b.itemSeq) {
+                return -1;
+              } else if (a.valueSeq > b.valueSeq) {
+                return 1;
+              } else if (a.valueSeq < b.valueSeq) {
+                return -1;
+              } else {
+                return 0;
+              }
+            }),
           };
         } else {
           return v;
@@ -197,7 +213,7 @@ const ProdChangeProtocolDialog = (props) => {
 
     const checkdedList = checkedToggleAll(
       findCheckList(cloneUsedList),
-      false,
+      true,
       'unusedProtocolList',
     );
 
@@ -206,6 +222,8 @@ const ProdChangeProtocolDialog = (props) => {
     const apiList = setCheckedUsedList(cloneApiList, usedList);
 
     const unusedList = addList(cloneUnusedList, checkdedList);
+
+    // console.log('@@ unusedList >> ', unusedList);
 
     dispatch(
       handleChangeList({
@@ -223,7 +241,7 @@ const ProdChangeProtocolDialog = (props) => {
 
     const checkdedList = checkedToggleAll(
       findCheckList(cloneUnusedList),
-      false,
+      true,
       'usedProtocolList',
     );
 
