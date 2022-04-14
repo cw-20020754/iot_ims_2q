@@ -141,6 +141,10 @@ const ProtocolFuncTree = () => {
 
   useEffect(() => {
     fetchProtocolItemList();
+  }, [fetchProtocolItemList, protocolFuncParams]);
+
+  useEffect(() => {
+    fetchProtocolItemList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
