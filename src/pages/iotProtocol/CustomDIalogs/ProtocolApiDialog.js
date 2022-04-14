@@ -27,13 +27,14 @@ import {
 import { setSnackbar } from 'redux/reducers/changeStateSlice';
 import { protocolAPI } from 'api';
 
+let hasError = false;
+
 const ProtocolApiDialog = (props) => {
   const { onClose } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [hasError, setHasError] = useState('false');
-  const [comCodeSubmit, setComCodeSubmit] = useState('false');
+  const [comCodeSubmit, setComCodeSubmit] = useState(false);
 
   const openDialog = useSelector(
     (state) => state.protocolApi.openDialog,
@@ -217,7 +218,7 @@ const ProtocolApiDialog = (props) => {
   };
 
   const handleFormChildrenError = () => {
-    setHasError(true);
+    hasError = true;
   };
 
   const handleSubmit = async (e) => {
@@ -225,7 +226,7 @@ const ProtocolApiDialog = (props) => {
     e.preventDefault();
 
     if (hasError === true) {
-      setHasError(false);
+      hasError = false;
       return;
     }
 
@@ -266,7 +267,7 @@ const ProtocolApiDialog = (props) => {
   };
 
   const handleClose = async (isSubmit) => {
-    setHasError(false);
+    hasError = false;
     await dispatch(setDialogInfo({}));
     await dispatch(setOpenDialog(false));
     return onClose(isSubmit);

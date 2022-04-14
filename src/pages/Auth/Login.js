@@ -51,7 +51,7 @@ const Login = () => {
     showPassword: false,
   });
 
-  const [hasError, setHasError] = useState('false');
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (initial && !isNull(state) && state.sessionExpired) {

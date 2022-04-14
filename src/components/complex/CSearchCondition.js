@@ -25,7 +25,7 @@ const CSearchCondition = (props) => {
   const classes = AppStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [hasError, setHasError] = useState('false');
+  const [hasError, setHasError] = useState(false);
 
   const autoCRef = useRef(null);
 
