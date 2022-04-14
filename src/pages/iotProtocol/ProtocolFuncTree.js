@@ -13,6 +13,7 @@ import {
 } from 'redux/reducers/iotProtocol/protocolFunc';
 import ProtocolFuncForm from './ProtocolFuncForm';
 import { isNull } from 'common/utils';
+import CInput from 'components/basic/CInput';
 
 const ProtocolFuncTree = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const ProtocolFuncTree = () => {
     shallowEqual,
   );
 
+  const [filter, setFilter] = React.useState('');
   const [expanded, setExpanded] = React.useState([]);
   const [formType, setFormType] = React.useState('item');
   const [protocolItemParams, setProtocolItemParams] = React.useState({
@@ -81,7 +83,7 @@ const ProtocolFuncTree = () => {
     [dispatch, treeDataList],
   );
 
-  const handleNodeToggle = async (nodeIds, e) => {
+  const handleNodeToggle = (nodeIds, e) => {
     if (
       nodeIds &&
       nodeIds.length > 0 &&
@@ -89,17 +91,22 @@ const ProtocolFuncTree = () => {
         (item) => item.id === nodeIds[0] && item.children.length < 2,
       )
     ) {
-      await fetchProtocolValueList(nodeIds[0]);
+      fetchProtocolValueList(nodeIds[0]);
     }
     setExpanded([nodeIds[0]]);
   };
 
   const handleSubmit = () => {
     fetchProtocolItemList();
+    expanded.length > 0 && fetchProtocolValueList(expanded[0]);
   };
 
   const handleFormTypeChange = (value) => {
     setFormType(value);
+  };
+
+  const handleFilterChange = (value) => {
+    setFilter(value);
   };
 
   const fetchGetProtocolItem = useCallback(async () => {
@@ -140,6 +147,10 @@ const ProtocolFuncTree = () => {
 
   useEffect(() => {
     fetchProtocolItemList();
+  }, [fetchProtocolItemList, protocolFuncParams]);
+
+  useEffect(() => {
+    fetchProtocolItemList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -155,10 +166,21 @@ const ProtocolFuncTree = () => {
       >
         <Grid item xs={4}>
           <CTree
-            treeDataList={treeDataList}
+            treeDataList={treeDataList.filter((data) =>
+              data.labelText.includes(filter),
+            )}
             onNodeSelect={handleNodeSelect}
             onNodeToggle={handleNodeToggle}
             expanded={expanded}
+            headerChildren={
+              <CInput
+                name="filter"
+                placeholder={t('word.search')}
+                label={t('word.search')}
+                sx={{ width: 1 }}
+                onChange={(e) => handleFilterChange(e.target.value)}
+              ></CInput>
+            }
           ></CTree>
         </Grid>
         <Grid item xs={8}>

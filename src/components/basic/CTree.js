@@ -94,7 +94,6 @@ const CTree = (props) => {
           onNodeToggle={handleChange}
           {...other}
         >
-          {/* TODO... transition 방법 찾아 적용  */}
           {treeDataList && treeDataList.length > 0 && renderTree(treeDataList)}
         </TreeView>
       </CardActions>

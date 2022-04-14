@@ -90,7 +90,7 @@ const ProtocolApi = () => {
             handleDialogOpen({
               type: 'delApi',
               params: {
-                apiSeq: params.apiSeq,
+                apiSeq: params.row.apiSeq,
               },
             });
           },

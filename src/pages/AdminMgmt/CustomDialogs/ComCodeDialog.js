@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { FormControl } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -24,12 +24,12 @@ import {
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import { setSnackbar } from 'redux/reducers/changeStateSlice';
 
+let hasError = false;
+
 const ComCodeDialog = (props) => {
   const { onClose } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
-
-  const [hasError, setHasError] = useState('false');
 
   const texts = {
     addGroup: t('word.group') + ' ' + t('word.add'),
@@ -130,7 +130,7 @@ const ComCodeDialog = (props) => {
                 value={dialogInfo.params.code}
                 onChange={(e) => handleChange({ code: e.target.value })}
                 onValidation={(value) =>
-                  rules.requireAlert(value) || rules.maxLength(value, 5)
+                  rules.requireAlert(value) || rules.maxLength(value, 4)
                 }
                 onValidationError={handleFormChildrenError}
               ></CInput>
@@ -207,7 +207,7 @@ const ComCodeDialog = (props) => {
   };
 
   const handleFormChildrenError = () => {
-    setHasError(true);
+    hasError = true;
   };
 
   const handleSubmit = async (e) => {
@@ -215,7 +215,7 @@ const ComCodeDialog = (props) => {
     e.preventDefault();
 
     if (hasError === true) {
-      setHasError(false);
+      hasError = false;
       return;
     }
 
@@ -261,7 +261,7 @@ const ComCodeDialog = (props) => {
   };
 
   const handleClose = async (isSubmit, submitType) => {
-    setHasError(false);
+    hasError = false;
     await dispatch(setComCodeDialogInfo({}));
     await dispatch(setComCodeOpenDialog(false));
     return onClose(isSubmit, submitType);
