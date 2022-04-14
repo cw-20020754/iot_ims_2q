@@ -13,6 +13,7 @@ import {
 } from 'redux/reducers/iotProtocol/protocolFunc';
 import ProtocolFuncForm from './ProtocolFuncForm';
 import { isNull } from 'common/utils';
+import CInput from 'components/basic/CInput';
 
 const ProtocolFuncTree = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const ProtocolFuncTree = () => {
     shallowEqual,
   );
 
+  const [filter, setFilter] = React.useState('');
   const [expanded, setExpanded] = React.useState([]);
   const [formType, setFormType] = React.useState('item');
   const [protocolItemParams, setProtocolItemParams] = React.useState({
@@ -103,6 +105,10 @@ const ProtocolFuncTree = () => {
     setFormType(value);
   };
 
+  const handleFilterChange = (value) => {
+    setFilter(value);
+  };
+
   const fetchGetProtocolItem = useCallback(async () => {
     await dispatch(getProtocolItem(protocolItemParams));
   }, [dispatch, protocolItemParams]);
@@ -160,10 +166,21 @@ const ProtocolFuncTree = () => {
       >
         <Grid item xs={4}>
           <CTree
-            treeDataList={treeDataList}
+            treeDataList={treeDataList.filter((data) =>
+              data.labelText.includes(filter),
+            )}
             onNodeSelect={handleNodeSelect}
             onNodeToggle={handleNodeToggle}
             expanded={expanded}
+            headerChildren={
+              <CInput
+                name="filter"
+                placeholder={t('word.search')}
+                label={t('word.search')}
+                sx={{ width: 1 }}
+                onChange={(e) => handleFilterChange(e.target.value)}
+              ></CInput>
+            }
           ></CTree>
         </Grid>
         <Grid item xs={8}>

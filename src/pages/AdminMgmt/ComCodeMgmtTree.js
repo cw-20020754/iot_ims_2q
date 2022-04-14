@@ -1,10 +1,11 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { IconButton } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CButton from 'components/basic/CButton';
 import CTree from 'components/basic/CTree';
+import CInput from 'components/basic/CInput';
 import {
   getComCodeGroup,
   setComCodeParams,
@@ -18,6 +19,8 @@ const ComCodeMgmtTree = (props) => {
   const { onComCodeDialogOpen } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const [filter, setFilter] = React.useState('');
 
   const treeExpanded = useSelector(
     (state) => state.comCodeMgmt.treeExpanded,
@@ -84,6 +87,10 @@ const ComCodeMgmtTree = (props) => {
     dispatch(setTreeExpanded(nodeIds));
   };
 
+  const handleFilterChange = (value) => {
+    setFilter(value);
+  };
+
   const fetchComCodeGroupData = useCallback(async () => {
     await dispatch(getComCodeGroup());
   }, [dispatch]);
@@ -102,7 +109,9 @@ const ComCodeMgmtTree = (props) => {
 
   return (
     <CTree
-      treeDataList={treeDataList}
+      treeDataList={treeDataList.filter((data) =>
+        data.labelText.includes(filter),
+      )}
       onNodeSelect={handleNodeSelect}
       onNodeButtonClick={(e, type, id, name) => {
         e.stopPropagation();
@@ -115,10 +124,25 @@ const ComCodeMgmtTree = (props) => {
       expanded={treeExpanded}
       headerChildren={
         <>
-          <IconButton onClick={() => fetchComCodeGroupData()}>
-            <AutorenewIcon />
-          </IconButton>
+          <Paper
+            sx={{
+              p: '2px 4px',
+              display: 'flex',
+              alignItems: 'center',
+              width: '80%',
+            }}
+          >
+            <CInput
+              sx={{ ml: 1, flex: 1 }}
+              placeholder={t('word.search')}
+              onChange={(e) => handleFilterChange(e.target.value)}
+            />
+            <IconButton onClick={() => fetchComCodeGroupData()}>
+              <AutorenewIcon />
+            </IconButton>
+          </Paper>
           <CButton
+            sx={{ width: '90px' }}
             onClick={() =>
               onComCodeDialogOpen({
                 type: 'addGroup',
