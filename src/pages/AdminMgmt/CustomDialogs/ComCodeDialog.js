@@ -130,7 +130,7 @@ const ComCodeDialog = (props) => {
                 value={dialogInfo.params.code}
                 onChange={(e) => handleChange({ code: e.target.value })}
                 onValidation={(value) =>
-                  rules.requireAlert(value) || rules.maxLength(value, 5)
+                  rules.requireAlert(value) || rules.maxLength(value, 4)
                 }
                 onValidationError={handleFormChildrenError}
               ></CInput>

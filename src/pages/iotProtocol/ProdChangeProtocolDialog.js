@@ -61,9 +61,6 @@ const ProdChangeProtocolDialog = (props) => {
     (state) => state.iotProtocol.dataGridTitle,
     shallowEqual,
   );
-  console.log('protocolApiList >> ', protocolApiList);
-  console.log('usedProtocolList >> ', usedProtocolList);
-  console.log('unusedProtocolList >> ', unusedProtocolList);
 
   // 체크된 것 찾기
   const findCheckList = (list) => {
@@ -119,8 +116,8 @@ const ProdChangeProtocolDialog = (props) => {
     });
   };
   // 리스트 추가
-  const addList = (list, movedList) => {
-    let array = list;
+  const addList = (originList, movedList) => {
+    let array = originList;
 
     // console.log('@@ array >> ', JSON.stringify(array));
     // console.log('@@ movedList >> ', JSON.stringify(movedList));

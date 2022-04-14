@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Grid } from '@mui/material';
 import ComCodeDialog from './CustomDialogs/ComCodeDialog';
@@ -6,9 +6,10 @@ import ComCodeMgmtTree from './ComCodeMgmtTree';
 import ComCodeMgmtGrid from './ComCodeMgmtGrid';
 import {
   getComCodeGroup,
-  setComCodeParams,
   setComCodeDialogInfo,
   setComCodeOpenDialog,
+  getComCode,
+  setComCodeParams,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 
 const ComCodeMgmt = () => {
@@ -19,6 +20,16 @@ const ComCodeMgmt = () => {
     shallowEqual,
   );
 
+  const initComCodeParams = useSelector(
+    (state) => state.comCodeMgmt.initComCodeParams,
+    shallowEqual,
+  );
+
+  const comCodeParams = useSelector(
+    (state) => state.comCodeMgmt.comCodeParams,
+    shallowEqual,
+  );
+
   const handleDialogOpen = async (values) => {
     await dispatch(setComCodeDialogInfo({ ...dialogInfo, ...values }));
     await dispatch(setComCodeOpenDialog(true));
@@ -26,11 +37,23 @@ const ComCodeMgmt = () => {
 
   const handleDialogClose = async (isSubmit, submitType) => {
     if (isSubmit) {
-      submitType === 'group'
-        ? await dispatch(getComCodeGroup())
-        : dispatch(setComCodeParams({ dialogInfo }));
+      if (submitType === 'group') {
+        await dispatch(getComCodeGroup());
+      } else {
+        await dispatch(getComCode(comCodeParams));
+        await dispatch(getComCodeGroup());
+      }
     }
   };
+
+  const dispatchComCodeParams = async () => {
+    await dispatch(setComCodeParams({ ...initComCodeParams }));
+  };
+
+  useEffect(() => {
+    return () => dispatchComCodeParams();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

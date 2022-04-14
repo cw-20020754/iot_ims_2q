@@ -106,9 +106,7 @@ export const postProtocolApiExport = async (body) => {
  */
 export const deleteProtocolApi = async (params) => {
   return axios
-    .delete(
-      makeurlQeuryString(`${API.API_URL}/v1/admin/deleteProtocolApi/`, params),
-    )
+    .delete(makeurlQeuryString(`${API.API_URL}/v1/protocol/api/`, params))
     .then((response) => {
       return response;
     });

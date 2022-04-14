@@ -5,6 +5,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleIcon from '@mui/icons-material/Article';
+import { isNull } from 'common/utils';
 
 const name = 'comCode';
 
@@ -18,6 +19,14 @@ const initialState = {
   },
   // 공통코드 목록 조회 by getComCode
   comCodeList: [],
+  initComCodeParams: {
+    groupId: '',
+    code: '',
+    codeNm: '',
+    page: 0,
+    pageSize: 5,
+    rowPerPage: [5, 10, 25],
+  },
   comCodeParams: {
     groupId: '',
     code: '',
@@ -28,6 +37,8 @@ const initialState = {
   },
   comCodeTotalElements: 0,
   treeDataList: [],
+  treeExpanded: [],
+  initDataGridTitle: i18n.t('word.com') + i18n.t('word.code'),
   dataGridTitle: i18n.t('word.com') + i18n.t('word.code'),
   conditionList: [
     {
@@ -247,9 +258,16 @@ const comCodeMgmt = createSlice({
     setComCodeOpenDialog(state, action) {
       state.openDialog = action.payload;
     },
+    setTreeExpanded(state, action) {
+      state.treeExpanded = action.payload;
+    },
     setComCodeDialogInfo(state, action) {
       const obj = action.payload;
       state.dialogInfo = { ...state.dialogInfo, ...obj };
+    },
+    setDataGridTitle(state, action) {
+      const value = action.payload;
+      state.dataGridTitle = state.initDataGridTitle.concat(' / ').concat(value);
     },
     setConditionSelctList(state, action) {
       const obj = action.payload;
@@ -371,12 +389,23 @@ const comCodeMgmt = createSlice({
         });
       }
 
-      state.comCodeParams = {
-        ...state.comCodeParams,
-        groupId: state.treeDataList.length > 0 && state.treeDataList[0].id,
-        groupNm:
-          state.treeDataList.length > 0 && state.treeDataList[0].labelText,
-      };
+      if (
+        isNull(state.comCodeParams.groupId) ||
+        isNull(state.comCodeParams.groupNm)
+      ) {
+        const groupNm =
+          state.treeDataList.length > 0 && state.treeDataList[0].labelText;
+        state.comCodeParams = {
+          ...state.comCodeParams,
+          groupId: state.treeDataList.length > 0 && state.treeDataList[0].id,
+          groupNm: groupNm,
+        };
+        state.dataGridTitle = state.initDataGridTitle
+          .concat(' / ')
+          .concat(groupNm);
+      }
+
+      state.treeExpanded = [];
 
       state.loading = false;
       state.error = false;
@@ -518,5 +547,7 @@ export const {
   setComCodeOpenDialog,
   setComCodeDialogInfo,
   setConditionSelctList,
+  setDataGridTitle,
+  setTreeExpanded,
 } = comCodeMgmt.actions;
 export default comCodeMgmt.reducer;

@@ -81,7 +81,7 @@ const ProtocolFuncTree = () => {
     [dispatch, treeDataList],
   );
 
-  const handleNodeToggle = async (nodeIds, e) => {
+  const handleNodeToggle = (nodeIds, e) => {
     if (
       nodeIds &&
       nodeIds.length > 0 &&
@@ -89,13 +89,14 @@ const ProtocolFuncTree = () => {
         (item) => item.id === nodeIds[0] && item.children.length < 2,
       )
     ) {
-      await fetchProtocolValueList(nodeIds[0]);
+      fetchProtocolValueList(nodeIds[0]);
     }
     setExpanded([nodeIds[0]]);
   };
 
   const handleSubmit = () => {
     fetchProtocolItemList();
+    expanded.length > 0 && fetchProtocolValueList(expanded[0]);
   };
 
   const handleFormTypeChange = (value) => {

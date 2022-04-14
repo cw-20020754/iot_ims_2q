@@ -255,7 +255,7 @@ const ProtocolApiDialog = (props) => {
         await dispatch(putProtocolApi(dialogInfo.params));
         break;
       case 'delApi':
-        await dispatch(deleteProtocolApi(dialogInfo.params.groupId.toString()));
+        await dispatch(deleteProtocolApi(dialogInfo.params.apiSeq.toString()));
         break;
       default:
     }
@@ -269,7 +269,7 @@ const ProtocolApiDialog = (props) => {
     setHasError(false);
     await dispatch(setDialogInfo({}));
     await dispatch(setOpenDialog(false));
-    return () => onClose(isSubmit);
+    return onClose(isSubmit);
   };
 
   const handleComCodeDialogOpen = async (values) => {
@@ -326,38 +326,42 @@ const ProtocolApiDialog = (props) => {
           prependIcon={dialogInfo.type === 'delApi' && WarningIcon}
           title={texts[dialogInfo.type]}
         >
-          <CButton
-            type="button"
-            onClick={() =>
-              handleComCodeDialogOpen({
-                type: 'addCode',
-                params: {
-                  groupId: '001',
-                  code: '',
-                  codeNm: '',
-                  langCode: 'ko',
-                },
-              })
-            }
-          >
-            {texts.protocolGroupAdd}
-          </CButton>
-          <CButton
-            type="button"
-            onClick={() =>
-              handleComCodeDialogOpen({
-                type: 'addCode',
-                params: {
-                  groupId: '003',
-                  code: '',
-                  codeNm: '',
-                  langCode: 'ko',
-                },
-              })
-            }
-          >
-            {texts.apiNmAdd}
-          </CButton>
+          {dialogInfo.type !== 'delApi' && (
+            <>
+              <CButton
+                type="button"
+                onClick={() =>
+                  handleComCodeDialogOpen({
+                    type: 'addCode',
+                    params: {
+                      groupId: '001',
+                      code: '',
+                      codeNm: '',
+                      langCode: 'ko',
+                    },
+                  })
+                }
+              >
+                {texts.protocolGroupAdd}
+              </CButton>
+              <CButton
+                type="button"
+                onClick={() =>
+                  handleComCodeDialogOpen({
+                    type: 'addCode',
+                    params: {
+                      groupId: '003',
+                      code: '',
+                      codeNm: '',
+                      langCode: 'ko',
+                    },
+                  })
+                }
+              >
+                {texts.apiNmAdd}
+              </CButton>
+            </>
+          )}
         </CDialogTitle>
         {renderForm(dialogInfo.type)}
         <CDialogActions>

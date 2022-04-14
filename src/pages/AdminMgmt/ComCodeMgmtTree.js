@@ -9,6 +9,8 @@ import {
   getComCodeGroup,
   setComCodeParams,
   postComCodeListForTree,
+  setDataGridTitle,
+  setTreeExpanded,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
 
@@ -17,7 +19,10 @@ const ComCodeMgmtTree = (props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const [expanded, setExpanded] = React.useState([]);
+  const treeExpanded = useSelector(
+    (state) => state.comCodeMgmt.treeExpanded,
+    shallowEqual,
+  );
 
   const treeDataList = useSelector(
     (state) => state.comCodeMgmt.treeDataList,
@@ -28,8 +33,12 @@ const ComCodeMgmtTree = (props) => {
     async (e, nodeIds) => {
       const name = 'codeId';
       let value = '';
+      let groupNm = '';
       if (nodeIds.indexOf('|') !== -1) {
         const nodeId = nodeIds.split('|');
+        groupNm = treeDataList.filter((data) => data.id === nodeId[0])[0]
+          ?.labelText;
+
         await dispatch(
           setComCodeParams({
             page: 0,
@@ -38,21 +47,25 @@ const ComCodeMgmtTree = (props) => {
             langCode: treeDataList
               .filter((data) => data.id === nodeId[0])[0]
               .children.filter((child) => child.id === nodeIds)[0]?.labelInfo,
-            groupNm: e.target.textContent,
+            groupNm: groupNm,
           }),
         );
         value = nodeId[1];
       } else {
+        groupNm = treeDataList.filter((data) => data.id === nodeIds)[0]
+          ?.labelText;
+
         await dispatch(
           setComCodeParams({
             page: 0,
             groupId: nodeIds,
-            groupNm: e.target.textContent,
+            groupNm: groupNm,
             code: '',
             codeNm: '',
           }),
         );
       }
+      dispatch(setDataGridTitle(groupNm));
       await dispatch(setSearchConditionParam({ name, value }));
     },
     [dispatch, treeDataList],
@@ -68,7 +81,7 @@ const ComCodeMgmtTree = (props) => {
     ) {
       await fetchComCodeGroupChildren(nodeIds);
     }
-    setExpanded(nodeIds);
+    dispatch(setTreeExpanded(nodeIds));
   };
 
   const fetchComCodeGroupData = useCallback(async () => {
@@ -99,7 +112,7 @@ const ComCodeMgmtTree = (props) => {
         });
       }}
       onNodeToggle={handleNodeToggle}
-      expanded={expanded}
+      expanded={treeExpanded}
       headerChildren={
         <>
           <IconButton onClick={() => fetchComCodeGroupData()}>

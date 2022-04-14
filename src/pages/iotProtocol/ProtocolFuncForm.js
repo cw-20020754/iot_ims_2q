@@ -36,14 +36,15 @@ import {
 import { setSnackbar } from 'redux/reducers/changeStateSlice';
 import { protocolFuncAPI } from 'api';
 
+let hasError = false;
+
 const ProtocolFuncForm = (props) => {
   const { formType, onSubmit, onFormTypeChnage } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [hasError, setHasError] = useState('false');
-  const [deprecatedConfirm, setDeprecatedConfirm] = useState('false');
-  const [comCodeSubmit, setComCodeSubmit] = useState('false');
+  const [deprecatedConfirm, setDeprecatedConfirm] = useState(false);
+  const [comCodeSubmit, setComCodeSubmit] = useState(false);
 
   const texts = {
     funcNmAdd: t('word.func') + ' ' + t('word.nm') + ' ' + t('word.add'),
@@ -153,6 +154,11 @@ const ProtocolFuncForm = (props) => {
 
   const dataGridTitle = useSelector(
     (state) => state.protocolFunc.dataGridTitle,
+    shallowEqual,
+  );
+
+  const hasValidationError = useSelector(
+    (state) => state.protocolFunc.hasValidationError,
     shallowEqual,
   );
 
@@ -446,6 +452,7 @@ const ProtocolFuncForm = (props) => {
   };
 
   const handleValidation = (e) => {
+    hasError = false;
     switch (formType) {
       case 'item':
         e.target.form.funcType.click();
@@ -458,7 +465,6 @@ const ProtocolFuncForm = (props) => {
         e.target.form.itemAttrNm.blur();
         e.target.form.funcDesc.focus();
         e.target.form.funcDesc.blur();
-
         break;
       case 'value':
         e.target.form.valueNm.click();
@@ -473,7 +479,7 @@ const ProtocolFuncForm = (props) => {
   };
 
   const handleFormChildrenError = () => {
-    setHasError(true);
+    hasError = true;
   };
 
   const handleSubmit = async (e) => {
@@ -481,7 +487,7 @@ const ProtocolFuncForm = (props) => {
     e.preventDefault();
 
     if (hasError === true) {
-      setHasError(false);
+      hasError = false;
       return;
     }
 
@@ -561,7 +567,7 @@ const ProtocolFuncForm = (props) => {
   };
 
   const handleCancel = async () => {
-    setHasError(false);
+    hasError = false;
     await dispatch(setDialogInfo({}));
     await dispatch(setOpenDialog(false));
   };
