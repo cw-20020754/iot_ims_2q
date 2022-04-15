@@ -20,6 +20,7 @@ const CTreeItem = React.forwardRef((props, ref) => {
       padding: 0,
       '& .MuiTreeItem-iconContainer svg': {
         fontSize: labelComponent ? 'normal' : 'xx-large',
+        marginRight: '8px',
       },
     },
   });

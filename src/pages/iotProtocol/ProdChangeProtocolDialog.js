@@ -3,7 +3,7 @@ import CDialogTitle from 'components/basic/CDialogTitle';
 import CButton from 'components/basic/CButton';
 import CDialogContent from 'components/basic/CDialogContent';
 import CDialogActions from 'components/basic/CDialogActions';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import CSlectAutocomplete from 'components/basic/CSlectAutocomplete';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { isNull, makeQuery } from 'common/utils';
@@ -16,6 +16,7 @@ import {
   Grid,
   Typography,
   Chip,
+  Box,
 } from '@mui/material';
 import IotProtocolStyle from './IotProtocolStyle';
 import { useTheme } from '@mui/styles';
@@ -41,6 +42,7 @@ const ProdChangeProtocolDialog = (props) => {
   const theme = useTheme();
 
   const [selectedValue, setSelectedValue] = useState('');
+  const [expanded, setExpanded] = useState([]);
 
   const protocolApiList = useSelector(
     (state) => state.iotProtocol.protocolApiList,
@@ -61,6 +63,9 @@ const ProdChangeProtocolDialog = (props) => {
     (state) => state.iotProtocol.dataGridTitle,
     shallowEqual,
   );
+  // console.log('protocolApiList >> ', protocolApiList);
+  // console.log('usedProtocolList >> ', usedProtocolList);
+  // console.log('unusedProtocolList >> ', unusedProtocolList);
 
   // 체크된 것 찾기
   const findCheckList = (list) => {
@@ -119,9 +124,6 @@ const ProdChangeProtocolDialog = (props) => {
   const addList = (originList, movedList) => {
     let array = originList;
 
-    // console.log('@@ array >> ', JSON.stringify(array));
-    // console.log('@@ movedList >> ', JSON.stringify(movedList));
-
     // 요소에 없는값 추가
     const results = movedList.filter(
       ({ groupCode: id1 }) => !array.some(({ groupCode: id2 }) => id2 === id1),
@@ -140,28 +142,15 @@ const ProdChangeProtocolDialog = (props) => {
         const data = movedList.find((f) => f.groupCode === v.groupCode);
 
         if (!isNull(data)) {
-          const children = [...v.children, ...data.children];
+          const children =
+            results.length === 0
+              ? [...v.children, ...data.children]
+              : [...data.children];
 
           return {
             ...v,
             checked: data.checked,
-            children: children.sort((a, b) => {
-              if (Number(a.itemId) > Number(b.itemId)) {
-                return 1;
-              } else if (Number(a.itemId) < Number(b.itemId)) {
-                return -1;
-              } else if (a.itemSeq > b.itemSeq) {
-                return 1;
-              } else if (a.itemSeq < b.itemSeq) {
-                return -1;
-              } else if (a.valueSeq > b.valueSeq) {
-                return 1;
-              } else if (a.valueSeq < b.valueSeq) {
-                return -1;
-              } else {
-                return 0;
-              }
-            }),
+            children: children.sort((a, b) => a.rownum - b.rownum),
           };
         } else {
           return v;
@@ -219,8 +208,6 @@ const ProdChangeProtocolDialog = (props) => {
     const apiList = setCheckedUsedList(cloneApiList, usedList);
 
     const unusedList = addList(cloneUnusedList, checkdedList);
-
-    // console.log('@@ unusedList >> ', unusedList);
 
     dispatch(
       handleChangeList({
@@ -510,8 +497,31 @@ const ProdChangeProtocolDialog = (props) => {
   const TreeItemComponent = (node) => {
     return (
       <FormControlLabel
+        sx={{ width: '100%' }}
         key={node.id}
-        label={<>{getLabel(node)}</>}
+        classes={{
+          label: classes.formLabel,
+        }}
+        label={
+          <Box
+            component="div"
+            sx={{
+              display: 'flex',
+              padding: '2px',
+              width: '100%',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            {getLabel(node)}
+            {node.children && node.type !== 'protocolApiList' && (
+              <Typography color={`${theme.palette.grey[600]}`}>
+                {node.children.length}
+                {t('word.case')}
+              </Typography>
+            )}
+          </Box>
+        }
         control={
           <Checkbox
             checked={node.checked}
@@ -521,6 +531,12 @@ const ProdChangeProtocolDialog = (props) => {
         }
       />
     );
+  };
+
+  const handleNodeToggle = (e, type) => {
+    if (type !== 'protocolApiList') {
+      setExpanded(e);
+    }
   };
 
   const protocolChangeList = (type, title, subTitle, items) => {
@@ -545,7 +561,8 @@ const ProdChangeProtocolDialog = (props) => {
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           onNodeSelect={(e) => {}}
-          onNodeToggle={(e) => {}}
+          onNodeToggle={(e) => handleNodeToggle(e, type)}
+          expanded={type !== 'protocolApiList' ? expanded : []}
           // TODO... 전체 열고 닫기시 아래 참고. expanded state 관리 필요
           // 그보다 전체 열고 선택 / 해제가 매우 느림. 해결 이후 작업.
           // expanded={
@@ -561,12 +578,16 @@ const ProdChangeProtocolDialog = (props) => {
                 control={
                   <Checkbox onChange={(e) => handleCheckAll(e, type, items)} />
                 }
+                sx={{ paddingRight: '28px' }}
               />
               {subTitle && (
                 <Chip
                   label={subTitle}
                   color="info"
-                  sx={{ fontWeight: 600, fontSize: '12px' }}
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '12px',
+                  }}
                 />
               )}
             </>
@@ -670,7 +691,11 @@ const ProdChangeProtocolDialog = (props) => {
         </Grid>
       </CDialogContent>
       <CDialogActions sx={{ padding: 4 }}>
-        <CButton variant="outlined" type={'cancel'} onClick={() => onClose()}>
+        <CButton
+          variant="outlined"
+          type={'cancel'}
+          onClick={() => onClose('cancel')}
+        >
           {t('word.cancel')}
         </CButton>
         <CButton variant="outlined" type={'save'} onClick={() => handleSave()}>

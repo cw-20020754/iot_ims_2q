@@ -318,15 +318,18 @@ const ProdByProtocol = () => {
     await dispatch(setColumnVisibilityModel(newModel));
   };
 
-  const dialogClose = useCallback(async () => {
-    setOpenDialog(false);
+  const dialogClose = useCallback(
+    async (type) => {
+      setOpenDialog(false);
 
-    if (!isNull(searchCondition)) {
-      await fetchProtocolData({
-        ...searchCondition,
-      });
-    }
-  }, [fetchProtocolData, searchCondition]);
+      if (type !== 'cancel' && !isNull(searchCondition)) {
+        await fetchProtocolData({
+          ...searchCondition,
+        });
+      }
+    },
+    [fetchProtocolData, searchCondition],
+  );
 
   return (
     <Grid container>
@@ -346,6 +349,7 @@ const ProdByProtocol = () => {
               sx={{
                 width: '100%',
                 padding: 2,
+                flex: 8,
               }}
               orientation={'vertical'}
               tabDataList={tabDataList}
