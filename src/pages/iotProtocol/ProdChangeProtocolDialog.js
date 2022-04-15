@@ -260,7 +260,7 @@ const ProdChangeProtocolDialog = (props) => {
         return v;
       });
 
-    const result = await dispatch(
+    await dispatch(
       postProtocolByProduct({
         prodTypeCode: dialogInfo.searchCondition.prodTypeCode,
         typeCode: dialogInfo.searchCondition.typeCode,
@@ -270,20 +270,6 @@ const ProdChangeProtocolDialog = (props) => {
       }),
     );
 
-    if (
-      !isNull(result) &&
-      !isNull(result.payload) &&
-      result.payload.status === HTTP_STATUS.SUCCESS
-    ) {
-      await dispatch(
-        setSnackbar({
-          snackbarOpen: true,
-          severity: 'success',
-          snackbarMessage: t('desc.saveSuccess'),
-          autoHideDuration: 3000,
-        }),
-      );
-    }
     onClose();
   };
 
@@ -587,6 +573,7 @@ const ProdChangeProtocolDialog = (props) => {
                   sx={{
                     fontWeight: 600,
                     fontSize: '12px',
+                    marginRight: '15px',
                   }}
                 />
               )}
