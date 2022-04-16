@@ -34,6 +34,7 @@ const CTabs = (props) => {
             variant="scrollable"
             scrollButtons
             allowScrollButtonsMobile
+            sx={orientation === 'vertical' ? { flex: 2 } : null}
           >
             {tabDataList &&
               tabDataList.map((tab, index) => (

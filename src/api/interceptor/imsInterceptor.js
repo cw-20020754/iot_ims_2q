@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { isNull, store } from 'common/utils';
+import { isNull, saveAlert, store } from 'common/utils';
 import { decryptData, getCookie } from 'common/auth';
 import { checkErrorStatus } from 'common/utils';
 
@@ -24,6 +24,7 @@ imsInterceptor.interceptors.request.use(
         config.headers.userId = decryptData(userId);
       }
 
+      saveAlert('ims', config);
       return config;
     } catch (err) {}
     return config;

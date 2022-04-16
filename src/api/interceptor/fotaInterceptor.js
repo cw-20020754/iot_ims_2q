@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { checkErrorStatus, isNull } from 'common/utils';
+import { checkErrorStatus, isNull, saveAlert } from 'common/utils';
 import { decryptData, getCookie } from 'common/auth';
-import { HTTP_STATUS } from '../../common/constants';
 
 const fotaInterceptor = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? '' : '/',
@@ -16,6 +15,9 @@ fotaInterceptor.interceptors.request.use(
       if (!isNull(token)) {
         config.headers.Authorization = 'Bearer ' + decryptData(token);
       }
+
+      saveAlert('fota', config);
+
       return config;
     } catch (err) {}
     return config;

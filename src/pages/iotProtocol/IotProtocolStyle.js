@@ -6,7 +6,6 @@ const IotProtocolStyle = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.grey[500]}`,
     position: 'sticky',
     top: 0,
-    // zIndex: 1,
     minHeight: 50,
   },
   itemContent: {
@@ -27,9 +26,19 @@ const IotProtocolStyle = makeStyles((theme) => ({
   },
   CButton: {
     borderWidth: 2,
+    fontSize: '1.2rem',
+    minWidth: '70px',
     '&.Mui-disabled': {
       borderWidth: 2,
+      fontSize: '1.2rem',
     },
+    '&:hover': {
+      borderWidth: 2,
+      fontSize: '1.2rem',
+    },
+  },
+  formLabel: {
+    width: '100%',
   },
 }));
 

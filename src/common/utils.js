@@ -1,7 +1,11 @@
 import dayjs from 'dayjs';
 import qs from 'qs';
 import xlsx from 'xlsx';
-import { HTTP_STATUS } from './constants';
+import {
+  FOTA_POST_FOR_INQUIRY_LIST,
+  HTTP_STATUS,
+  IMS_POST_FOR_INQUIRY_LIST,
+} from './constants';
 import i18n from 'common/locale/i18n';
 import { setSnackbar } from '../redux/reducers/changeStateSlice';
 import { removeCookie } from './auth';
@@ -258,6 +262,25 @@ const fileDownload = (result) => {
   saveAs(result.data, decodeURIComponent(fileName));
 };
 
+const saveAlert = (type, config) => {
+  if (config.method === 'get') return;
+
+  if (
+    (type === 'ims' &&
+      !IMS_POST_FOR_INQUIRY_LIST.includes(config.url.split('v1')[1])) ||
+    (type === 'fota' && !FOTA_POST_FOR_INQUIRY_LIST.includes(config.url))
+  ) {
+    store.dispatch(
+      setSnackbar({
+        snackbarOpen: true,
+        severity: 'success',
+        snackbarMessage: i18n.t('desc.saveSuccess'),
+        autoHideDuration: 3000,
+      }),
+    );
+  }
+};
+
 export {
   store,
   injectStore,
@@ -276,4 +299,5 @@ export {
   checkErrorStatus,
   fileDownload,
   getCodeToText,
+  saveAlert,
 };

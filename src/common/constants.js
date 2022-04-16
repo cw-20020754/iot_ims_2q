@@ -43,4 +43,21 @@ const GROUP_ID = {
   PROTOCOL_ITEM_TYPE: '009',
 };
 
-export { API, HTTP_STATUS, GROUP_ID };
+// 조회용 post list
+const IMS_POST_FOR_INQUIRY_LIST = [
+  '/admin/comCode/list',
+  '/protocol/product/excel',
+  '/protocol/api/excel',
+  '/protocol/item/excel',
+  '/protocol/item/listAll',
+];
+
+const FOTA_POST_FOR_INQUIRY_LIST = ['https://tcauth.coway.co.kr/oauth/token'];
+
+export {
+  API,
+  HTTP_STATUS,
+  GROUP_ID,
+  IMS_POST_FOR_INQUIRY_LIST,
+  FOTA_POST_FOR_INQUIRY_LIST,
+};
