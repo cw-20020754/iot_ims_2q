@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Toolbar, Typography } from '@mui/material';
+import { Box, IconButton, Toolbar, Typography } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import CButton from '../basic/CButton';
@@ -10,6 +10,8 @@ import { useTheme } from '@mui/styles';
 import { useTranslation } from 'react-i18next';
 import { persistor } from 'index';
 import { decryptData } from '../../common/auth';
+import { setSidebarShow } from '../../redux/reducers/changeStateSlice';
+import MenuIcon from '@mui/icons-material/Menu';
 const AppHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,11 +50,11 @@ const AppHeader = () => {
   };
 
   return (
-    <AppBar position="fixed" open={sidebarShow} enableColorOnDark elevation={0}>
+    <AppBar position="fixed" open={sidebarShow}>
       <Toolbar sx={{ justifyContent: 'flex-end' }}>
         {/*<IconButton*/}
         {/*  color="neutral"*/}
-        {/*  aria-label="open drawer"*/}
+        {/*  aria-label="toggle drawer"*/}
         {/*  onClick={() => {*/}
         {/*    dispatch(setSidebarShow(!sidebarShow));*/}
         {/*  }}*/}
@@ -60,22 +62,30 @@ const AppHeader = () => {
         {/*>*/}
         {/*  <MenuIcon />*/}
         {/*</IconButton>*/}
-        {/*<CButton variant="text">IOt</CButton>*/}
-        <Typography
-          variant="h5"
-          noWrap
-          component="div"
-          color={theme.palette.primary.main}
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}
         >
-          {`${username && decryptData(username)}  ${t('word.sir')}`}
-        </Typography>
-        <CButton
-          variant="text"
-          onClick={executeLogout}
-          style={{ fontSize: '0.925rem' }}
-        >
-          {t('word.logout')}
-        </CButton>
+          <Typography
+            variant="h5"
+            noWrap
+            component="div"
+            color={theme.palette.primary.main}
+          >
+            {`${username && decryptData(username)}  ${t('word.sir')}`}
+          </Typography>
+          <CButton
+            variant="text"
+            onClick={executeLogout}
+            style={{ fontSize: '0.925rem' }}
+          >
+            {t('word.logout')}
+          </CButton>
+        </Box>
       </Toolbar>
     </AppBar>
   );

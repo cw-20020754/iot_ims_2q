@@ -49,6 +49,7 @@ const IMS_POST_FOR_INQUIRY_LIST = [
   '/protocol/product/excel',
   '/protocol/api/excel',
   '/protocol/item/excel',
+  '/protocol/item/list',
   '/protocol/item/listAll',
 ];
 

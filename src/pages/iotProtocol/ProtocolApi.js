@@ -245,7 +245,7 @@ const ProtocolApi = () => {
           onClickSearch={handleClickSearch}
           conditionList={conditionList}
           defaultValues={defaultProtocolApiParams}
-          expanded={true}
+          defaultExpanded={true}
         />
       )}
       <CDataGrid

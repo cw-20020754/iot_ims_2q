@@ -2,7 +2,13 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 // material-ui
-import { Box, ButtonBase, List, Typography } from '@mui/material';
+import {
+  Box,
+  ButtonBase,
+  List,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
 
@@ -11,10 +17,10 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { BrowserView, MobileView } from 'react-device-detect';
 
 // project imports
-import logo from 'assets/images/logo.png';
 import { DRAWER_WIDTH } from 'common/constants';
 import { useTranslation } from 'react-i18next';
 import CMenuList from '../complex/MenuList/CMenuList';
+import logo_iocare from 'assets/images/logo_iocare.png';
 
 const AppSidebar = () => {
   const { t } = useTranslation();
@@ -70,22 +76,34 @@ const AppSidebar = () => {
       '& .MuiDrawer-paper': closedMixin(theme),
     }),
   }));
-  // ----------------------------------------------------------------------
 
+  // ----------------------------------------------------------------------
+  // const hidden = useMediaQuery((theme) => theme.breakpoints.up('md'));
   return (
     <Box component="nav" aria-label="mailbox folders">
       <Drawer variant="permanent" open={sidebarShow}>
         {/*Logo Section*/}
         <DrawerHeader>
           <ButtonBase disableRipple>
-            <Box component={'img'} src={logo} sx={{ width: '75%' }} />
+            <Box
+              component={'img'}
+              src={logo_iocare}
+              sx={{ width: '70%', alignItems: 'flex-start' }}
+            />
           </ButtonBase>
-          <ButtonBase>
-            <Typography variant="subtitle1" noWrap>
-              {t('word.appTitle')}
+          <ButtonBase
+            sx={{
+              alignItems: 'flex-end',
+              padding: '12px',
+            }}
+            disableRipple
+          >
+            <Typography variant="h4" noWrap sx={{ lineHeight: 1.635 }}>
+              {t('word.iot') + ' ' + t('word.ims')}
             </Typography>
           </ButtonBase>
         </DrawerHeader>
+
         <BrowserView>
           <PerfectScrollbar
             component="div"
@@ -95,7 +113,6 @@ const AppSidebar = () => {
             }}
           >
             <List>
-              {' '}
               <CMenuList />
             </List>
           </PerfectScrollbar>

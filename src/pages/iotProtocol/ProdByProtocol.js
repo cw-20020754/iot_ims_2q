@@ -338,7 +338,7 @@ const ProdByProtocol = () => {
           <CSearchCondition
             onClickSearch={handleClickSearch}
             conditionList={conditionList}
-            expanded={true}
+            defaultExpanded={true}
             defaultValues={defaultProtocolApiParams}
             autoClear
           />

@@ -20,12 +20,18 @@ import { isNull } from 'common/utils';
 import rules from 'common/rules';
 
 const CSearchCondition = (props) => {
-  const { conditionList, onClickSearch, expanded, defaultValues, autoClear } =
-    props;
+  const {
+    conditionList,
+    onClickSearch,
+    defaultExpanded,
+    defaultValues,
+    autoClear,
+  } = props;
   const classes = AppStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [hasError, setHasError] = useState(false);
+  const [expanded, setExpaned] = useState(false);
 
   const autoCRef = useRef(null);
 
@@ -95,6 +101,10 @@ const CSearchCondition = (props) => {
       fetchDefaultSearchConditionParam();
     }
 
+    if (!isNull(defaultExpanded)) {
+      setExpaned(defaultExpanded);
+    }
+
     return async () => {
       await dispatch(setSearchConditionParam());
     };
@@ -109,6 +119,7 @@ const CSearchCondition = (props) => {
         id="panel1a-header"
         className={classes.accordionHeader}
         classes={{ content: classes.accordionContent }}
+        onClick={() => setExpaned(!expanded)}
       >
         <Typography>{t('word.search')}</Typography>
         <CButton
