@@ -24,7 +24,7 @@ import logo_iocare from 'assets/images/logo_iocare.png';
 
 const AppSidebar = () => {
   const { t } = useTranslation();
-  const sidebarShow = useSelector((state) => state.changeState.sidebarShow);
+  const sidebarShow = useSelector((state) => state.sharedInfo.sidebarShow);
 
   // ----------------------------------------------------------------------
 

@@ -1,3 +1,6 @@
-import FirmwareManage from './FirmwareManage';
+import FirmwareMgmt from './FirmwareMgmt';
+import FotaPolicyMgmt from './FotaPolicyMgmt';
+import CertPolicy from './CertPolicy';
+import FotaStatus from './FotaStatus';
 
-export { FirmwareManage };
+export { FirmwareMgmt, FotaPolicyMgmt, CertPolicy, FotaStatus };

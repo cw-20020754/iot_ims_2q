@@ -49,7 +49,7 @@
     "datm": "일시",
     "size": "크기",
     "ver": "버전",
-    "devModelCode": "기기모델코드",
+    "devModelCode": "POP 코드",
     "status": "상태",
     "reservation": "예약",
     "id": "ID",
@@ -64,7 +64,6 @@
     "expected": "예정",
     "factory": "공장",
     "shipment": "출하",
-    "manage": "관리",
     "loc": "지역",
     "line": "라인",
     "mac": "MAC",
@@ -126,7 +125,14 @@
     "confirm": "확인",
     "copy": "복제",
     "select": "선택",
-    "case": "건"
+    "case": "건",
+    "regId": "등록자 아이디",
+    "updId": "수정자 아이디",
+    "updDate": "수정일시",
+    "regDate": "등록일시",
+    "detail": "상세",
+    "prodLine" : "제품군",
+    "immediate" : "즉시"
   },
   "desc": {
     "copyright": "Copyright Coway Co., Ltd. All Rights reserved.",
@@ -142,9 +148,11 @@
     "goHome": "Go Home",
     "sessonExpired": "세션이 만료되어 재로그인이 필요합니다.",
     "protocolHasChildNoti": "프로토콜 기능 하위 Value값이 존재합니다.",
+    "selectFile" : "Select your firmware file",
     "alert": {
       "dataDuplicated": "이미 존재하는 값이 있습니다.",
-      "deprecatedConfirm": "이전 버전 항목이 존재합니다.\nDeprecated 후 새 버전을 등록 하시겠습니까?"
+      "deprecatedConfirm": "이전 버전 항목이 존재합니다.\nDeprecated 후 새 버전을 등록 하시겠습니까?",
+      "saveDelete": "삭제되었습니다."
     },
     "saveSuccess": "저장이 완료되었습니다.",
     "validation": {

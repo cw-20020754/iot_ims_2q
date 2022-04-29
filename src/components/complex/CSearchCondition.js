@@ -15,7 +15,7 @@ import CInput from 'components/basic/CInput';
 import CSelect from 'components/basic/CSelect';
 import CSlectAutocomplete from 'components/basic/CSlectAutocomplete';
 import CButton from 'components/basic/CButton';
-import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
+import { setSearchConditionParam } from 'redux/reducers/common/sharedInfo';
 import { isNull } from 'common/utils';
 import rules from 'common/rules';
 
@@ -36,7 +36,7 @@ const CSearchCondition = (props) => {
   const autoCRef = useRef(null);
 
   const searchConditionParams = useSelector(
-    (state) => state.changeState.searchConditionParams,
+    (state) => state.sharedInfo.searchConditionParams,
     shallowEqual,
   );
 
@@ -73,6 +73,8 @@ const CSearchCondition = (props) => {
       if (isNull(name)) {
         return;
       }
+
+      // console.log('name ,  value >> ', name, value);
 
       if (autoClear && !isNull(autoCRef.current)) {
         const ele = autoCRef.current.getElementsByClassName(
@@ -149,7 +151,7 @@ const CSearchCondition = (props) => {
                       name={item.category}
                       type={item.id}
                       value={searchConditionParams[item.category] || ''}
-                      label={item.label}
+                      label={item.id !== 'datetime-local' ? item.label : ' '}
                       onChange={(e) =>
                         handleChangeFormData(e.target.name, e.target.value)
                       }
@@ -178,7 +180,9 @@ const CSearchCondition = (props) => {
                       getOption={item.getOption}
                       getValue={item.getValue}
                       optionArray={item.optionArray}
-                      onValidation={(value) => rules[item.rules](value)}
+                      onValidation={(value) =>
+                        item.rules && rules[item.rules](value)
+                      }
                       onValidationError={handleFormChildrenError}
                       onChange={(e, newValue) => {
                         handleChangeFormData(

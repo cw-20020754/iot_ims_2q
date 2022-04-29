@@ -22,7 +22,7 @@ import {
   setComCodeDialogInfo,
   setComCodeOpenDialog,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
-import { setSnackbar } from 'redux/reducers/changeStateSlice';
+import { setSnackbar } from 'redux/reducers/common/sharedInfo';
 
 let hasError = false;
 

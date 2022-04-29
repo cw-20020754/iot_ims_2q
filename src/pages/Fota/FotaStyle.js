@@ -1,12 +1,16 @@
 import { makeStyles } from '@mui/styles';
 
-const fotaStyles = makeStyles({
+const fotaStyles = makeStyles((theme) => ({
   root: {
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
-    width: 100,
-    height: 48,
-    backgroundColor: 'darkred',
+    fontWeight: 500,
+    fontSize: 20,
+    paddingRight: 8,
+    borderLeftStyle: 'solid',
+    borderLeftWidth: '8px',
+    borderLeftColor: theme.palette.primary.main,
+  },
+  hide: {
+    display: 'none',
   },
   bottomFooter: {
     position: 'fixed',
@@ -16,6 +20,9 @@ const fotaStyles = makeStyles({
   test: {
     backgroundColor: 'black',
   },
-});
+  title: {
+    fontSize: '1.2rem',
+  },
+}));
 
 export default fotaStyles;

@@ -4,20 +4,18 @@ import { Box, IconButton, Toolbar, Typography } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import CButton from '../basic/CButton';
-import { setLogoutInfo } from 'redux/reducers/authSlice';
+import { setLogoutInfo } from 'redux/reducers/auth/auth';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/styles';
 import { useTranslation } from 'react-i18next';
 import { persistor } from 'index';
 import { decryptData } from '../../common/auth';
-import { setSidebarShow } from '../../redux/reducers/changeStateSlice';
-import MenuIcon from '@mui/icons-material/Menu';
 const AppHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
   const { t } = useTranslation();
-  const sidebarShow = useSelector((state) => state.changeState.sidebarShow);
+  const sidebarShow = useSelector((state) => state.sharedInfo.sidebarShow);
   const { username } = useSelector((state) => state.auth);
   // styles ----------------------------------------------------------------------
 

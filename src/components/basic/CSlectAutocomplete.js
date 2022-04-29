@@ -39,7 +39,7 @@ const CSlectAutocomplete = React.forwardRef((props, ref) => {
         ref={ref}
         name={name}
         options={optionArray}
-        getOptionLabel={(option) => option[getOption]}
+        getOptionLabel={(option) => option[getOption] || ''}
         isOptionEqualToValue={(option, value) =>
           option[getValue] === value[getValue]
         }

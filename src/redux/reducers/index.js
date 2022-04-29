@@ -1,24 +1,30 @@
 import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import changeStateSlice from './changeStateSlice';
-import sharedInfoSlice from './sharedInfoSlice';
-import fotaInfoSlice from './fotaInfoSlice';
+import sharedInfo from './common/sharedInfo';
 import { comCodeMgmt } from './adminMgmt';
 import { protocolApi } from './iotProtocol';
 import { protocolFunc } from './iotProtocol';
-import authSlice from './authSlice';
-import iotProtocolSlice from './iotProtocolSlice';
+import auth from './auth/auth';
+import prodByProtocol from './iotProtocol/prodByProtocol';
+import {
+  certPolicyMgmt,
+  firmwareMgmt,
+  fotaPolicyMgmt,
+  fotaStatus,
+} from './fota';
 
 const rootReducer = combineReducers({
-  changeState: changeStateSlice,
-  sharedInfo: sharedInfoSlice,
-  fotaInfo: fotaInfoSlice,
+  sharedInfo: sharedInfo,
   comCodeMgmt: comCodeMgmt,
-  auth: authSlice,
+  auth: auth,
   protocolApi: protocolApi,
   protocolFunc: protocolFunc,
-  iotProtocol: iotProtocolSlice,
+  iotProtocol: prodByProtocol,
+  firmwareMgmt: firmwareMgmt,
+  fotaPolicyMgmt: fotaPolicyMgmt,
+  certPolicyMgmt: certPolicyMgmt,
+  fotaStatus: fotaStatus,
 });
 
 const persistConfig = {

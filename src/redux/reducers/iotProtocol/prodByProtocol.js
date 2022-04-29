@@ -242,7 +242,7 @@ export const postProtocolByProduct = createAsyncThunk(
   },
 );
 
-const iotProtocolSlice = createSlice({
+const prodByProtocol = createSlice({
   name,
   initialState,
   reducers: {
@@ -396,6 +396,6 @@ export const {
   setDataGridTitle,
   setTabDataList,
   handleCheckLists,
-} = iotProtocolSlice.actions;
+} = prodByProtocol.actions;
 
-export default iotProtocolSlice.reducer;
+export default prodByProtocol.reducer;

@@ -1,10 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
-import {
-  DataGridPro,
-  useGridApiRef,
-  GridLinkOperator,
-} from '@mui/x-data-grid-pro';
+import { DataGridPro, useGridApiRef } from '@mui/x-data-grid-pro';
 import { Card, Box, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import CButton from 'components/basic/CButton';
@@ -51,7 +46,9 @@ const CDataGrid = (props) => {
     autoHeight,
     columnsButton,
     exportButton,
+    refreshButton,
     onExportButtonClick,
+    onRefreshButtonClick,
     ...rest
   } = props;
 
@@ -61,8 +58,10 @@ const CDataGrid = (props) => {
     <CToolbar
       columnsButton={columnsButton}
       exportButton={exportButton}
+      refreshButton={refreshButton}
       exportText={t('word.export')}
       onExportButtonClick={onExportButtonClick}
+      onRefreshButtonClick={onRefreshButtonClick}
       rowCnt={rows?.length || 0}
     />
   );

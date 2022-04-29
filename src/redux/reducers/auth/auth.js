@@ -32,7 +32,7 @@ export const executeLogin = createAsyncThunk(
   },
 );
 
-const authSlice = createSlice({
+const auth = createSlice({
   name,
   initialState,
   reducers: {
@@ -81,5 +81,5 @@ const authSlice = createSlice({
 });
 
 export const { setLoginInfo, setLogoutInfo, setApiHeaders, setUserInfo } =
-  authSlice.actions;
-export default authSlice.reducer;
+  auth.actions;
+export default auth.reducer;

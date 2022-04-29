@@ -1,55 +1,60 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
   CardHeader,
   Divider,
-  FormControlLabel,
   Grid,
-  Switch,
   Typography,
 } from '@mui/material';
-import fotaStyles from './FotaStyle';
-import { useTranslation } from 'react-i18next';
-import CSelect from 'components/basic/CSelect';
-import rules from 'common/rules';
 import { dateToTimestampConvert, isNull } from 'common/utils';
-import { useTheme } from '@mui/styles';
-import CInput from 'components/basic/CInput';
-import CButton from 'components/basic/CButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { GROUP_ID } from 'common/constants';
-import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
+import fotaStyles from './FotaStyle';
+import { useTranslation } from 'react-i18next';
+import CInput from 'components/basic/CInput';
+import CSelect from 'components/basic/CSelect';
+import CButton from 'components/basic/CButton';
 import dayjs from 'dayjs';
+import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
+import { GROUP_ID } from 'common/constants';
+import rules from 'common/rules';
 import { GlobalLoading } from 'redux/reducers/common/sharedInfo';
+import FotaPolicyMgmtDialog from './CustomDialogs/FotaPolicyMgmtDialog';
 import {
-  postCertPolicy,
-  putCertPolicy,
-} from 'redux/reducers/fota/certPolicyMgmt';
+  postFotaPolicy,
+  putFotaPolicy,
+  setDialogParams,
+} from 'redux/reducers/fota/fotaPolicyMgmt';
 
-const CertPolicyDetail = (props) => {
-  const theme = useTheme();
+const FotaPolicyMgmtDetail = () => {
   const dispatch = useDispatch();
   const classes = fotaStyles();
   const { t } = useTranslation();
   const ref = React.createRef();
   const navigate = useNavigate();
   const location = useLocation();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogInfo, setDialogInfo] = useState({
+    type: '',
+    params: {},
+    devModelCode: '',
+  });
 
   let hasError = false;
-  const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
   const { isEdit } = !isNull(location.state) ? location.state : false;
   const { params } = !isNull(location.state) ? location.state : {};
-
   const [submitData, setSubmitData] = useState({
-    useYn: true,
-    policyStatus: '1',
     policyId: '',
     regId: 'i.Trust',
+    useYn: true,
+    wifiApplyType: 1,
+    mcuApplyType: 1,
     regDate: null,
-    updId: 'i.Trust',
     updDate: null,
+    wifiTargetFrmwrId: '',
+    mcuTargetFrmwrId: '',
     publishDate: dayjs(new Date())
       .hour(0)
       .minute(0)
@@ -57,23 +62,25 @@ const CertPolicyDetail = (props) => {
       .format('YYYY-MM-DDTHH:mm'),
   });
 
+  // console.log('@@ params >> ', params);
+
   const texts = {
-    firmwareAdd: t('word.cert') + t('word.policy') + ' ' + t('word.add'),
-    firmwareMdf: t('word.cert') + t('word.policy') + ' ' + t('word.mdf'),
-    policyName: t('word.policy') + ' ' + t('word.nm'),
+    fotaPolicyAdd: t('word.fota') + ' ' + t('word.policy') + t('word.add'),
+    fotaPolicyMdf: t('word.fota') + ' ' + t('word.policy') + t('word.mdf'),
+    policyNm: t('word.policy') + ' ' + t('word.nm'),
     policyDesc: t('word.policy') + ' ' + t('word.desc'),
     publishTargetType:
       t('word.publish') + ' ' + t('word.target') + ' ' + t('word.type'),
     targetId: t('word.serialNum'),
     publishType: t('word.publish') + ' ' + t('word.type'),
-    reservationTime: t('word.reservation') + ' ' + t('word.time'),
-    certType: t('word.cert') + ' ' + t('word.type'),
+    reserveTime: t('word.reservation') + ' ' + t('word.time'),
     policyStatus: t('word.policy') + ' ' + t('word.status'),
+    wifiFirmwareVer:
+      t('word.wifi') + ' ' + t('word.firmware') + ' ' + t('word.ver'),
+    mcuFirmwareVer:
+      t('word.mcu') + ' ' + t('word.firmware') + ' ' + t('word.ver'),
     regCharId: t('word.reg') + t('word.char') + ' ' + t('word.id'),
     mdfCharId: t('word.mdf') + t('word.char') + ' ' + t('word.id'),
-    devModelCode: t('word.devModelCode'),
-    cancel: t('word.cancel'),
-    save: t('word.save'),
   };
 
   const policyStatusList = useSelector(
@@ -100,13 +107,100 @@ const CertPolicyDetail = (props) => {
     shallowEqual,
   )[0]?.codeList;
 
-  const certTypeList = useSelector(
-    (state) =>
-      state.comCodeMgmt.sharedComCodeList.filter(
-        (code) => code?.groupId === GROUP_ID.CERT_TYPE,
-      ),
-    shallowEqual,
-  )[0]?.codeList;
+  const handleFormChildrenError = () => {
+    hasError = true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (hasError === true) {
+      hasError = false;
+      return;
+    }
+
+    dispatch(GlobalLoading(true));
+
+    let result;
+
+    const formData = {
+      ...submitData,
+      publishDate:
+        Number(submitData.publishType) === 2 && !isNull(submitData.publishDate)
+          ? dateToTimestampConvert(submitData.publishDate)
+          : null,
+      policyStatus: Number(submitData.policyStatus),
+      targetType: Number(submitData.targetType),
+      publishType: Number(submitData.publishType),
+    };
+
+    // 정책 등록
+    if (!isEdit) {
+      result = await dispatch(
+        postFotaPolicy({
+          formData: formData,
+        }),
+      );
+    } else {
+      result = await dispatch(
+        putFotaPolicy({
+          formData: submitData,
+        }),
+      );
+    }
+
+    if (
+      !isNull(result) &&
+      !isNull(result.payload) &&
+      !isNull(result.payload.data.header.success)
+    ) {
+      navigate('/fota/fotaPolicyMgmt');
+    }
+
+    dispatch(GlobalLoading(false));
+  };
+
+  const handleValidation = (e) => {
+    const {
+      policyName,
+      policyDesc,
+      targetType,
+      targetId,
+      publishType,
+      policyStatus,
+      wifiFrmwrVer,
+      mcuFrmwrVer,
+    } = e.target.form;
+
+    policyName.blur();
+    policyName.focus();
+    policyDesc.blur();
+    policyDesc.focus();
+    targetId.blur();
+    targetId.focus();
+    targetType.click();
+    targetType.focus();
+    publishType.click();
+    publishType.focus();
+    policyStatus.click();
+    policyStatus.focus();
+    wifiFrmwrVer.blur();
+    wifiFrmwrVer.focus();
+    mcuFrmwrVer.blur();
+    mcuFrmwrVer.focus();
+  };
+
+  const fetchComCodeList = useCallback(async () => {
+    await dispatch(
+      postComCodeList({
+        groupIdList: [
+          GROUP_ID.POLICY_STATUS,
+          GROUP_ID.TARGET_TYPE,
+          GROUP_ID.PUBLISH_TYPE,
+        ],
+      }),
+    );
+  }, [dispatch]);
 
   const onChangeFormData = useCallback((e, name, newValue) => {
     let sChecked = e.target.checked;
@@ -122,115 +216,49 @@ const CertPolicyDetail = (props) => {
 
     setSubmitData((prevState) => ({
       ...prevState,
-      [sName]: sName === 'useYn' ? sChecked : sValue,
+      [sName]: sValue,
     }));
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (hasError === true) {
-      hasError = false;
-      return;
-    }
+  const handleDialogOpen = async (type) => {
     dispatch(GlobalLoading(true));
+    setOpenDialog(true);
 
-    // console.log('@@@@@ submitData >> ', submitData);
+    setDialogInfo((prevState) => ({
+      ...prevState,
+      type: type === 'wifiFrmwrVer' ? '1' : '2',
+    }));
 
-    let result;
-
-    const formData = {
-      ...submitData,
-      publishDate:
-        Number(submitData.publishType) === 2 && !isNull(submitData.publishDate)
-          ? dateToTimestampConvert(submitData.publishDate)
-          : null,
-      applyCertType: Number(submitData.applyCertType),
-      targetType: Number(submitData.targetType),
-      publishType: Number(submitData.publishType),
-      policyStatus: Number(submitData.policyStatus),
-    };
-
-    // 인증정책 등록
-    if (!isEdit) {
-      result = await dispatch(
-        postCertPolicy({
-          formData: formData,
-        }),
-      );
-    } else {
-      result = await dispatch(
-        putCertPolicy({
-          formData: formData,
-        }),
-      );
-    }
-
+    setOpenDialog(true);
     dispatch(GlobalLoading(false));
-
-    if (
-      !isNull(result) &&
-      !isNull(result.payload) &&
-      !isNull(result.payload.data) &&
-      result.payload.data.header.success
-    ) {
-      navigate('/fota/certPolicy');
-    }
   };
 
-  const handleValidation = (e) => {
-    const {
-      policyName,
-      policyDesc,
-      targetType,
-      targetId,
-      publishType,
-      applyCertType,
-      policyStatus,
-    } = e.target.form;
+  const dialogClose = useCallback(
+    async (type, selectedRow) => {
+      setOpenDialog(false);
 
-    policyName.focus();
-    policyName.blur();
-    policyDesc.focus();
-    policyDesc.blur();
-    targetType.click();
-    targetType.focus();
-    targetId.focus();
-    targetId.blur();
-    publishType.click();
-    publishType.focus();
-    applyCertType.click();
-    applyCertType.focus();
-    policyStatus.click();
-    policyStatus.focus();
-  };
+      dispatch(setDialogParams('initialState'));
 
-  const handleFormChildrenError = () => {
-    hasError = true;
-  };
+      const name = type === '1' ? 'wifiFrmwrVer' : 'mcuFrmwrVer';
 
-  const fetchComCodeList = useCallback(async () => {
-    await dispatch(
-      postComCodeList({
-        groupIdList: [
-          GROUP_ID.PUBLISH_TYPE,
-          GROUP_ID.TARGET_TYPE,
-          GROUP_ID.CERT_TYPE,
-          GROUP_ID.POLICY_STATUS,
-        ],
-      }),
-    );
-  }, [dispatch]);
+      const frmwrId = type === '1' ? 'wifiFrmwrId' : 'mcuFrmwrId';
+
+      if (!isNull(selectedRow)) {
+        setSubmitData((prevState) => ({
+          ...prevState,
+          [name]: selectedRow.frmwrVer,
+          [frmwrId]: selectedRow.frmwrId,
+        }));
+      }
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
-    if (
-      !certTypeList ||
-      !policyStatusList ||
-      !publishTypeList ||
-      !targetTypeList
-    ) {
+    if (!policyStatusList || !publishTypeList || !targetTypeList) {
       fetchComCodeList();
     }
+
     if (isEdit) {
       setSubmitData((prevState) => ({
         ...prevState,
@@ -243,6 +271,7 @@ const CertPolicyDetail = (props) => {
       setSubmitData((prevState) => ({
         ...prevState,
         ...params,
+        policyStatus: '1',
         publishType: '1',
       }));
     }
@@ -254,7 +283,7 @@ const CertPolicyDetail = (props) => {
       <CardHeader
         title={
           <Typography variant={'h3'}>
-            {isEdit ? texts.firmwareMdf : texts.firmwareAdd}
+            {isEdit ? texts.fotaPolicyMdf : texts.fotaPolicyAdd}
           </Typography>
         }
         classes={{
@@ -265,13 +294,13 @@ const CertPolicyDetail = (props) => {
       <Divider />
       <CardContent sx={{ pt: 2 }}>
         <Grid container spacing={4} justifyContent="space-between">
-          {/* 정책 이름 */}
-          <Grid item xs={6} md={6} lg={6}>
+          {/*정책 이름*/}
+          <Grid item xs={6} lg={6} md={6}>
             <CInput
-              label={texts.policyName}
+              label={texts.policyNm}
               type="textBox"
               name="policyName"
-              id={texts.policyName}
+              id={texts.policyNm}
               value={submitData.policyName || ''}
               onChange={onChangeFormData}
               ref={ref}
@@ -321,9 +350,10 @@ const CertPolicyDetail = (props) => {
               id={texts.targetId}
               value={submitData.targetId || ''}
               onChange={onChangeFormData}
+              ref={ref}
               fullWidth
               onValidation={(value) =>
-                rules.requireAlert(value) || rules.maxLength(value, 128)
+                rules.requireAlert(value) || rules.maxLength(value, 18)
               }
               onValidationError={handleFormChildrenError}
             />
@@ -331,8 +361,8 @@ const CertPolicyDetail = (props) => {
           {/*배포 유형*/}
           <Grid item xs={6} lg={6} md={6}>
             <CSelect
-              label={texts.publishType}
               name="publishType"
+              label={texts.publishType}
               id={texts.publishType}
               value={submitData.publishType || ''}
               onChange={onChangeFormData}
@@ -344,10 +374,10 @@ const CertPolicyDetail = (props) => {
           {/*예약 시간*/}
           <Grid item xs={6} lg={6} md={6}>
             <CInput
-              label={texts.reservationTime}
+              label={texts.reserveTime}
               type="datetime-local"
               name={'publishDate'}
-              id={texts.reservationTime}
+              id={texts.reserveTime}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -358,31 +388,48 @@ const CertPolicyDetail = (props) => {
               disabled={submitData.publishType !== '2'}
             />
           </Grid>
-          {/*인증 유형*/}
+          {/*정책 상태*/}
           <Grid item xs={6} lg={6} md={6}>
             <CSelect
-              label={texts.certType}
-              name="applyCertType"
-              ref={ref}
-              value={submitData.applyCertType || ''}
-              onChange={onChangeFormData}
-              optionArray={certTypeList}
+              name="policyStatus"
+              label={texts.policyStatus}
+              id={texts.policyStatus}
+              value={submitData.policyStatus || '1'}
+              onChange={(e) => onChangeFormData}
+              optionArray={policyStatusList}
+              disabled={!isEdit}
               onValidation={(value) => rules.requireAlert(value)}
               onValidationError={handleFormChildrenError}
             />
           </Grid>
-          {/*정책 상태*/}
+          {/* WIFI 펌웨어 버전 */}
           <Grid item xs={6} lg={6} md={6}>
-            <CSelect
-              label={texts.policyStatus}
-              name="policyStatus"
+            <CInput
+              label={texts.wifiFirmwareVer}
+              type={'textBox'}
+              name="wifiFrmwrVer"
+              id={texts.wifiFirmwareVer}
+              value={submitData.wifiFrmwrVer || ''}
+              onClick={() => handleDialogOpen('wifiFrmwrVer')}
               ref={ref}
-              value={submitData.policyStatus || ''}
-              onChange={onChangeFormData}
-              disabled={!isEdit}
-              optionArray={policyStatusList}
+              fullWidth
               onValidation={(value) => rules.requireAlert(value)}
               onValidationError={handleFormChildrenError}
+            />
+          </Grid>
+          {/* MCU 펌웨어 버전 */}
+          <Grid item xs={6} lg={6} md={6}>
+            <CInput
+              label={texts.mcuFirmwareVer}
+              type={'MCU'}
+              name="mcuFrmwrVer"
+              id={texts.mcuFirmwareVer}
+              value={submitData.mcuFrmwrVer || ''}
+              onClick={() => handleDialogOpen('mcuFrmwrVer')}
+              onValidation={(value) => rules.requireAlert(value)}
+              onValidationError={handleFormChildrenError}
+              ref={ref}
+              fullWidth
             />
           </Grid>
           {/* 등록자 아이디 */}
@@ -397,24 +444,6 @@ const CertPolicyDetail = (props) => {
               fullWidth
             />
           </Grid>
-          {isEdit && (
-            <Grid item xs={6} lg={6} md={6}>
-              <FormControlLabel
-                sx={{ padding: 2 }}
-                control={
-                  <Switch
-                    {...label}
-                    checked={submitData.useYn}
-                    onChange={onChangeFormData}
-                    name="useYn"
-                  />
-                }
-                label={`${t('word.use')} ${t('word.yn')} : ${
-                  submitData.useYn === true ? 'Y' : 'N'
-                } `}
-              />
-            </Grid>
-          )}
           <Grid
             item
             xs={12}
@@ -425,7 +454,7 @@ const CertPolicyDetail = (props) => {
             <CButton
               key={texts.cancel}
               type="cancel"
-              onClick={() => navigate('/fota/certPolicy')}
+              onClick={() => navigate('/fota/fotaPolicyMgmt')}
               sx={{ mr: 3 }}
             >
               {t('word.cancel')}
@@ -436,8 +465,16 @@ const CertPolicyDetail = (props) => {
           </Grid>
         </Grid>
       </CardContent>
+      {openDialog && (
+        <FotaPolicyMgmtDialog
+          open={openDialog}
+          onClose={dialogClose}
+          maxWidth={'md'}
+          dialogInfo={dialogInfo}
+        />
+      )}
     </Card>
   );
 };
 
-export default CertPolicyDetail;
+export default FotaPolicyMgmtDetail;

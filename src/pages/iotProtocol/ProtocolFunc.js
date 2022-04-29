@@ -12,7 +12,7 @@ import {
   setProtocolItem,
   setProtocolValue,
 } from 'redux/reducers/iotProtocol/protocolFunc';
-import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
+import { setSearchConditionParam } from 'redux/reducers/common/sharedInfo';
 import { isNull } from 'common/utils';
 import ProtocolFuncGrid from './ProtocolFuncGrid';
 import ProtocolFuncTree from './ProtocolFuncTree';

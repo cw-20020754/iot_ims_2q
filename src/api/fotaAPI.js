@@ -21,9 +21,6 @@ export const postFirmware = async (body) => {
     })
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -33,9 +30,6 @@ export const putFirmware = (body) => {
     .put(`${API.FOTA_URL}/iot/v1/fota/manager/firmware`, body)
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -45,9 +39,6 @@ export const deleteFirmware = (policyId) => {
     .delete(`${API.FOTA_URL}/iot/v1/fota/manager/firmware/${policyId}`)
     .then((response) => {
       return response;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 /**
@@ -64,9 +55,6 @@ export const getFotaPolicyList = (param) => {
     )
     .then((response) => {
       return response;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 // FOTA 정책 등록
@@ -75,9 +63,6 @@ export const postFotaPolicy = (body) => {
     .post(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`, body)
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -87,9 +72,6 @@ export const putFotaPolicy = (body) => {
     .put(`${API.FOTA_URL}/iot/v1/fota/manager/policy/fota`, body)
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -100,9 +82,6 @@ export const deleteFotaPolicy = (frmwrId) => {
     .then((response) => {
       return response;
       // console.log("response >> ", JSON.stringify(response));
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 /**
@@ -120,9 +99,6 @@ export const getCertPolicyList = (param) => {
     .then((response) => {
       // console.log("response >> ", JSON.stringify(response.data));
       return response;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -132,9 +108,6 @@ export const postCertPolicy = (body) => {
     .post(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`, body)
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -144,9 +117,6 @@ export const putCertPolicy = (body) => {
     .put(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert`, body)
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -156,9 +126,6 @@ export const deleteCertPolicy = (policyId) => {
     .delete(`${API.FOTA_URL}/iot/v1/fota/manager/policy/cert/${policyId}`)
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -171,11 +138,7 @@ export const getStatusList = (param) => {
       makeurlQeuryString(`${API.FOTA_URL}/iot/v1/fota/manager/shadow`, param),
     )
     .then((response) => {
-      // console.log("response >> ", JSON.stringify(response.data));
       return response;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -185,9 +148,6 @@ export const deleteStatus = (serial) => {
     .delete(`${API.FOTA_URL}/iot/v1/test/shadow/reset/${serial}`)
     .then((res) => {
       return res;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
 
@@ -201,8 +161,5 @@ export const getHistoryList = (param) => {
     )
     .then((response) => {
       return response;
-    })
-    .catch((err) => {
-      if (err.response) return err.response;
     });
 };
