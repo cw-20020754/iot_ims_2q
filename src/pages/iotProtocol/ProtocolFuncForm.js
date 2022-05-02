@@ -33,7 +33,7 @@ import {
   setProtocolItem,
   setProtocolValue,
 } from 'redux/reducers/iotProtocol/protocolFunc';
-import { setSnackbar } from 'redux/reducers/changeStateSlice';
+import { setSnackbar } from 'redux/reducers/common/sharedInfo';
 import { protocolFuncAPI } from 'api';
 
 let hasError = false;

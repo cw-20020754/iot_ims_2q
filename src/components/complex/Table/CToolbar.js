@@ -6,14 +6,19 @@ import {
   GridToolbarExport,
 } from '@mui/x-data-grid-pro';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import CButton from 'components/basic/CButton';
+import { useTranslation } from 'react-i18next';
 
 const CToolbar = (props) => {
+  const { t } = useTranslation();
   const {
     columnsButton,
     exportButton,
+    refreshButton,
     exportText,
     onExportButtonClick,
+    onRefreshButtonClick,
     rowCnt,
   } = props;
 
@@ -29,6 +34,16 @@ const CToolbar = (props) => {
             onClick={() => onExportButtonClick()}
           >
             {exportText}
+          </CButton>
+        )}
+        {refreshButton && (
+          <CButton
+            variant="text"
+            color="success"
+            startIcon={<RefreshIcon />}
+            onClick={() => onRefreshButtonClick()}
+          >
+            {t('word.refresh')}
           </CButton>
         )}
       </Stack>

@@ -7,7 +7,7 @@ import {
   IMS_POST_FOR_INQUIRY_LIST,
 } from './constants';
 import i18n from 'common/locale/i18n';
-import { setSnackbar } from '../redux/reducers/changeStateSlice';
+import { setSnackbar } from '../redux/reducers/common/sharedInfo';
 import { removeCookie } from './auth';
 import { persistor } from '../index';
 import { history } from 'App';
@@ -48,6 +48,16 @@ const getCodeToText = (category, data, codes) => {
     (el) => el.value === data,
   );
   return !isNull(result) ? result.text : data;
+};
+
+const getCodeToTxt = (value, codes, catetory) => {
+  if (Array.isArray(codes) && codes.length > 0) {
+    return codes.find((el) => el[catetory] === value).text;
+  }
+};
+
+const getTxtToCode = (value, codes, catetory) => {
+  return codes.find((el) => el[catetory] === value).value;
 };
 
 // Date Formatting
@@ -158,8 +168,8 @@ const makeRowsFormat = (list, codes) => {
 const reformatData = (type, value, catetory, codes) => {
   if (!isNull(value)) {
     switch (type) {
-      case 'text':
-        return getCodeToText(catetory, value, codes);
+      case 'txt':
+        return getCodeToTxt(value, codes, catetory);
       case 'date':
         return dateFormatConvert(value);
       case 'fileSize':
@@ -244,11 +254,11 @@ const checkErrorStatus = async (status, error) => {
       msg = `${i18n.t('desc.networkError')}`;
     }
   }
-
   if (!isNull(msg)) {
     store.dispatch(
       setSnackbar({
         snackbarOpen: true,
+        severity: 'error',
         snackbarMessage: msg,
         autoHideDuration: 5000,
       }),
@@ -264,6 +274,18 @@ const fileDownload = (result) => {
 
 const saveAlert = (type, config) => {
   if (config.method === 'get') return;
+
+  if (config.method === 'delete') {
+    store.dispatch(
+      setSnackbar({
+        snackbarOpen: true,
+        severity: 'success',
+        snackbarMessage: i18n.t('desc.alert.saveDelete'),
+        autoHideDuration: 3000,
+      }),
+    );
+    return;
+  }
 
   if (
     (type === 'ims' &&
@@ -300,4 +322,6 @@ export {
   fileDownload,
   getCodeToText,
   saveAlert,
+  reformatData,
+  getTxtToCode,
 };

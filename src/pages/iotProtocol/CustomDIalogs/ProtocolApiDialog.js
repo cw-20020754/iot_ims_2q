@@ -24,7 +24,7 @@ import {
   setDialogInfo,
   setOpenDialog,
 } from 'redux/reducers/iotProtocol/protocolApi';
-import { setSnackbar } from 'redux/reducers/changeStateSlice';
+import { setSnackbar } from 'redux/reducers/common/sharedInfo';
 import { protocolAPI } from 'api';
 
 let hasError = false;

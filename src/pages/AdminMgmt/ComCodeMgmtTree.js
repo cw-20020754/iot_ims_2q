@@ -13,7 +13,7 @@ import {
   setDataGridTitle,
   setTreeExpanded,
 } from 'redux/reducers/adminMgmt/comCodeMgmt';
-import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
+import { setSearchConditionParam } from 'redux/reducers/common/sharedInfo';
 
 const ComCodeMgmtTree = (props) => {
   const { onComCodeDialogOpen } = props;

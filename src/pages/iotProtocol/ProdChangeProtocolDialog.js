@@ -25,12 +25,11 @@ import {
   handleChangeList,
   handleCheckLists,
   postProtocolByProduct,
-} from 'redux/reducers/iotProtocolSlice';
+} from 'redux/reducers/iotProtocol/prodByProtocol';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { checkedToggleAll } from 'common/iotProtocol';
-import { GlobalLoading, setSnackbar } from 'redux/reducers/changeStateSlice';
-import { HTTP_STATUS } from 'common/constants';
+import { GlobalLoading } from 'redux/reducers/common/sharedInfo';
 import CTree from 'components/basic/CTree';
 
 const ProdChangeProtocolDialog = (props) => {

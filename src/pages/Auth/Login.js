@@ -28,10 +28,10 @@ import {
   executeLogin,
   setLoginInfo,
   setUserInfo,
-} from 'redux/reducers/authSlice';
+} from 'redux/reducers/auth/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { encryptData, isAuthenticated, removeCookie } from 'common/auth';
-import { setSnackbar } from 'redux/reducers/changeStateSlice';
+import { setSnackbar } from 'redux/reducers/common/sharedInfo';
 
 const Login = () => {
   const classes = AuthStyle();
@@ -108,7 +108,7 @@ const Login = () => {
         await dispatch(setLoginInfo(result));
         if (isNull(authError) && isAuthenticated()) {
           dispatch(setUserInfo(encryptData(values.userId)));
-          navigate('/fota/firmwaremanage');
+          navigate('/fota/firmwareMgmt');
         } else {
           setAlertMessage(authError);
         }

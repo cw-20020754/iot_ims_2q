@@ -1,14 +1,15 @@
 import React from 'react';
-import { FirmwareManage } from '../pages/Fota';
-import FotaPolicy from '../pages/Fota/FotaPolicy';
 import CertPolicy from '../pages/Fota/CertPolicy';
 import FotaStatus from '../pages/Fota/FotaStatus';
-import FotaHistory from '../pages/Fota/FotaHistory';
-import FirmwareManageDetail from '../pages/Fota/FirmwareManageDetail';
 import DefaultLayout from '../components/layout/DefaultLayout';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import i18n from '../common/locale/i18n';
 import PrivateRoute from './PrivateRoute';
+import FirmwareMgmt from 'pages/Fota/FirmwareMgmt';
+import FirmwareMgmtDetail from 'pages/Fota/FirmwareMgmtDetail';
+import FotaPolicyMgmt from 'pages/Fota/FotaPolicyMgmt';
+import FotaPolicyMgmtDetail from 'pages/Fota/FotaPolicyMgmtDetail';
+import CertPolicyDetail from '../pages/Fota/CertPolicyDetail';
 
 // ==============================|| FOTA ROUTING ||============================== //
 
@@ -26,8 +27,8 @@ const fota = {
   show: true,
   children: [
     {
-      path: 'firmwareManage',
-      element: <FirmwareManage />,
+      path: 'firmwareMgmt',
+      element: <FirmwareMgmt />,
       type: 'item',
       title: `${i18n.t('word.firmwareManage')}`,
       meta: {
@@ -40,8 +41,8 @@ const fota = {
       show: true,
     },
     {
-      path: 'firmwareManageDetail',
-      element: <FirmwareManageDetail />,
+      path: 'firmwareMgmtDetail',
+      element: <FirmwareMgmtDetail />,
       type: 'item',
       title: `${i18n.t('word.firmwareDetail')}`,
       meta: {
@@ -55,8 +56,8 @@ const fota = {
       show: false,
     },
     {
-      path: 'fotaPolicy',
-      element: <FotaPolicy />,
+      path: 'fotaPolicyMgmt',
+      element: <FotaPolicyMgmt />,
       type: 'item',
       title: `${i18n.t('word.fotaPolicyManage')}`,
       meta: {
@@ -67,6 +68,33 @@ const fota = {
         ],
       },
       show: true,
+    },
+    {
+      path: 'fotaPolicyMgmtDetail',
+      element: <FotaPolicyMgmtDetail />,
+      type: 'item',
+      title: `${
+        i18n.t('word.fota') + i18n.t('word.policy') + i18n.t('word.detail')
+      }`,
+      meta: {
+        public: false,
+        breadcrumb: [
+          { title: `${i18n.t('word.fota')}` },
+          {
+            title: `${
+              i18n.t('word.fota') + i18n.t('word.policy') + i18n.t('word.mgmt')
+            }`,
+          },
+          {
+            title: `${
+              i18n.t('word.fota') +
+              i18n.t('word.policy') +
+              i18n.t('word.detail')
+            }`,
+          },
+        ],
+      },
+      show: false,
     },
     {
       path: 'certPolicy',
@@ -83,6 +111,33 @@ const fota = {
       show: true,
     },
     {
+      path: 'certPolicyMgmtDetail',
+      element: <CertPolicyDetail />,
+      type: 'item',
+      title: `${
+        i18n.t('word.cert') + i18n.t('word.policy') + i18n.t('word.mgmt')
+      }`,
+      meta: {
+        public: false,
+        breadcrumb: [
+          { title: `${i18n.t('word.fota')}` },
+          {
+            title: `${
+              i18n.t('word.cert') + i18n.t('word.policy') + i18n.t('word.mgmt')
+            }`,
+          },
+          {
+            title: `${
+              i18n.t('word.cert') +
+              i18n.t('word.policy') +
+              i18n.t('word.detail')
+            }`,
+          },
+        ],
+      },
+      show: false,
+    },
+    {
       path: 'statusCheck',
       element: <FotaStatus />,
       type: 'item',
@@ -92,20 +147,6 @@ const fota = {
         breadcrumb: [
           { title: `${i18n.t('word.fota')}` },
           { title: `${i18n.t('word.statusSearch')}` },
-        ],
-      },
-      show: true,
-    },
-    {
-      path: 'historyCheck',
-      element: <FotaHistory />,
-      type: 'item',
-      title: `${i18n.t('word.historySearch')}`,
-      meta: {
-        public: false,
-        breadcrumb: [
-          { title: `${i18n.t('word.fota')}` },
-          { title: `${i18n.t('word.historySearch')}` },
         ],
       },
       show: true,

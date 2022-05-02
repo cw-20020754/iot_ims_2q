@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, Snackbar } from '@mui/material';
 import { isNull } from 'common/utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSnackbar } from '../../redux/reducers/changeStateSlice';
+import { setSnackbar } from 'redux/reducers/common/sharedInfo';
 
 const CNotification = (props) => {
   const { open, children, anchorOrigin, ...rest } = props;
@@ -19,7 +19,7 @@ const CNotification = (props) => {
     vertical,
     horizontal,
     severity,
-  } = useSelector((state) => state.changeState.snackbar);
+  } = useSelector((state) => state.sharedInfo.snackbar);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {

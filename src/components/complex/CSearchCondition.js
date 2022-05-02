@@ -15,22 +15,28 @@ import CInput from 'components/basic/CInput';
 import CSelect from 'components/basic/CSelect';
 import CSlectAutocomplete from 'components/basic/CSlectAutocomplete';
 import CButton from 'components/basic/CButton';
-import { setSearchConditionParam } from 'redux/reducers/changeStateSlice';
+import { setSearchConditionParam } from 'redux/reducers/common/sharedInfo';
 import { isNull } from 'common/utils';
 import rules from 'common/rules';
 
 const CSearchCondition = (props) => {
-  const { conditionList, onClickSearch, expanded, defaultValues, autoClear } =
-    props;
+  const {
+    conditionList,
+    onClickSearch,
+    defaultExpanded,
+    defaultValues,
+    autoClear,
+  } = props;
   const classes = AppStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [hasError, setHasError] = useState(false);
+  const [expanded, setExpaned] = useState(false);
 
   const autoCRef = useRef(null);
 
   const searchConditionParams = useSelector(
-    (state) => state.changeState.searchConditionParams,
+    (state) => state.sharedInfo.searchConditionParams,
     shallowEqual,
   );
 
@@ -68,6 +74,8 @@ const CSearchCondition = (props) => {
         return;
       }
 
+      // console.log('name ,  value >> ', name, value);
+
       if (autoClear && !isNull(autoCRef.current)) {
         const ele = autoCRef.current.getElementsByClassName(
           'MuiAutocomplete-clearIndicator',
@@ -95,6 +103,10 @@ const CSearchCondition = (props) => {
       fetchDefaultSearchConditionParam();
     }
 
+    if (!isNull(defaultExpanded)) {
+      setExpaned(defaultExpanded);
+    }
+
     return async () => {
       await dispatch(setSearchConditionParam());
     };
@@ -109,6 +121,7 @@ const CSearchCondition = (props) => {
         id="panel1a-header"
         className={classes.accordionHeader}
         classes={{ content: classes.accordionContent }}
+        onClick={() => setExpaned(!expanded)}
       >
         <Typography>{t('word.search')}</Typography>
         <CButton
@@ -138,7 +151,7 @@ const CSearchCondition = (props) => {
                       name={item.category}
                       type={item.id}
                       value={searchConditionParams[item.category] || ''}
-                      label={item.label}
+                      label={item.id !== 'datetime-local' ? item.label : ' '}
                       onChange={(e) =>
                         handleChangeFormData(e.target.name, e.target.value)
                       }
@@ -167,7 +180,9 @@ const CSearchCondition = (props) => {
                       getOption={item.getOption}
                       getValue={item.getValue}
                       optionArray={item.optionArray}
-                      onValidation={(value) => rules[item.rules](value)}
+                      onValidation={(value) =>
+                        item.rules && rules[item.rules](value)
+                      }
                       onValidationError={handleFormChildrenError}
                       onChange={(e, newValue) => {
                         handleChangeFormData(

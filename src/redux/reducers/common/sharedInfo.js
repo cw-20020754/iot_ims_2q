@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { productInfoAPI } from '../../api';
-import { isNull } from '../../common/utils';
-
-const name = 'changeState';
+import React from 'react';
+import { productInfoAPI } from 'api';
+import { isNull } from 'common/utils';
+const name = 'sharedInfo';
 
 const initialState = {
   sidebarShow: true,
@@ -32,7 +32,7 @@ export const getDevModelCode = createAsyncThunk(
   },
 );
 
-const changeStateSlice = createSlice({
+const sharedInfo = createSlice({
   name,
   initialState,
   reducers: {
@@ -93,5 +93,6 @@ export const {
   getDatagridInfo,
   setSnackbar,
   setSearchConditionParam,
-} = changeStateSlice.actions;
-export default changeStateSlice.reducer;
+} = sharedInfo.actions;
+
+export default sharedInfo.reducer;

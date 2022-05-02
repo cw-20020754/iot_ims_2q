@@ -12,12 +12,12 @@ import {
   setConditionSelctList,
   setDataGridTitle,
   setTabDataList,
-} from 'redux/reducers/iotProtocolSlice';
+} from 'redux/reducers/iotProtocol/prodByProtocol';
 import { fileDownload, isNull, makeQuery } from 'common/utils';
 import {
   getDevModelCode,
   GlobalLoading,
-} from 'redux/reducers/changeStateSlice';
+} from 'redux/reducers/common/sharedInfo';
 import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import { GROUP_ID, HTTP_STATUS } from 'common/constants';
 import { prodByProtocolAPI } from 'api';
@@ -41,7 +41,7 @@ const ProdByProtocol = () => {
   );
   // 기기모델코드
   const devModelCodeList = useSelector(
-    (state) => state.changeState.devModelCodeList,
+    (state) => state.sharedInfo.devModelCodeList,
     shallowEqual,
   );
 
@@ -76,7 +76,7 @@ const ProdByProtocol = () => {
   );
 
   const searchConditionParams = useSelector(
-    (state) => state.changeState.searchConditionParams,
+    (state) => state.sharedInfo.searchConditionParams,
     shallowEqual,
   );
 
@@ -338,7 +338,7 @@ const ProdByProtocol = () => {
           <CSearchCondition
             onClickSearch={handleClickSearch}
             conditionList={conditionList}
-            expanded={true}
+            defaultExpanded={true}
             defaultValues={defaultProtocolApiParams}
             autoClear
           />

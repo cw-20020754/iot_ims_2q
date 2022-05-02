@@ -41,6 +41,15 @@ const GROUP_ID = {
   DEVICE_DISCONNECT_REASON: '007',
   DEVICE_RECONNECT_REASON: '008',
   PROTOCOL_ITEM_TYPE: '009',
+  FIRMWARE_TYPE: '013',
+  WIFI_HW_TYPE: '014',
+  MCU_HW_TYPE: '015',
+  TARGET_TYPE: '017',
+  CERT_TYPE: '019',
+  POLICY_STATUS: '020',
+  PUBLISH_TYPE: '021',
+  FOTA_STATUS: '023',
+  CERT_STATUS: '024',
 };
 
 // 조회용 post list
@@ -49,6 +58,7 @@ const IMS_POST_FOR_INQUIRY_LIST = [
   '/protocol/product/excel',
   '/protocol/api/excel',
   '/protocol/item/excel',
+  '/protocol/item/list',
   '/protocol/item/listAll',
 ];
 
