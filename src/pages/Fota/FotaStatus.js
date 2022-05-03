@@ -77,6 +77,7 @@ const FotaStatus = () => {
   const dataGridColums = [
     {
       ...GRID_DETAIL_PANEL_TOGGLE_COL_DEF,
+      type: 'actions',
       renderCell: (params) => (
         <CustomDetailPanelToggle id={params.id} value={params.value} />
       ),
@@ -261,36 +262,6 @@ const FotaStatus = () => {
     dispatch(GlobalLoading(false));
   };
 
-  // const excelDownload = useCallback(async () => {
-  //   setIsLoading(true);
-  //
-  //   let query = makeQuery(
-  //     {
-  //       page: 0,
-  //       size: fotaStatus.totalElements,
-  //       totalItem: fotaStatus.totalElements,
-  //     },
-  //     searchOption,
-  //   );
-  //
-  //   const result = await fotaAPI.getStatusList(query);
-  //   console.log('for excel result', result);
-  //
-  //   if (!isNull(result)) {
-  //     // const list = result.data.payload.content;
-  //     const list = result.data.payload;
-  //     console.log('for excel result.list', list);
-  //
-  //     onExcelDownload(
-  //       t('word.fota') + t('word.statusSearch'),
-  //       makeRowsFormat(list, codes),
-  //       columns,
-  //     );
-  //
-  //     setIsLoading(false);
-  //   }
-  // }, [columns, fotaStatus.totalElements, searchOption, codes, t]);
-
   const handleRefreshButtonClick = () => {
     fetchFotaStatus(fotaStatusParams);
   };
@@ -308,21 +279,24 @@ const FotaStatus = () => {
 
     return (
       <Stack
-        sx={{ py: 2, height: 1, boxSizing: 'border-box' }}
+        sx={{
+          py: 2,
+          height: 1,
+          boxSizing: 'border-box',
+        }}
         direction="column"
       >
-        <Paper sx={{ flex: 1, mx: 'auto', width: '100%', p: 1 }}>
-          <Stack direction="column" spacing={1} sx={{ height: 1 }}>
+        <Paper
+          sx={{
+            flex: 1,
+            mx: 'auto',
+            width: '100%',
+            p: 1,
+          }}
+        >
+          <Stack direction="column" spacing={2} sx={{ height: 1 }}>
             <Grid container>
-              <Grid
-                item
-                md={12}
-                sx={{
-                  '& .super-app-theme--header': {
-                    backgroundColor: 'rgba(255, 7, 0, 0.55)',
-                  },
-                }}
-              >
+              <Grid item md={12}>
                 <CDataGrid
                   height={100}
                   density="compact"

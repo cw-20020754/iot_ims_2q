@@ -109,15 +109,6 @@ const CertPolicy = () => {
           onClick: async () => {
             await dispatch(deleteCertPolicy(params.row.policyId));
 
-            // await dispatch(
-            //   setSnackbar({
-            //     snackbarOpen: true,
-            //     severity: 'success',
-            //     autoHideDuration: 3000,
-            //     snackbarMessage: i18n.t('desc.alert.saveDelete'),
-            //   }),
-            // );
-
             handleRefreshButtonClick();
           },
           hideable:

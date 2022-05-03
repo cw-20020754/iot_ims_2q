@@ -19,13 +19,14 @@ import dayjs from 'dayjs';
 import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import { GROUP_ID } from 'common/constants';
 import rules from 'common/rules';
-import { GlobalLoading } from 'redux/reducers/common/sharedInfo';
+import { GlobalLoading, setSnackbar } from 'redux/reducers/common/sharedInfo';
 import FotaPolicyMgmtDialog from './CustomDialogs/FotaPolicyMgmtDialog';
 import {
   postFotaPolicy,
   putFotaPolicy,
   setDialogParams,
 } from 'redux/reducers/fota/fotaPolicyMgmt';
+import i18n from 'common/locale/i18n';
 
 const FotaPolicyMgmtDetail = () => {
   const dispatch = useDispatch();
@@ -71,7 +72,7 @@ const FotaPolicyMgmtDetail = () => {
     policyDesc: t('word.policy') + ' ' + t('word.desc'),
     publishTargetType:
       t('word.publish') + ' ' + t('word.target') + ' ' + t('word.type'),
-    targetId: t('word.serialNum'),
+    targetId: t('word.serial'),
     publishType: t('word.publish') + ' ' + t('word.type'),
     reserveTime: t('word.reservation') + ' ' + t('word.time'),
     policyStatus: t('word.policy') + ' ' + t('word.status'),
@@ -152,9 +153,31 @@ const FotaPolicyMgmtDetail = () => {
     if (
       !isNull(result) &&
       !isNull(result.payload) &&
-      !isNull(result.payload.data.header.success)
+      !isNull(result.payload.data) &&
+      result.payload.data.header.success
     ) {
+      await dispatch(
+        setSnackbar({
+          snackbarOpen: true,
+          severity: 'success',
+          snackbarMessage: i18n.t('desc.saveSuccess'),
+          autoHideDuration: 3000,
+        }),
+      );
+
       navigate('/fota/fotaPolicyMgmt');
+    } else {
+      const text = !isNull(result.payload.data.header)
+        ? result.payload.data.header.message
+        : i18n.t('desc.tempError');
+      await dispatch(
+        setSnackbar({
+          snackbarOpen: true,
+          severity: 'error',
+          snackbarMessage: text,
+          autoHideDuration: 3000,
+        }),
+      );
     }
 
     dispatch(GlobalLoading(false));
@@ -203,7 +226,6 @@ const FotaPolicyMgmtDetail = () => {
   }, [dispatch]);
 
   const onChangeFormData = useCallback((e, name, newValue) => {
-    let sChecked = e.target.checked;
     let sName, sValue;
 
     if (isNull(newValue)) {
@@ -394,12 +416,10 @@ const FotaPolicyMgmtDetail = () => {
               name="policyStatus"
               label={texts.policyStatus}
               id={texts.policyStatus}
-              value={submitData.policyStatus || '1'}
-              onChange={(e) => onChangeFormData}
+              value={submitData.policyStatus || ''}
+              onChange={onChangeFormData}
               optionArray={policyStatusList}
               disabled={!isEdit}
-              onValidation={(value) => rules.requireAlert(value)}
-              onValidationError={handleFormChildrenError}
             />
           </Grid>
           {/* WIFI 펌웨어 버전 */}
@@ -433,17 +453,17 @@ const FotaPolicyMgmtDetail = () => {
             />
           </Grid>
           {/* 등록자 아이디 */}
-          <Grid item xs={6} lg={6} md={6}>
-            <CInput
-              label={!isEdit ? texts.regCharId : texts.mdfCharId}
-              type="textBox"
-              name={'regId'}
-              id={t('word.reg') + t('word.char') + ' ' + t('word.id')}
-              value={!isEdit ? submitData.regId : submitData.updId}
-              disabled
-              fullWidth
-            />
-          </Grid>
+          {/*<Grid item xs={6} lg={6} md={6}>*/}
+          {/*  <CInput*/}
+          {/*    label={!isEdit ? texts.regCharId : texts.mdfCharId}*/}
+          {/*    type="textBox"*/}
+          {/*    name={'regId'}*/}
+          {/*    id={t('word.reg') + t('word.char') + ' ' + t('word.id')}*/}
+          {/*    value={!isEdit ? submitData.regId : submitData.updId}*/}
+          {/*    disabled*/}
+          {/*    fullWidth*/}
+          {/*  />*/}
+          {/*</Grid>*/}
           <Grid
             item
             xs={12}
@@ -454,12 +474,15 @@ const FotaPolicyMgmtDetail = () => {
             <CButton
               key={texts.cancel}
               type="cancel"
-              onClick={() => navigate('/fota/fotaPolicyMgmt')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/fota/fotaPolicyMgmt');
+              }}
               sx={{ mr: 3 }}
             >
               {t('word.cancel')}
             </CButton>
-            <CButton type="save" onClick={(e) => handleValidation(e)}>
+            <CButton type="submit" onClick={(e) => handleValidation(e)}>
               {t('word.save')}
             </CButton>
           </Grid>

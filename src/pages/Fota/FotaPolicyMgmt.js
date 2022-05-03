@@ -85,6 +85,22 @@ const FotaPolicyMgmt = () => {
     },
   ];
 
+  const setDetailInfo = (params) => {
+    return {
+      ...params,
+      policyStatus: String(params.policyStatus),
+      targetType: getTxtToCode(params.targetType, targetTypeList, 'text'),
+      publishType: getTxtToCode(params.publishType, publishTypeList, 'text'),
+      publishDate: !isNull(params.publishDate)
+        ? dayjs(params.publishDate).format('YYYY-MM-DDTHH:mm:ss')
+        : dayjs(new Date())
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .format('YYYY-MM-DDTHH:mm'),
+    };
+  };
+
   const dataGridColums = [
     {
       field: 'actions',
@@ -96,30 +112,8 @@ const FotaPolicyMgmt = () => {
           type: 'edit',
           id: params.id,
           onClick: () => {
-            const row = {
-              ...params.row,
-              policyStatus: String(params.row.policyStatus),
-              targetType: getTxtToCode(
-                params.row.targetType,
-                targetTypeList,
-                'text',
-              ),
-              publishType: getTxtToCode(
-                params.row.publishType,
-                publishTypeList,
-                'text',
-              ),
-              publishDate: !isNull(params.row.publishDate)
-                ? dayjs(params.row.publishDate).format('YYYY-MM-DDTHH:mm')
-                : dayjs(new Date())
-                    .hour(0)
-                    .minute(0)
-                    .second(0)
-                    .format('YYYY-MM-DDTHH:mm'),
-            };
-
             navigate('/fota/fotaPolicyMgmtDetail', {
-              state: { isEdit: true, params: row },
+              state: { isEdit: true, params: setDetailInfo(params.row) },
             });
           },
           hideable: params.row.policyStatus !== 1,
@@ -265,6 +259,10 @@ const FotaPolicyMgmt = () => {
     if (devModelCodeList.length === 0) {
       fetchDevModeCodeList();
     }
+
+    return () => {
+      dispatch(setFotaPolicyMgmtParams('initialState'));
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

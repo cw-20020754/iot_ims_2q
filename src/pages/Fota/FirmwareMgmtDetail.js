@@ -48,8 +48,10 @@ const FirmwareMgmtDetail = (props) => {
   const { params } = !isNull(location.state) ? location.state : {};
 
   const [submitData, setSubmitData] = useState({
-    regId: 'i.Trust',
     useYn: true,
+    hwType: '0',
+    frmwrType: '1',
+    regId: 'i.Trust',
   });
 
   const texts = {
@@ -167,35 +169,40 @@ const FirmwareMgmtDetail = (props) => {
           formData: formData,
         }),
       );
-      if (
-        !isNull(result) &&
-        !isNull(result.payload) &&
-        result.payload.status === HTTP_STATUS.SUCCESS
-      ) {
-        navigate('/fota/firmwareMgmt');
-      }
+      // 펌웨어 수정
     } else {
       result = await dispatch(
         putFirmware({
           formData: submitData,
         }),
       );
-      if (
-        !isNull(result) &&
-        !isNull(result.payload) &&
-        result.payload.header.success
-      ) {
-        await dispatch(
-          setSnackbar({
-            snackbarOpen: true,
-            severity: 'success',
-            snackbarMessage: i18n.t('desc.saveSuccess'),
-            autoHideDuration: 3000,
-          }),
-        );
-
-        navigate('/fota/firmwareMgmt');
-      }
+    }
+    if (
+      !isNull(result) &&
+      !isNull(result.payload) &&
+      result.payload.header.success
+    ) {
+      await dispatch(
+        setSnackbar({
+          snackbarOpen: true,
+          severity: 'success',
+          snackbarMessage: i18n.t('desc.saveSuccess'),
+          autoHideDuration: 3000,
+        }),
+      );
+      navigate('/fota/firmwareMgmt');
+    } else {
+      const text = !isNull(result.payload.header)
+        ? result.payload.header.message
+        : i18n.t('desc.tempError');
+      await dispatch(
+        setSnackbar({
+          snackbarOpen: true,
+          severity: 'error',
+          snackbarMessage: text,
+          autoHideDuration: 3000,
+        }),
+      );
     }
 
     dispatch(GlobalLoading(false));
@@ -242,14 +249,9 @@ const FirmwareMgmtDetail = (props) => {
     }
 
     if (isEdit) {
-      setSubmitData((prevState) => ({
-        ...prevState,
+      setSubmitData((prev) => ({
+        ...prev,
         ...params,
-        frmwrType: params.frmwrType === 'WIFI' ? '1' : '2',
-        useYn: params.useYn === 'Y',
-        hwType: params.frmwrType === 'WIFI' ? String(params.hwType) : '1',
-        regDate: dateToTimestampConvert(params.regDate),
-        updDate: dateToTimestampConvert(params.updDate),
       }));
     }
 
@@ -337,10 +339,12 @@ const FirmwareMgmtDetail = (props) => {
           {/*펌웨어 유형*/}
           <Grid item xs={6} md={6} lg={6}>
             <CSelect
+              id="frmwrType"
               ref={ref}
               name="frmwrType"
               label={texts.firmwareType}
-              value={submitData.frmwrType || ''}
+              value={submitData.frmwrType}
+              defaultValue=""
               optionArray={frmwrTypeList}
               onChange={onChangeFormData}
               onValidation={(value) => rules.requireAlert(value)}
@@ -401,10 +405,18 @@ const FirmwareMgmtDetail = (props) => {
           {/*하드웨어 유형, */}
           <Grid item xs={6} lg={6} md={6}>
             <CSelect
+              id={texts.hwType}
               label={texts.hwType}
               name="hwType"
               ref={ref}
-              value={submitData.hwType || ''}
+              value={
+                !isNull(wifiHwType) &&
+                wifiHwType.length > 0 &&
+                !isNull(mcuHwType) &&
+                mcuHwType.length > 0
+                  ? submitData.hwType
+                  : ''
+              }
               onChange={onChangeFormData}
               optionArray={
                 submitData.frmwrType === '1' ? wifiHwType : mcuHwType
@@ -436,52 +448,29 @@ const FirmwareMgmtDetail = (props) => {
                   devModelCodeList.find(
                     (v) => v.devModelCode === params.devModelCode,
                   )) ||
-                ''
+                null
               }
               onValidation={(value) => rules.requireAlert(value)}
               onValidationError={handleFormChildrenError}
             />
           </Grid>
           {isEdit && (
-            <>
-              {/* 등록자 아이디 */}
-              <Grid item xs={6} lg={6} md={6}>
-                <CInput
-                  label={
-                    submitData.frmwrId === ''
-                      ? t('word.regId')
-                      : t('word.updId')
-                  }
-                  type="textBox"
-                  name={'regId'}
-                  id={t('word.regId')}
-                  value={
-                    submitData.frmwrId === ''
-                      ? submitData.regId
-                      : submitData.updId
-                  }
-                  disabled
-                  ref={ref}
-                  fullWidth
-                />
-              </Grid>
-              <Grid item xs={6} lg={6} md={6}>
-                <FormControlLabel
-                  sx={{ padding: 2 }}
-                  control={
-                    <Switch
-                      {...label}
-                      checked={submitData.useYn}
-                      onChange={onChangeFormData}
-                      name="useYn"
-                    />
-                  }
-                  label={`${t('word.use')} ${t('word.yn')} : ${
-                    submitData.useYn === true ? 'Y' : 'N'
-                  } `}
-                />
-              </Grid>
-            </>
+            <Grid item xs={6} lg={6} md={6}>
+              <FormControlLabel
+                // sx={{ padding: 2 }}
+                control={
+                  <Switch
+                    {...label}
+                    checked={submitData.useYn}
+                    onChange={onChangeFormData}
+                    name="useYn"
+                  />
+                }
+                label={`${t('word.use')} ${t('word.yn')} : ${
+                  submitData.useYn === true ? 'Y' : 'N'
+                } `}
+              />
+            </Grid>
           )}
           <Grid
             item
@@ -493,12 +482,15 @@ const FirmwareMgmtDetail = (props) => {
             <CButton
               key={texts.cancel}
               type="cancel"
-              onClick={() => navigate('/fota/firmwareMgmt')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/fota/firmwareMgmt');
+              }}
               sx={{ mr: 3 }}
             >
               {t('word.cancel')}
             </CButton>
-            <CButton type="save" onClick={(e) => handleValidation(e)}>
+            <CButton type="submit" onClick={(e) => handleValidation(e)}>
               {t('word.save')}
             </CButton>
           </Grid>

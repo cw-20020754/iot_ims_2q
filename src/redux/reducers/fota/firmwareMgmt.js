@@ -31,6 +31,14 @@ const initialState = {
       align: 'center',
     },
     {
+      field: 'frmwrDesc',
+      headerName: i18n.t('word.firmware') + ' ' + i18n.t('word.desc'),
+      width: 250,
+      editable: false,
+      headerAlign: 'center',
+      align: 'center',
+    },
+    {
       field: 'frmwrVer',
       headerName: i18n.t('word.firmware') + ' ' + i18n.t('word.ver'),
       width: 150,
@@ -254,7 +262,10 @@ const firmwareMgmt = createSlice({
   reducers: {
     setFirmwareMgmtParams(state, action) {
       const obj = action.payload;
-      state.firmwareMgmtParams = { ...state.firmwareMgmtParams, ...obj };
+      state.firmwareMgmtParams =
+        obj === 'initialState'
+          ? initialState.firmwareMgmtParams
+          : { ...state.firmwareMgmtParams, ...obj };
     },
     setConditionSelctList(state, action) {
       const obj = action.payload;

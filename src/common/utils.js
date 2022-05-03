@@ -52,7 +52,9 @@ const getCodeToText = (category, data, codes) => {
 
 const getCodeToTxt = (value, codes, catetory) => {
   if (Array.isArray(codes) && codes.length > 0) {
-    return codes.find((el) => el[catetory] === value).text;
+    const result = codes.find((el) => el[catetory] === value);
+
+    return !isNull(result) ? result['text'] : '';
   }
 };
 
@@ -288,9 +290,8 @@ const saveAlert = (type, config) => {
   }
 
   if (
-    (type === 'ims' &&
-      !IMS_POST_FOR_INQUIRY_LIST.includes(config.url.split('v1')[1])) ||
-    (type === 'fota' && !FOTA_POST_FOR_INQUIRY_LIST.includes(config.url))
+    type === 'ims' &&
+    !IMS_POST_FOR_INQUIRY_LIST.includes(config.url.split('v1')[1])
   ) {
     store.dispatch(
       setSnackbar({

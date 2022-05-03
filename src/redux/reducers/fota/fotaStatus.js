@@ -239,7 +239,7 @@ const initialState = {
     },
     {
       field: 'serial',
-      headerName: i18n.t('word.serialNum'),
+      headerName: i18n.t('word.serial'),
       width: 250,
       editable: false,
       headerAlign: 'center',
@@ -380,7 +380,7 @@ const initialState = {
     {
       id: 'serial',
       category: 'serial',
-      label: i18n.t('word.serialNum'),
+      label: i18n.t('word.serial'),
       type: 'textBox',
       value: '',
       size: {
@@ -409,7 +409,7 @@ const initialState = {
     },
     {
       field: 'serial',
-      headerName: i18n.t('word.serialNum'),
+      headerName: i18n.t('word.serial'),
       width: 200,
       editable: false,
       headerAlign: 'center',

@@ -22,11 +22,12 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { GROUP_ID } from 'common/constants';
 import { postComCodeList } from 'redux/reducers/adminMgmt/comCodeMgmt';
 import dayjs from 'dayjs';
-import { GlobalLoading } from 'redux/reducers/common/sharedInfo';
+import { GlobalLoading, setSnackbar } from 'redux/reducers/common/sharedInfo';
 import {
   postCertPolicy,
   putCertPolicy,
 } from 'redux/reducers/fota/certPolicyMgmt';
+import i18n from 'common/locale/i18n';
 
 const CertPolicyDetail = (props) => {
   const theme = useTheme();
@@ -64,7 +65,7 @@ const CertPolicyDetail = (props) => {
     policyDesc: t('word.policy') + ' ' + t('word.desc'),
     publishTargetType:
       t('word.publish') + ' ' + t('word.target') + ' ' + t('word.type'),
-    targetId: t('word.serialNum'),
+    targetId: t('word.serial'),
     publishType: t('word.publish') + ' ' + t('word.type'),
     reservationTime: t('word.reservation') + ' ' + t('word.time'),
     certType: t('word.cert') + ' ' + t('word.type'),
@@ -166,16 +167,36 @@ const CertPolicyDetail = (props) => {
       );
     }
 
-    dispatch(GlobalLoading(false));
-
     if (
       !isNull(result) &&
       !isNull(result.payload) &&
       !isNull(result.payload.data) &&
       result.payload.data.header.success
     ) {
+      await dispatch(
+        setSnackbar({
+          snackbarOpen: true,
+          severity: 'success',
+          snackbarMessage: i18n.t('desc.saveSuccess'),
+          autoHideDuration: 3000,
+        }),
+      );
+
       navigate('/fota/certPolicy');
+    } else {
+      const text = !isNull(result.payload.data.header)
+        ? result.payload.data.header.message
+        : i18n.t('desc.tempError');
+      await dispatch(
+        setSnackbar({
+          snackbarOpen: true,
+          severity: 'error',
+          snackbarMessage: text,
+          autoHideDuration: 3000,
+        }),
+      );
     }
+    dispatch(GlobalLoading(false));
   };
 
   const handleValidation = (e) => {
@@ -381,8 +402,6 @@ const CertPolicyDetail = (props) => {
               onChange={onChangeFormData}
               disabled={!isEdit}
               optionArray={policyStatusList}
-              onValidation={(value) => rules.requireAlert(value)}
-              onValidationError={handleFormChildrenError}
             />
           </Grid>
           {/* 등록자 아이디 */}
@@ -425,12 +444,15 @@ const CertPolicyDetail = (props) => {
             <CButton
               key={texts.cancel}
               type="cancel"
-              onClick={() => navigate('/fota/certPolicy')}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/fota/certPolicy');
+              }}
               sx={{ mr: 3 }}
             >
               {t('word.cancel')}
             </CButton>
-            <CButton type="save" onClick={(e) => handleValidation(e)}>
+            <CButton type="submit" onClick={(e) => handleValidation(e)}>
               {t('word.save')}
             </CButton>
           </Grid>

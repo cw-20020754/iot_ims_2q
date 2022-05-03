@@ -31,7 +31,7 @@ import {
 } from 'redux/reducers/auth/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { encryptData, isAuthenticated, removeCookie } from 'common/auth';
-import { setSnackbar } from 'redux/reducers/common/sharedInfo';
+import { GlobalLoading, setSnackbar } from 'redux/reducers/common/sharedInfo';
 
 const Login = () => {
   const classes = AuthStyle();
@@ -51,7 +51,7 @@ const Login = () => {
     showPassword: false,
   });
 
-  const [hasError, setHasError] = useState(false);
+  let hasError = false;
 
   useEffect(() => {
     if (initial && !isNull(state) && state.sessionExpired) {
@@ -88,34 +88,41 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    dispatch(GlobalLoading(true));
     removeCookie('accessToken');
 
-    // validation check
-    if (checkValidation()) {
-      const formData = new FormData();
+    console.log('hasError >> ', hasError);
 
-      formData.append('grant_type', 'password');
-      formData.append('username', values.userId);
-      formData.append('password', values.password);
+    if (hasError === true) {
+      hasError = false;
+      dispatch(GlobalLoading(false));
+      return;
+    }
 
-      const result = await dispatch(
-        executeLogin({
-          formData: formData,
-        }),
-      );
+    const formData = new FormData();
 
-      if (responseCheck(result)) {
-        await dispatch(setLoginInfo(result));
-        if (isNull(authError) && isAuthenticated()) {
-          dispatch(setUserInfo(encryptData(values.userId)));
-          navigate('/fota/firmwareMgmt');
-        } else {
-          setAlertMessage(authError);
-        }
+    formData.append('grant_type', 'password');
+    formData.append('username', values.userId);
+    formData.append('password', values.password);
+
+    const result = await dispatch(
+      executeLogin({
+        formData: formData,
+      }),
+    );
+
+    if (responseCheck(result)) {
+      await dispatch(setLoginInfo(result));
+      if (isNull(authError) && isAuthenticated()) {
+        dispatch(setUserInfo(encryptData(values.userId)));
+        navigate('/fota/firmwareMgmt');
       } else {
         setAlertMessage(authError);
       }
+    } else {
+      setAlertMessage(authError);
     }
+    dispatch(GlobalLoading(false));
   };
 
   const checkValidation = () => {
@@ -143,7 +150,7 @@ const Login = () => {
   };
 
   const handleFormChildrenError = () => {
-    setHasError(true);
+    hasError = true;
   };
 
   const handleValidation = (e) => {

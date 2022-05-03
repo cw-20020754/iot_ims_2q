@@ -2,7 +2,13 @@ import React, { useCallback, useEffect } from 'react';
 import { Box, Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { isNull, makeQuery, onExcelDownload, reformatData } from 'common/utils';
+import {
+  dateToTimestampConvert,
+  isNull,
+  makeQuery,
+  onExcelDownload,
+  reformatData,
+} from 'common/utils';
 import CSearchCondition from 'components/complex/CSearchCondition';
 import CDataGrid from 'components/complex/Table/CDataGrid';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +32,17 @@ const FirmwareMgmt = () => {
   const dispatch = useDispatch();
   let navigate = useNavigate();
 
+  const setDetailInfo = (params) => {
+    return {
+      ...params,
+      useYn: params.useYn === 'Y',
+      frmwrType: params.frmwrType === 'WIFI' ? '1' : '2',
+      hwType: params.frmwrType === 'WIFI' ? String(params.hwType) : '0',
+      regDate: dateToTimestampConvert(params.regDate),
+      updDate: dateToTimestampConvert(params.updDate),
+    };
+  };
+
   const dataGridColums = [
     {
       field: 'actions',
@@ -37,8 +54,10 @@ const FirmwareMgmt = () => {
           type: 'edit',
           id: params.id,
           onClick: () => {
+            setDetailInfo(params.row);
+
             navigate('/fota/FirmwareMgmtDetail', {
-              state: { isEdit: true, params: params.row },
+              state: { isEdit: true, params: setDetailInfo(params.row) },
             });
           },
         }),
@@ -202,6 +221,10 @@ const FirmwareMgmt = () => {
     if (devModelCodeList.length === 0) {
       fetchDevModeCodeList();
     }
+
+    return () => {
+      dispatch(setFirmwareMgmtParams('initialState'));
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
