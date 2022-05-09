@@ -24,7 +24,7 @@ jobs:
         run: yarn install
           
       - name: Build
-        run: vite build
+        run: yarn build
         
       - name: S3 Deploy
         env:
