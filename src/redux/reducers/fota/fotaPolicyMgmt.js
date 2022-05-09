@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fotaAPI } from 'api';
 import { isNull } from 'common/utils';
-import i18n from '../../../common/locale/i18n';
+import i18n from 'common/locale/i18n';
 import dayjs from 'dayjs';
 
 const name = 'fotaPolicyMgmt';
@@ -69,7 +69,7 @@ const initialState = {
     },
     {
       field: 'targetId',
-      headerName: i18n.t('word.serialNum'),
+      headerName: i18n.t('word.serial'),
       width: 150,
       editable: false,
       headerAlign: 'center',
@@ -415,7 +415,10 @@ const fotaPolicyMgmt = createSlice({
   reducers: {
     setFotaPolicyMgmtParams(state, action) {
       const obj = action.payload;
-      state.fotaPolicyMgmtParams = { ...state.fotaPolicyMgmtParams, ...obj };
+      state.fotaPolicyMgmtParams =
+        obj === 'initialState'
+          ? initialState.fotaPolicyMgmtParams
+          : { ...state.fotaPolicyMgmtParams, ...obj };
     },
     setDialogParams(state, action) {
       const obj = action.payload;

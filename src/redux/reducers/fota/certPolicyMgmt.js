@@ -69,7 +69,7 @@ const initialState = {
     },
     {
       field: 'targetId',
-      headerName: i18n.t('word.serialNum'),
+      headerName: i18n.t('word.serial'),
       width: 250,
       editable: false,
       headerAlign: 'center',

@@ -5,6 +5,57 @@
 
 ## ⛏Project Setup
 
+### `vite`
+vite는 "빠르다"라는 의미로 웹팩을 사용할 때보다 훨씬 더 빠르게 개발하고 배포할 수 있는 개발 툴.
+[(vite 사용가이드)](https://vitejs-kr.github.io/guide/)
+ ```txt
+# 신규 프로젝트 생성
+yarn create @vitejs/app
+
+yarn create vite [project_name] --template react
+
+cd [project_name]
+yarn
+yarn dev
+
+project close and reopen
+```
+
+### vite 실행 /빌드
+```
+vite dev
+
+
+// vite cli 안되는 경우
+sudo npm install --global vite
+
+(검증)
+vite --mode staging
+
+(운영)
+vite --mode prodcution
+
+(빌드)
+vite build
+
+(검증)
+vite build --mode staging
+
+(운영)
+vite build --mode prodcution
+
+
+```
+
+
+
+
+### vite migration 참고 사이트
+[vite migration(1)](https://darekkay.com/blog/create-react-app-to-vite/)  
+[vite migration(2)](https://www.darraghoriordan.com/2021/05/16/migrating-from-create-react-app-to-vite/)
+
+
+
 
 ### `yarn`
 npm을 대체할 수 있는 도구로 npm보다 더 빠르며 효율적인 캐시 시스템과 기타 부가 기능을
@@ -83,8 +134,8 @@ yarn add dayjs
 
 |폴더|router|화면|설명|
 |---|---|---|-----|
-|DashboardPage/index.js|/dashboard|대시보드|대시보드 메인 페이지|
-|DeviceIntegratedMonitoringPage/index.js|/deviceMonitoring|디바이스 통합 모니터링|통합 모니터링 페이지|
+|DashboardPage/index.jsx|/dashboard|대시보드|대시보드 메인 페이지|
+|DeviceIntegratedMonitoringPage/index.jsx|/deviceMonitoring|디바이스 통합 모니터링|통합 모니터링 페이지|
 |FotaPage/FirmwareManagementPage.js|/fota/firmwareManagement|FOTA Firmware 관리|FOTA Firmware 리스트, 펌웨어 리스트 추가 수정 삭제 및 엑셀 다운로드 기능|
 |FotaPage/FirmwareManagementDetailPage.js|/fota/firmwareManagementDetail|FOTA Firmware 관리 상세|Firmware 등록 및 수정|
 |FotaPage/FotaPolicyManagementPage.js|/fota/policyManagement|FOTA 정책관리|FOTA 정책 리스트, 정책 추가 수정 삭제 및 엑셀 다운로드 기능|
@@ -121,8 +172,8 @@ iotims-admin-web-client
     │    └── store   # redux store
 │   ├── views/       # views source (common button, theme...)
     ├── _nav.js/     # navigation with icon, router..
-│   ├── App.js
-│   ├── index.js
+│   ├── App.jsx
+│   ├── index.jsx
 │   ├── routes.js    #routes config
 │   └── store.js     #template state example 
 │

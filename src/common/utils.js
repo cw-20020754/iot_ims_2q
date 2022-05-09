@@ -1,16 +1,12 @@
 import dayjs from 'dayjs';
 import qs from 'qs';
 import xlsx from 'xlsx';
-import {
-  FOTA_POST_FOR_INQUIRY_LIST,
-  HTTP_STATUS,
-  IMS_POST_FOR_INQUIRY_LIST,
-} from './constants';
+import { HTTP_STATUS, IMS_POST_FOR_INQUIRY_LIST } from './constants';
 import i18n from 'common/locale/i18n';
-import { setSnackbar } from '../redux/reducers/common/sharedInfo';
+import { setSnackbar } from '@/redux/reducers/common/sharedInfo';
 import { removeCookie } from './auth';
 import { persistor } from '../index';
-import { history } from 'App';
+import { history } from '../App';
 import { saveAs } from 'file-saver';
 
 let store;
@@ -52,7 +48,9 @@ const getCodeToText = (category, data, codes) => {
 
 const getCodeToTxt = (value, codes, catetory) => {
   if (Array.isArray(codes) && codes.length > 0) {
-    return codes.find((el) => el[catetory] === value).text;
+    const result = codes.find((el) => el[catetory] === value);
+
+    return !isNull(result) ? result['text'] : '';
   }
 };
 
@@ -288,9 +286,8 @@ const saveAlert = (type, config) => {
   }
 
   if (
-    (type === 'ims' &&
-      !IMS_POST_FOR_INQUIRY_LIST.includes(config.url.split('v1')[1])) ||
-    (type === 'fota' && !FOTA_POST_FOR_INQUIRY_LIST.includes(config.url))
+    type === 'ims' &&
+    !IMS_POST_FOR_INQUIRY_LIST.includes(config.url.split('v1')[1])
   ) {
     store.dispatch(
       setSnackbar({
