@@ -10,7 +10,6 @@ import './common/locale/i18n';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import { injectStore } from './common/utils';
-// require('dotenv').config();
 
 export const persistor = persistStore(store);
 
