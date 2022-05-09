@@ -21,14 +21,11 @@ const isAuthenticated = () => {
 };
 
 const encryptData = (data) => {
-  return CryptoJS.AES.encrypt(
-    data,
-    process.env.REACT_APP_SECRET_KEY,
-  ).toString();
+  return CryptoJS.AES.encrypt(data, import.meta.env.VITE_SECRET_KEY).toString();
 };
 
 const decryptData = (data) => {
-  const bytes = CryptoJS.AES.decrypt(data, process.env.REACT_APP_SECRET_KEY);
+  const bytes = CryptoJS.AES.decrypt(data, import.meta.env.VITE_SECRET_KEY);
 
   return bytes.toString(CryptoJS.enc.Utf8);
 };

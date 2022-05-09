@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.17.3",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.3.1",
@@ -50,14 +51,9 @@
     "xlsx": "^0.17.4"
   },
   "scripts": {
-    "start": "dotenv -e .env.dev react-scripts start",
-    "start:stg": "dotenv -e .env.stg react-scripts start",
-    "start:prod": "dotenv -e .env.prod react-scripts start",
-    "build": "dotenv -e .env.dev react-scripts build",
-    "build:stg": "dotenv -e .env.stg react-scripts build",
-    "build:prod": "dotenv -e .env.prod react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": [
@@ -78,12 +74,14 @@
     ]
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "1.1.1",
     "dotenv-cli": "^4.1.1",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "2.4.1"
+    "prettier": "2.4.1",
+    "vite": "2.7.0"
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"

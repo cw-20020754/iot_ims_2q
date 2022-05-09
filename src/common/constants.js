@@ -2,9 +2,9 @@ export const DRAWER_WIDTH = 240;
 export const GRID_SPACING = 3;
 
 const API = {
-  API_URL: process.env.REACT_APP_API_URL,
-  FOTA_URL: process.env.REACT_APP_FOTA_URL,
-  AUTH_URL: process.env.REACT_APP_AUTH_URL,
+  API_URL: import.meta.env.VITE_API_URL,
+  FOTA_URL: import.meta.env.VITE_FOTA_URL,
+  AUTH_URL: import.meta.env.VITE_AUTH_URL,
   AUTH_HEADERS: {
     'Content-Type': 'application/x-www-form-urlencoded',
     Authorization:
