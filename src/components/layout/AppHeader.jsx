@@ -1,24 +1,28 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Toolbar, Typography } from '@mui/material';
+import { Box, IconButton, Toolbar, Typography } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import CButton from '../basic/CButton';
 import { setLogoutInfo } from '@/redux/reducers/auth/auth';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@mui/styles';
 import { useTranslation } from 'react-i18next';
 import { decryptData } from 'common/auth';
 import { persistor } from '../../index';
+import { useTheme } from '@mui/styles';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import { ColorModeContext } from '../../assets/theme/color-context';
 
 const AppHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const theme = useTheme();
   const { t } = useTranslation();
   const sidebarShow = useSelector((state) => state.sharedInfo.sidebarShow);
   const { username } = useSelector((state) => state.auth);
   // styles ----------------------------------------------------------------------
+  const theme = useTheme();
+  const colorMode = React.useContext(ColorModeContext);
 
   const drawerWidth = 240;
 
@@ -50,7 +54,11 @@ const AppHeader = () => {
 
   return (
     <AppBar position="fixed" open={sidebarShow}>
-      <Toolbar sx={{ justifyContent: 'flex-end' }}>
+      <Toolbar
+        sx={{
+          justifyContent: 'flex-end',
+        }}
+      >
         {/*<IconButton*/}
         {/*  color="neutral"*/}
         {/*  aria-label="toggle drawer"*/}
@@ -61,6 +69,29 @@ const AppHeader = () => {
         {/*>*/}
         {/*  <MenuIcon />*/}
         {/*</IconButton>*/}
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant={'h6'} component="div">
+            {theme.mode} mode
+          </Typography>
+          <IconButton
+            sx={{ ml: 1 }}
+            onClick={colorMode.toggleColorMode}
+            color="inherit"
+          >
+            {theme.mode === 'dark' ? (
+              <Brightness7Icon sx={{ color: theme.palette.grey.main }} />
+            ) : (
+              <Brightness4Icon />
+            )}
+          </IconButton>
+        </Box>
         <Box
           sx={{
             flexGrow: 1,

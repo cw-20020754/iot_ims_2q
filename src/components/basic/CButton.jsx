@@ -37,9 +37,9 @@ const CButton = (props) => {
     fontWeight: 600,
     boxShadow: isNull(variant) && theme.shadows[2],
     fontsize: '0.825rem',
-    '&:hover': {
-      backgroundColor: isNull(variant) && theme.palette.grey[100],
-    },
+    // '&:hover': {
+    //   backgroundColor: isNull(variant) && theme.palette.grey[100],
+    // },
     ...(isNull(color) && !isNull(type) && customType[type]),
   }));
 

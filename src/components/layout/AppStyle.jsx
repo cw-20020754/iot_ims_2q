@@ -1,8 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@mui/styles';
+import { makeStyles, useTheme } from '@mui/styles';
 import colors from 'assets/scss/_themes-vars.module.scss';
 
 const color = colors;
+// const theme = useTheme();
 
 const AppStyles = makeStyles({
   root: {
@@ -36,6 +37,7 @@ const AppStyles = makeStyles({
     borderLeftStyle: 'solid',
     borderLeftWidth: '8px',
     borderLeftColor: color.primaryMain,
+    // borderLeftColor: theme.palette.primary,
     borderRadius: '4px',
     maxHeight: '48px',
     boxShadow: 3,

@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
+import { useTheme } from '@mui/styles';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -25,6 +26,8 @@ import logo_iocare from 'assets/images/logo_iocare.png';
 const AppSidebar = () => {
   const { t } = useTranslation();
   const sidebarShow = useSelector((state) => state.sharedInfo.sidebarShow);
+  const theme = useTheme();
+  const localTheme = localStorage.getItem('localTheme');
 
   // ----------------------------------------------------------------------
 
@@ -83,12 +86,17 @@ const AppSidebar = () => {
     <Box component="nav" aria-label="mailbox folders">
       <Drawer variant="permanent" open={sidebarShow}>
         {/*Logo Section*/}
-        <DrawerHeader>
+        <DrawerHeader
+          sx={{ backgroundColor: localTheme === 'dark' ? 'grey.deepdark' : '' }}
+        >
           <ButtonBase disableRipple>
             <Box
               component={'img'}
               src={logo_iocare}
-              sx={{ width: '70%', alignItems: 'flex-start' }}
+              sx={{
+                width: '70%',
+                alignItems: 'flex-start',
+              }}
             />
           </ButtonBase>
           <ButtonBase

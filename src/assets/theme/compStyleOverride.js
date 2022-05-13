@@ -3,7 +3,7 @@ import SpoqaHanSansNeoWoff from '../font/SpoqaHanSansNeo-Regular.woff';
 import SpoqaHanSansNeoWoff2 from '../font/SpoqaHanSansNeo-Regular.woff2';
 
 export default function componentStyleOverrides(theme) {
-  const bgColor = theme.colors?.grey50;
+  const bgColor = theme.paper;
   return {
     MuiCssBaseline: {
       styleOverrides: `
@@ -24,6 +24,10 @@ export default function componentStyleOverrides(theme) {
         root: {
           fontWeight: 500,
           borderRadius: '4px',
+          '&:hover': {
+            backgroundColor: theme.paper,
+            borderColor: theme.menuSelectedBack,
+          },
         },
       },
     },
@@ -34,6 +38,8 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         root: {
           backgroundImage: 'none',
+          background: theme.paper,
+          color: theme.heading,
         },
         rounded: {
           borderRadius: `${theme?.customization?.borderRadius}px`,
@@ -45,6 +51,7 @@ export default function componentStyleOverrides(theme) {
         root: {
           color: theme.colors?.textDark,
           padding: '24px',
+          background: theme.paper,
         },
         title: {
           fontSize: '1rem',
@@ -55,6 +62,8 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         root: {
           padding: '16px',
+          background: theme.paper,
+          color: theme.textDark,
         },
       },
     },
@@ -62,6 +71,7 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         root: {
           padding: '24px',
+          color: theme.textDark,
         },
       },
     },
@@ -111,14 +121,14 @@ export default function componentStyleOverrides(theme) {
         input: {
           color: theme.textDark,
           '&::placeholder': {
-            color: theme.darkTextSecondary,
+            color: theme.darkTextPrimary,
             fontSize: '0.875rem',
           },
           '&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
-            color: theme.colors?.primaryMain,
+            color: theme.menuSelected,
           },
           '&.Mui-error .MuiInputAdornment-root .MuiSvgIcon-root': {
-            color: theme.colors?.errorMain,
+            color: theme.error,
           },
         },
       },
@@ -126,7 +136,7 @@ export default function componentStyleOverrides(theme) {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          background: bgColor,
+          background: theme.paper,
           borderRadius: `${theme?.customization?.borderRadius}px`,
           '& .MuiOutlinedInput-notchedOutline': {
             borderColor: theme.colors?.grey400,
@@ -209,14 +219,15 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         tooltip: {
           color: theme.paper,
-          background: theme.colors?.grey700,
+          background: theme.darkTextPrimary,
         },
       },
     },
-    MuiTextField: {
-      root: {
-        '&::placeholder': {
-          color: 'red',
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          background: theme.paper,
+          color: theme.textDark,
         },
       },
     },
@@ -224,6 +235,8 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         root: {
           padding: '28px',
+          background: theme.paper,
+          color: theme.textDark,
         },
       },
     },
@@ -237,6 +250,57 @@ export default function componentStyleOverrides(theme) {
           '& .MuiDataGrid-toolbarContainer': {
             padding: '-2px 4px 10px',
           },
+        },
+      },
+    },
+    MuiTreeView: {
+      styleOverrides: {
+        root: {
+          background: theme.paper,
+          color: theme.heading,
+        },
+      },
+    },
+    MuiTabsFlexContainer: {
+      styleOverrides: {
+        root: {
+          background: theme.paper,
+          color: theme.temp,
+        },
+      },
+    },
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          background: theme.paper,
+        },
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          background: theme.paper,
+        },
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          background: theme.background,
+        },
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          background: theme.paper,
+        },
+      },
+    },
+    MuiMenuList: {
+      styleOverrides: {
+        root: {
+          background: theme.paper,
         },
       },
     },

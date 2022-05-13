@@ -12,7 +12,7 @@ const CGridActionsCellItem = (props) => {
 
   const iconType = (type) => {
     if (type === 'delete') {
-      return <DeleteIcon />;
+      return <DeleteIcon sx={{ color: theme.palette.grey.main }} />;
     } else if (type === 'edit') {
       return <EditIcon sx={{ color: theme.palette.primary.main }} />;
     } else if (type === 'history') {

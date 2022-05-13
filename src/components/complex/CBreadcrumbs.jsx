@@ -68,9 +68,7 @@ const CBreadcrumb = () => {
             <Link
               underline="hover"
               color={
-                breadcrumbs.length === 1
-                  ? theme.palette.primary.main
-                  : 'inherit'
+                breadcrumbs.length === 1 ? theme.palette.primary.main : ' '
               }
               onClick={handleClick}
               key={index}
